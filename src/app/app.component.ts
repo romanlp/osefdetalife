@@ -2,7 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {getSupportedInputTypes, Platform, supportsPassiveEventListeners} from '@angular/cdk/platform';
 import {ViewportRuler} from '@angular/cdk/scrolling';
 import {Observable} from 'rxjs/Observable';
-import 'rxjs/operator/map';
+import {AngularFireAuth} from 'angularfire2/auth';
+import * as firebase from 'firebase/app';
 
 @Component({
   selector: 'app-root',
@@ -16,12 +17,23 @@ export class AppComponent implements OnInit {
   public supportedInputTypes: Set<string>;
   public viewportSize: { width: number, height: number };
   public viewportRect: ClientRect;
-  private viewportScrollPosition: { top: number; left: number };
-  private viewportWidth$: Observable<number>;
-  private viewportHeight$: Observable<number>;
+  public viewportScrollPosition: { top: number; left: number };
+  public viewportWidth$: Observable<number>;
+  public viewportHeight$: Observable<number>;
 
-  constructor(private _platform: Platform,
-              private _ruler: ViewportRuler) {
+  constructor(public _platform: Platform,
+              private _ruler: ViewportRuler,
+              private afAuth: AngularFireAuth) {
+  }
+
+  public login() {
+    this.afAuth.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
+      .then(logged => console.log(logged))
+      .catch(error => console.error(error));
+  }
+
+  public logout() {
+    this.afAuth.auth.signOut();
   }
 
   ngOnInit(): void {

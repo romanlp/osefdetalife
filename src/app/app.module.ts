@@ -14,6 +14,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/filter';
 import {AngularFireModule} from 'angularfire2';
 import {AngularFireAuthModule} from 'angularfire2/auth';
+import {MatButtonModule} from '@angular/material';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import {AngularFireAuthModule} from 'angularfire2/auth';
     BrowserModule,
     AppRoutingModule,
     PlatformModule,
+    MatButtonModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
     ServiceWorkerModule.register('/ngsw-worker.js', {enabled: environment.production})
