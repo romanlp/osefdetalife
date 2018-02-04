@@ -20,6 +20,7 @@ export class AppComponent implements OnInit {
   public viewportScrollPosition: { top: number; left: number };
   public viewportWidth$: Observable<number>;
   public viewportHeight$: Observable<number>;
+  public user$: Observable<firebase.User>;
 
   constructor(public _platform: Platform,
               private _ruler: ViewportRuler,
@@ -37,6 +38,7 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.user$ = this.afAuth.authState;
     this.supportPassiveEvent = supportsPassiveEventListeners();
     this.supportedInputTypes = getSupportedInputTypes();
 

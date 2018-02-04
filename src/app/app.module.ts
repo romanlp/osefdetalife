@@ -10,21 +10,21 @@ import {environment} from '../environments/environment';
 import {PlatformModule} from '@angular/cdk/platform';
 import {VIEWPORT_RULER_PROVIDER} from '@angular/cdk/scrolling';
 
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/filter';
 import {AngularFireModule} from 'angularfire2';
 import {AngularFireAuthModule} from 'angularfire2/auth';
-import {MatButtonModule} from '@angular/material';
+import {MatButtonModule, MatIconModule, MatMenuModule, MatToolbarModule} from '@angular/material';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
     AppComponent
   ],
   imports: [
+    BrowserAnimationsModule,
     BrowserModule,
     AppRoutingModule,
     PlatformModule,
-    MatButtonModule,
+    MatButtonModule, MatToolbarModule, MatIconModule, MatMenuModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
     ServiceWorkerModule.register('/ngsw-worker.js', {enabled: environment.production})
