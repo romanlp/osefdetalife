@@ -18,4 +18,33 @@
   </li>
 </ul>
 
+<div>
+  {{ _platform | json }}
+  Support passive event {{ supportPassiveEvent }}
+</div>
+
+<div>
+  viewport size:{{ viewportSize.width }} x {{ viewportSize.height }}
+</div>
+
+<div>
+  viewport rect:{{ viewportRect.width }} x {{ viewportRect.height }}
+  - top: {{ viewportRect.top }}
+  - bottom: {{ viewportRect.bottom }}
+  - left: {{ viewportRect.left }}
+  - right: {{ viewportRect.right }}
+</div>
+
+<div>
+  Scroll: {{ viewportScrollPosition.left }} {{ viewportScrollPosition.top }}
+</div>
+
+<div>
+  Viewport size observable: {{ viewportWidth$ | async }} x {{ viewportHeight$ | async }}
+</div>
+
+<ul>
+  <li *ngFor="let type of supportedInputTypes">{{ type }}</li>
+</ul>
+
 <router-outlet></router-outlet>
