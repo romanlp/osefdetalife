@@ -4,6 +4,7 @@ import {ViewportRuler} from '@angular/cdk/scrolling';
 import {Observable} from 'rxjs/Observable';
 import {AngularFireAuth} from 'angularfire2/auth';
 import * as firebase from 'firebase/app';
+import {FirebaseApp} from 'angularfire2/firebase.app.module';
 
 @Component({
   selector: 'app-root',
@@ -22,9 +23,13 @@ export class AppComponent implements OnInit {
   public viewportHeight$: Observable<number>;
   public user$: Observable<firebase.User>;
 
+  public metadata$: any;
+  public metadata2$: any;
+
   constructor(public _platform: Platform,
               private _ruler: ViewportRuler,
-              private afAuth: AngularFireAuth) {
+              private afAuth: AngularFireAuth,
+              private storage: FirebaseApp) {
   }
 
   public login() {
@@ -39,6 +44,8 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.user$ = this.afAuth.authState;
+    this.metadata$ = this.storage.storage().ref('shoreditch/shoreditch.jpeg').getDownloadURL();
+    console.log(this.metadata2$);
     this.supportPassiveEvent = supportsPassiveEventListeners();
     this.supportedInputTypes = getSupportedInputTypes();
 

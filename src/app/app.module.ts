@@ -1,7 +1,7 @@
 import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
 
-import {AppRoutingModule} from './app-routing.module';
+import {AppRoutingModule} from './routing/app-routing.module';
 
 import {ServiceWorkerModule} from '@angular/service-worker';
 import {AppComponent} from './app.component';
@@ -14,6 +14,8 @@ import {AngularFireModule} from 'angularfire2';
 import {AngularFireAuthModule} from 'angularfire2/auth';
 import {MatButtonModule, MatIconModule, MatMenuModule, MatToolbarModule} from '@angular/material';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {AngularFireStorageModule} from 'angularfire2/storage';
+import {CoreModule} from './core/core.module';
 
 @NgModule({
   declarations: [
@@ -24,10 +26,12 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
     BrowserModule,
     AppRoutingModule,
     PlatformModule,
+    CoreModule,
     MatButtonModule, MatToolbarModule, MatIconModule, MatMenuModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
-    ServiceWorkerModule.register('/ngsw-worker.js', {enabled: environment.production})
+    AngularFireStorageModule,
+    ServiceWorkerModule.register('/ngsw-worker.js', {enabled: environment.production}),
   ],
   providers: [VIEWPORT_RULER_PROVIDER],
   bootstrap: [AppComponent]
