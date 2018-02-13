@@ -17,6 +17,8 @@
   </mat-menu>
 </mat-toolbar>
 
+<router-outlet></router-outlet>
+
 <div style="text-align:center">
   <h1>
     Welcome to {{ title }}!
@@ -33,8 +35,8 @@
   viewport size:{{ viewportSize.width }} x {{ viewportSize.height }}
 </div>
 
-<div>
-  <img class="photo" [src]="metadata$ | async" alt="">
+<div *ngFor="let image$ of images$; index">
+  <img class="photo" [src]="image$ | async" (click)="openImage(index)">
 </div>
 
 {{ metadata2$ | async | json }}

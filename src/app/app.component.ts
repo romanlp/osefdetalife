@@ -4,7 +4,9 @@ import {ViewportRuler} from '@angular/cdk/scrolling';
 import {Observable} from 'rxjs/Observable';
 import {AngularFireAuth} from 'angularfire2/auth';
 import * as firebase from 'firebase/app';
-import {FirebaseApp} from 'angularfire2/firebase.app.module';
+import {AngularFireStorage} from 'angularfire2/storage';
+import {MatDialog} from '@angular/material';
+import {DialogImageComponent} from './shared/dialog-image/dialog-image.component';
 
 @Component({
   selector: 'app-root',
@@ -23,13 +25,14 @@ export class AppComponent implements OnInit {
   public viewportHeight$: Observable<number>;
   public user$: Observable<firebase.User>;
 
-  public metadata$: any;
+  public images$: Observable<string>[];
   public metadata2$: any;
 
   constructor(public _platform: Platform,
               private _ruler: ViewportRuler,
               private afAuth: AngularFireAuth,
-              private storage: FirebaseApp) {
+              private storage: AngularFireStorage,
+              private dialog: MatDialog) {
   }
 
   public login() {
@@ -42,9 +45,17 @@ export class AppComponent implements OnInit {
     this.afAuth.auth.signOut();
   }
 
+  public openImage(image: string) {
+    this.dialog.open(DialogImageComponent);
+  }
+
   ngOnInit(): void {
+    this.images$ = [];
+    for (let i = 1; i <= 3; i++) {
+      this.images$.push(this.storage.ref(`shoreditch/shoreditch${i}.jpeg`).getDownloadURL());
+    }
+
     this.user$ = this.afAuth.authState;
-    this.metadata$ = this.storage.storage().ref('shoreditch/shoreditch.jpeg').getDownloadURL();
     console.log(this.metadata2$);
     this.supportPassiveEvent = supportsPassiveEventListeners();
     this.supportedInputTypes = getSupportedInputTypes();
