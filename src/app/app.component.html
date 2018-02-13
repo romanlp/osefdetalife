@@ -27,16 +27,11 @@
 </div>
 
 <div>
-  {{ _platform | json }}
-  Support passive event {{ supportPassiveEvent }}
-</div>
-
-<div>
   viewport size:{{ viewportSize.width }} x {{ viewportSize.height }}
 </div>
 
-<div *ngFor="let image$ of images$; index">
-  <img class="photo" [src]="image$ | async" (click)="openImage(index)">
+<div *ngFor="let image$ of images$">
+  <img *ngIf="image$ | async as image" class="photo" [src]="image" (click)="openImage(image)">
 </div>
 
 {{ metadata2$ | async | json }}

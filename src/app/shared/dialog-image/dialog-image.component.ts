@@ -1,4 +1,5 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 
 @Component({
   selector: 'app-dialog-image',
@@ -6,11 +7,14 @@ import {Component, OnInit} from '@angular/core';
   styleUrls: ['./dialog-image.component.scss']
 })
 export class DialogImageComponent implements OnInit {
+  public imageUrl: string;
 
-  constructor() {
+  constructor(private dialogRef: MatDialogRef<DialogImageComponent>,
+              @Inject(MAT_DIALOG_DATA) private data: any) {
   }
 
   ngOnInit() {
+    this.imageUrl = this.data;
   }
 
 }

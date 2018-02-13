@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {getSupportedInputTypes, Platform, supportsPassiveEventListeners} from '@angular/cdk/platform';
+import {getSupportedInputTypes, supportsPassiveEventListeners} from '@angular/cdk/platform';
 import {ViewportRuler} from '@angular/cdk/scrolling';
 import {Observable} from 'rxjs/Observable';
 import {AngularFireAuth} from 'angularfire2/auth';
@@ -26,10 +26,8 @@ export class AppComponent implements OnInit {
   public user$: Observable<firebase.User>;
 
   public images$: Observable<string>[];
-  public metadata2$: any;
 
-  constructor(public _platform: Platform,
-              private _ruler: ViewportRuler,
+  constructor(private _ruler: ViewportRuler,
               private afAuth: AngularFireAuth,
               private storage: AngularFireStorage,
               private dialog: MatDialog) {
@@ -46,7 +44,7 @@ export class AppComponent implements OnInit {
   }
 
   public openImage(image: string) {
-    this.dialog.open(DialogImageComponent);
+    this.dialog.open(DialogImageComponent, {data: image});
   }
 
   ngOnInit(): void {
@@ -56,7 +54,6 @@ export class AppComponent implements OnInit {
     }
 
     this.user$ = this.afAuth.authState;
-    console.log(this.metadata2$);
     this.supportPassiveEvent = supportsPassiveEventListeners();
     this.supportedInputTypes = getSupportedInputTypes();
 
