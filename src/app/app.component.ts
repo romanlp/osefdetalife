@@ -15,7 +15,6 @@ import {DialogImageComponent} from './shared/dialog-image/dialog-image.component
 })
 export class AppComponent implements OnInit {
 
-  public title = 'app';
   public supportPassiveEvent: boolean;
   public supportedInputTypes: Set<string>;
   public viewportSize: { width: number, height: number };
@@ -23,24 +22,23 @@ export class AppComponent implements OnInit {
   public viewportScrollPosition: { top: number; left: number };
   public viewportWidth$: Observable<number>;
   public viewportHeight$: Observable<number>;
-  public user$: Observable<firebase.User>;
 
   public images$: Observable<string>[];
 
   constructor(private _ruler: ViewportRuler,
-              private afAuth: AngularFireAuth,
+              private auth: AngularFireAuth,
               private storage: AngularFireStorage,
               private dialog: MatDialog) {
   }
 
   public login() {
-    this.afAuth.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
+    this.auth.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
       .then(logged => console.log(logged))
       .catch(error => console.error(error));
   }
 
   public logout() {
-    this.afAuth.auth.signOut();
+    this.auth.auth.signOut();
   }
 
   public openImage(image: string) {
@@ -52,8 +50,6 @@ export class AppComponent implements OnInit {
     for (let i = 1; i <= 3; i++) {
       this.images$.push(this.storage.ref(`shoreditch/shoreditch${i}.jpeg`).getDownloadURL());
     }
-
-    this.user$ = this.afAuth.authState;
     this.supportPassiveEvent = supportsPassiveEventListeners();
     this.supportedInputTypes = getSupportedInputTypes();
 

@@ -12,7 +12,6 @@ import {VIEWPORT_RULER_PROVIDER} from '@angular/cdk/scrolling';
 
 import {AngularFireModule} from 'angularfire2';
 import {AngularFireAuthModule} from 'angularfire2/auth';
-import {MatButtonModule, MatDialogModule, MatIconModule, MatMenuModule, MatToolbarModule} from '@angular/material';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {AngularFireStorageModule} from 'angularfire2/storage';
 import {CoreModule} from './core/core.module';
@@ -23,13 +22,13 @@ import {SharedModule} from './shared/shared.module';
     AppComponent,
   ],
   imports: [
-    BrowserAnimationsModule,
     BrowserModule,
+    BrowserModule.withServerTransition({appId: 'romangular-firebase'}),
+    BrowserAnimationsModule,
     AppRoutingModule,
     PlatformModule,
     CoreModule,
     SharedModule,
-    MatButtonModule, MatToolbarModule, MatIconModule, MatMenuModule, MatDialogModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
     AngularFireStorageModule,
