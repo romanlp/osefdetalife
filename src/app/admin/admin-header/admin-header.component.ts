@@ -19,4 +19,14 @@ export class AdminHeaderComponent implements OnInit {
     this.user$ = this.auth.authState;
   }
 
+  public login() {
+    this.auth.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
+      .then(logged => console.log(logged))
+      .catch(error => console.error(error));
+  }
+
+  public logout() {
+    this.auth.auth.signOut();
+  }
+
 }

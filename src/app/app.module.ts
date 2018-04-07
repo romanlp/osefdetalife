@@ -16,6 +16,8 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {AngularFireStorageModule} from 'angularfire2/storage';
 import {CoreModule} from './core/core.module';
 import {SharedModule} from './shared/shared.module';
+import {GalleryModule} from './gallery/gallery.module';
+import {AngularFirestoreModule} from 'angularfire2/firestore';
 
 @NgModule({
   declarations: [
@@ -29,7 +31,9 @@ import {SharedModule} from './shared/shared.module';
     PlatformModule,
     CoreModule,
     SharedModule,
+    GalleryModule,
     AngularFireModule.initializeApp(environment.firebase),
+    AngularFirestoreModule,
     AngularFireAuthModule,
     AngularFireStorageModule,
     ServiceWorkerModule.register('/ngsw-worker.js', {enabled: environment.production}),
