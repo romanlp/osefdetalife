@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {AngularFirestore} from 'angularfire2/firestore';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
 import {DialogImageComponent} from '../../shared/dialog-image/dialog-image.component';
 import {MatDialog} from '@angular/material';
 import {AngularFireStorage} from 'angularfire2/storage';
@@ -13,7 +13,7 @@ import {AngularFireStorage} from 'angularfire2/storage';
 export class ArticleListComponent implements OnInit {
 
   public images$: Observable<string>[];
-  private posts: any;
+  public posts: any;
 
   constructor(private firestore: AngularFirestore,
               private storage: AngularFireStorage,

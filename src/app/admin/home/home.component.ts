@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
 import {getSupportedInputTypes, supportsPassiveEventListeners} from '@angular/cdk/platform';
 import {ViewportRuler} from '@angular/cdk/scrolling';
 
@@ -36,11 +37,11 @@ export class HomeComponent implements OnInit {
 
     // native resize event object
     this.viewportWidth$ = this._ruler.change()
-      .map(event => (event.target as Window).innerWidth);
+      .pipe(map(event => (event.target as Window).innerWidth));
 
     // native resize event object
     this.viewportHeight$ = this._ruler.change()
-      .map(event => (event.target as Window).innerHeight);
+      .pipe(map(event => (event.target as Window).innerHeight));
   }
 
 }
