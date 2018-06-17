@@ -2,10 +2,6 @@
   <span>Application Title</span>
   <span class="example-spacer"></span>
 
-  <button mat-button *ngIf="!(user$ | async)" (click)="login()">
-    Sign in
-  </button>
-
   <button mat-icon-button [matMenuTriggerFor]="menu" *ngIf="user$ | async as user">
     <img class="photo-icon" [src]="user.photoURL" alt="profile picture">
   </button>
