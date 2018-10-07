@@ -14,6 +14,7 @@ export class ArticleListComponent implements OnInit {
 
   public images$: Observable<string>[];
   public posts: any;
+  public folder = 'dprk';
 
   constructor(private firestore: AngularFirestore,
               private storage: AngularFireStorage,
@@ -23,13 +24,14 @@ export class ArticleListComponent implements OnInit {
   ngOnInit() {
     this.images$ = [];
     for (let i = 1; i <= 9; i++) {
-      this.images$.push(this.storage.ref(`dprk/thumbs/dprk-${i}.jpg`).getDownloadURL());
+      this.images$.push(this.storage.ref(`${this.folder}/thumbs/${this.folder}-${i}.jpg`).getDownloadURL());
     }
     this.posts = this.firestore.collection('posts').valueChanges();
   }
 
-  public openImage(image: string) {
-    this.dialog.open(DialogImageComponent, {data: image});
+  public openImage(index: string) {
+    console.log({folder: this.folder, image: this.folder + '-' + index});
+    this.dialog.open(DialogImageComponent, {data: {folder: this.folder, image: this.folder + '-' + index}});
   }
 
 }

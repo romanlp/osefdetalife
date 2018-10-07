@@ -1,5 +1,7 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import { AngularFireStorage } from 'angularfire2/storage';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-dialog-image',
@@ -7,14 +9,15 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
   styleUrls: ['./dialog-image.component.scss']
 })
 export class DialogImageComponent implements OnInit {
-  public imageUrl: string;
+  public imageUrl$: Observable<string>;
 
   constructor(private dialogRef: MatDialogRef<DialogImageComponent>,
-              @Inject(MAT_DIALOG_DATA) private data: any) {
+              private storage: AngularFireStorage,
+              @Inject(MAT_DIALOG_DATA) private data: {folder: string, image: string}) {
   }
 
   ngOnInit() {
-    this.imageUrl = this.data;
+    this.imageUrl$ = this.storage.ref(`${this.data.folder}/${this.data.image}.jpg`).getDownloadURL();
   }
 
 }

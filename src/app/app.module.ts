@@ -18,10 +18,12 @@ import {CoreModule} from './core/core.module';
 import {SharedModule} from './shared/shared.module';
 import {GalleryModule} from './gallery/gallery.module';
 import {AngularFirestoreModule} from 'angularfire2/firestore';
+import { HomeComponent } from './home/home.component';
 
 @NgModule({
   declarations: [
     AppComponent,
+    HomeComponent,
   ],
   imports: [
     BrowserModule,

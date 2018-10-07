@@ -2,12 +2,16 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { AuthenticatedGuard } from './guard/authenticated.guard';
-import { ArticleListComponent } from '../gallery/article-list/article-list.component';
+import { HomeComponent } from '../home/home.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: ArticleListComponent
+    component: HomeComponent,
+  },
+  {
+    path: 'gallery',
+    loadChildren: 'app/gallery/gallery.module#GalleryModule',
   },
   {
     path: 'login',

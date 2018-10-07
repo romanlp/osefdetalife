@@ -1,1 +1,40 @@
+:host {
+  display: block;
+  padding: 30px;
+}
 
+.title {
+  margin: 20px;
+  text-align: center;
+  font-size: 34px;
+  color: #3D537F;
+}
+
+.images {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 50px 30px;
+
+  .image {
+    margin: auto;
+    padding: 30px;
+    background-color: var(--color-item-light);
+    transition: 100ms ease-in-out transform;
+  }
+  .image:nth-child(odd) {
+    img {
+      transform: rotate(1.5deg)
+    }
+  }
+  .image:nth-child(even) {
+    img {
+      transform: rotate(-1.5deg)
+    }
+  }
+  .image:hover {
+    transform: scale(1.1);
+    img {
+      transform: none;
+    }
+  }
+}
