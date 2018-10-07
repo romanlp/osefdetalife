@@ -22,8 +22,8 @@ export class ArticleListComponent implements OnInit {
 
   ngOnInit() {
     this.images$ = [];
-    for (let i = 1; i <= 3; i++) {
-      this.images$.push(this.storage.ref(`shoreditch/shoreditch${i}.jpeg`).getDownloadURL());
+    for (let i = 1; i <= 9; i++) {
+      this.images$.push(this.storage.ref(`dprk/thumbs/dprk-${i}.jpg`).getDownloadURL());
     }
     this.posts = this.firestore.collection('posts').valueChanges();
   }
