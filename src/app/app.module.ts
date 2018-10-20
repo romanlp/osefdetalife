@@ -10,14 +10,15 @@ import {environment} from '../environments/environment';
 import {PlatformModule} from '@angular/cdk/platform';
 import {VIEWPORT_RULER_PROVIDER} from '@angular/cdk/scrolling';
 
-import {AngularFireModule} from 'angularfire2';
-import {AngularFireAuthModule} from 'angularfire2/auth';
+import { AngularFireModule } from '@angular/fire';
+import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { AngularFireAuthModule } from '@angular/fire/auth';
+import { AngularFireStorageModule } from '@angular/fire/storage';
+
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {AngularFireStorageModule} from 'angularfire2/storage';
 import {CoreModule} from './core/core.module';
 import {SharedModule} from './shared/shared.module';
 import {GalleryModule} from './gallery/gallery.module';
-import {AngularFirestoreModule} from 'angularfire2/firestore';
 import { HomeComponent } from './home/home.component';
 
 @NgModule({

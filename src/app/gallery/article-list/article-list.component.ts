@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {AngularFirestore} from 'angularfire2/firestore';
 import {Observable} from 'rxjs';
 import {DialogImageComponent} from '../../shared/dialog-image/dialog-image.component';
 import {MatDialog} from '@angular/material';
-import {AngularFireStorage} from 'angularfire2/storage';
+import {AngularFireStorage} from '@angular/fire/storage';
+import {AngularFirestore} from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-article-list',
@@ -30,7 +30,6 @@ export class ArticleListComponent implements OnInit {
   }
 
   public openImage(index: string) {
-    console.log({folder: this.folder, image: this.folder + '-' + index});
     this.dialog.open(DialogImageComponent, {data: {folder: this.folder, image: this.folder + '-' + index}});
   }
 

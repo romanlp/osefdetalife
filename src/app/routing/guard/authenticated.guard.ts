@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { CanLoad, Route, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, tap, take } from 'rxjs/operators';
-import { AngularFireAuth } from 'angularfire2/auth';
+import { AngularFireAuth } from '@angular/fire/auth';
 
 @Injectable({
   providedIn: 'root'

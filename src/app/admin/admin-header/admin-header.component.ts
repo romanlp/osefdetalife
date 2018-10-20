@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Observable} from 'rxjs';
 import * as firebase from 'firebase';
-import {AngularFireAuth} from 'angularfire2/auth';
+import {AngularFireAuth} from '@angular/fire/auth';
 
 @Component({
   selector: 'app-admin-header',
