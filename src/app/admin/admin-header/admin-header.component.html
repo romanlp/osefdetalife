@@ -2,13 +2,8 @@
   <span>Application Title</span>
   <span class="example-spacer"></span>
 
-  <button mat-icon-button [matMenuTriggerFor]="menu" *ngIf="user$ | async as user">
-    <img class="photo-icon" [src]="user.photoURL" alt="profile picture">
+  <button (click)="logout()" mat-button>
+    <mat-icon>exit_to_app</mat-icon>
+    <span>Logout</span>
   </button>
-  <mat-menu #menu="matMenu">
-    <button mat-menu-item (click)="logout()">
-      <mat-icon>exit_to_app</mat-icon>
-      <span>Logout</span>
-    </button>
-  </mat-menu>
 </mat-toolbar>
