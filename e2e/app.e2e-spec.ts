@@ -1,6 +1,6 @@
-import { AppPage } from './app.po';
+import {AppPage} from './app.po';
 
-describe('romangular App', () => {
+describe('Main App', () => {
   let page: AppPage;
 
   beforeEach(() => {
