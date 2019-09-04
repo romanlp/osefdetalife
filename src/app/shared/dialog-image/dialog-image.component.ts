@@ -1,7 +1,7 @@
-import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {AngularFireStorage} from '@angular/fire/storage';
-import {Observable} from 'rxjs';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { AngularFireStorage } from '@angular/fire/storage';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-dialog-image',
@@ -13,7 +13,7 @@ export class DialogImageComponent implements OnInit {
 
   constructor(private dialogRef: MatDialogRef<DialogImageComponent>,
               private storage: AngularFireStorage,
-              @Inject(MAT_DIALOG_DATA) private data: {folder: string, image: string}) {
+              @Inject(MAT_DIALOG_DATA) private data: { folder: string, image: string}) {
   }
 
   ngOnInit() {
