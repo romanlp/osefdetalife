@@ -12,14 +12,11 @@ import { Observable } from 'rxjs';
   templateUrl: './admin-header.component.html',
   styleUrls: ['./admin-header.component.scss']
 })
-export class AdminHeaderComponent implements OnInit {
+export class AdminHeaderComponent {
 
-  public user$: Observable<User>;
+  public user$: Observable<User | null>;
 
   constructor(private auth: AngularFireAuth) {
-  }
-
-  ngOnInit() {
     this.user$ = this.auth.authState;
   }
 

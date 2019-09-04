@@ -9,7 +9,7 @@ import { map } from 'rxjs/operators';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent {
 
   public viewportSize: { width: number, height: number };
   public viewportRect: ClientRect;
@@ -20,9 +20,6 @@ export class HomeComponent implements OnInit {
   public viewportHeight$: Observable<number>;
 
   constructor(private _ruler: ViewportRuler) {
-  }
-
-  ngOnInit() {
     this.supportPassiveEvent = supportsPassiveEventListeners();
     this.supportedInputTypes = getSupportedInputTypes();
 
@@ -43,5 +40,4 @@ export class HomeComponent implements OnInit {
     this.viewportHeight$ = this._ruler.change()
       .pipe(map(event => (event.target as Window).innerHeight));
   }
-
 }

@@ -13,7 +13,7 @@ import { DialogImageComponent } from '../../shared/dialog-image/dialog-image.com
 })
 export class ArticleListComponent implements OnInit {
 
-  public images$: Observable<string>[];
+  public images$: Observable<string>[] = [];
   public posts: any;
   public folder = 'dprk';
 
@@ -23,7 +23,6 @@ export class ArticleListComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.images$ = [];
     for (let i = 1; i <= 9; i++) {
       this.images$.push(this.storage.ref(`${this.folder}/thumbs/${this.folder}-${i}.jpg`).getDownloadURL());
     }

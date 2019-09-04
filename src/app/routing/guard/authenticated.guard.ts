@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { CanLoad, Route, Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 
 @Injectable({
@@ -27,5 +27,6 @@ export class AuthenticatedGuard implements CanLoad {
         take(1)
       );
     }
+    return of(false);
   }
 }
