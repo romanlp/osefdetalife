@@ -1,8 +1,8 @@
+import { getSupportedInputTypes, supportsPassiveEventListeners } from '@angular/cdk/platform';
+import { ViewportRuler } from '@angular/cdk/scrolling';
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { getSupportedInputTypes, supportsPassiveEventListeners } from '@angular/cdk/platform';
-import { ViewportRuler } from '@angular/cdk/scrolling';
 
 @Component({
   selector: 'app-home',

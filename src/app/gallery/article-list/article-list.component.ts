@@ -1,10 +1,10 @@
-import { Component, OnInit, NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, NgModule, OnInit } from '@angular/core';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFireStorage } from '@angular/fire/storage';
+import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { DialogImageComponent } from '../../shared/dialog-image/dialog-image.component';
-import { MatDialog } from '@angular/material/dialog';
-import { AngularFireStorage } from '@angular/fire/storage';
-import { AngularFirestore } from '@angular/fire/firestore';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-article-list',

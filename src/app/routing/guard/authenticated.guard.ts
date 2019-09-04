@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
+import { AngularFireAuth } from '@angular/fire/auth';
 import { CanLoad, Route, Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { map, tap, take } from 'rxjs/operators';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { map, take, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'

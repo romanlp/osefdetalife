@@ -1,11 +1,11 @@
-import { Component, OnInit, NgModule } from '@angular/core';
-import { Observable } from 'rxjs';
-import { AngularFireAuth } from '@angular/fire/auth';
-import { User } from 'firebase';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { CommonModule } from '@angular/common';
-import { MatIconModule } from '@angular/material/icon';
+import { Component, NgModule, OnInit } from '@angular/core';
+import { AngularFireAuth } from '@angular/fire/auth';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { User } from 'firebase';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-admin-header',

@@ -1,6 +1,6 @@
-import { Component, OnInit, NgModule } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/auth';
 import { CommonModule } from '@angular/common';
+import { Component, NgModule, OnInit } from '@angular/core';
+import { AngularFireAuth } from '@angular/fire/auth';
 import { RouterModule } from '@angular/router';
 import { auth } from 'firebase/app';
 
