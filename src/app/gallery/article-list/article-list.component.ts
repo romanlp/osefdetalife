@@ -1,9 +1,10 @@
-import {Component, OnInit} from '@angular/core';
-import {Observable} from 'rxjs';
-import {DialogImageComponent} from '../../shared/dialog-image/dialog-image.component';
-import {MatDialog} from '@angular/material/dialog';
-import {AngularFireStorage} from '@angular/fire/storage';
-import {AngularFirestore} from '@angular/fire/firestore';
+import { Component, OnInit, NgModule } from '@angular/core';
+import { Observable } from 'rxjs';
+import { DialogImageComponent } from '../../shared/dialog-image/dialog-image.component';
+import { MatDialog } from '@angular/material/dialog';
+import { AngularFireStorage } from '@angular/fire/storage';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-article-list',
@@ -30,7 +31,15 @@ export class ArticleListComponent implements OnInit {
   }
 
   public openImage(index: string) {
-    this.dialog.open(DialogImageComponent, {data: {folder: this.folder, image: this.folder + '-' + index}});
+    this.dialog.open(DialogImageComponent, { data: { folder: this.folder, image: this.folder + '-' + index}});
   }
 
+}
+
+@NgModule({
+  imports: [CommonModule],
+  declarations: [ArticleListComponent],
+  exports: [ArticleListComponent]
+})
+export class ArticleListModule {
 }

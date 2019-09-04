@@ -1,4 +1,5 @@
-import {Component, OnInit} from '@angular/core';
+import { Component, OnInit, NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-gallery-home',
@@ -13,4 +14,12 @@ export class GalleryHomeComponent implements OnInit {
   ngOnInit() {
   }
 
+}
+
+@NgModule({
+  imports: [CommonModule],
+  declarations: [GalleryHomeComponent],
+  exports: [GalleryHomeComponent]
+})
+export class GalleryHomeModule {
 }
