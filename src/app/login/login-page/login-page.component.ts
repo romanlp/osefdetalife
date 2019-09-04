@@ -1,23 +1,35 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgModule } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
-import * as firebase from 'firebase';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { auth } from 'firebase/app';
 
 @Component({
-  selector: 'app-login-page',
   templateUrl: './login-page.component.html',
-  styleUrls: ['./login-page.component.css']
+  styleUrls: ['./login-page.component.scss']
 })
 export class LoginPageComponent implements OnInit {
 
-  constructor(private auth: AngularFireAuth) { }
+  constructor(private authService: AngularFireAuth) { }
 
   ngOnInit() {
   }
 
   public login() {
-    this.auth.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
+    this.authService.auth.signInWithPopup(new auth.GoogleAuthProvider())
       .then(logged => console.log(logged))
       .catch(error => console.error(error));
   }
 
+}
+
+@NgModule({
+  imports: [
+    CommonModule,
+    RouterModule.forChild([{ path: '', component: LoginPageComponent }]),
+  ],
+  declarations: [LoginPageComponent],
+  exports: [LoginPageComponent]
+})
+export class LoginPageModule {
 }

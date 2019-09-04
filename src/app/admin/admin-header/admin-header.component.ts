@@ -1,7 +1,9 @@
-import {Component, OnInit} from '@angular/core';
-import {Observable} from 'rxjs';
-import * as firebase from 'firebase';
-import {AngularFireAuth} from '@angular/fire/auth';
+import { Component, OnInit, NgModule } from '@angular/core';
+import { Observable } from 'rxjs';
+import { AngularFireAuth } from '@angular/fire/auth';
+import { User } from 'firebase';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-admin-header',
@@ -10,7 +12,7 @@ import {AngularFireAuth} from '@angular/fire/auth';
 })
 export class AdminHeaderComponent implements OnInit {
 
-  public user$: Observable<firebase.User>;
+  public user$: Observable<User>;
 
   constructor(private auth: AngularFireAuth) {
   }
@@ -23,4 +25,12 @@ export class AdminHeaderComponent implements OnInit {
     this.auth.auth.signOut();
   }
 
+}
+
+@NgModule({
+  imports: [CommonModule, MatToolbarModule],
+  declarations: [AdminHeaderComponent],
+  exports: [AdminHeaderComponent]
+})
+export class AdminHeaderModule {
 }

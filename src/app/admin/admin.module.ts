@@ -1,10 +1,9 @@
-import {NgModule} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {RouterModule, Routes} from '@angular/router';
-import {HomeComponent} from './home/home.component';
-import {AdminComponent} from './admin.component';
-import {AdminHeaderComponent} from './admin-header/admin-header.component';
-import {SharedModule} from '../shared/shared.module';
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule, Routes } from '@angular/router';
+import { HomeComponent } from './home/home.component';
+import { AdminComponent } from './admin.component';
+import { SharedModule } from '../shared/shared.module';
 
 const routes: Routes = [
   {
@@ -27,8 +26,7 @@ const routes: Routes = [
   ],
   declarations: [
     AdminComponent,
-    HomeComponent,
-    AdminHeaderComponent
+    HomeComponent
   ]
 })
 export class AdminModule {
