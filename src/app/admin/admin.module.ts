@@ -4,6 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { AdminComponent } from './admin.component';
 import { SharedModule } from '../shared/shared.module';
+import { AdminHeaderModule } from './admin-header/admin-header.component';
 
 const routes: Routes = [
   {
@@ -23,6 +24,7 @@ const routes: Routes = [
     CommonModule,
     SharedModule,
     RouterModule.forChild(routes),
+    AdminHeaderModule,
   ],
   declarations: [
     AdminComponent,

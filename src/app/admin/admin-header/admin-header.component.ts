@@ -4,6 +4,8 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { User } from 'firebase';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-admin-header',
@@ -28,7 +30,7 @@ export class AdminHeaderComponent implements OnInit {
 }
 
 @NgModule({
-  imports: [CommonModule, MatToolbarModule],
+  imports: [CommonModule, MatToolbarModule, MatIconModule, MatButtonModule],
   declarations: [AdminHeaderComponent],
   exports: [AdminHeaderComponent]
 })

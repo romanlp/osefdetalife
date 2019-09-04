@@ -20,12 +20,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CoreModule } from './core/core.module';
 import { SharedModule } from './shared/shared.module';
 import { GalleryModule } from './gallery/gallery.module';
-import { HomeComponent } from './home/home.component';
+import { HomeModule } from './home/home.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent,
   ],
   imports: [
     BrowserModule,
@@ -36,6 +35,7 @@ import { HomeComponent } from './home/home.component';
     CoreModule,
     SharedModule,
     GalleryModule,
+    HomeModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
     AngularFireAuthModule,
