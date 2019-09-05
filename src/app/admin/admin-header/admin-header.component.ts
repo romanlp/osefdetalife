@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { User } from 'firebase';
 import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-admin-header',
@@ -16,14 +17,14 @@ export class AdminHeaderComponent {
 
   public user$: Observable<User | null>;
 
-  constructor(private auth: AngularFireAuth) {
+  constructor(private auth: AngularFireAuth, private router: Router) {
     this.user$ = this.auth.authState;
   }
 
   public logout() {
     this.auth.auth.signOut();
+    this.router.navigate(['login']);
   }
-
 }
 
 @NgModule({
