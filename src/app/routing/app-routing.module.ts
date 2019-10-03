@@ -5,7 +5,7 @@ import { AuthenticatedGuard } from './guard/authenticated.guard';
 
 const routes: Routes = [
   {
-    path: '',
+    path: 'home',
     component: HomeComponent,
   },
   {
@@ -21,7 +21,12 @@ const routes: Routes = [
     path: 'admin',
     loadChildren: () => import('app/admin/admin.module').then(m => m.AdminModule),
     canLoad: [AuthenticatedGuard],
-  }
+  },
+  {
+    path: '',
+    redirectTo: 'gallery',
+    pathMatch: 'full'
+  },
 ];
 
 @NgModule({

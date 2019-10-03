@@ -16,6 +16,7 @@ import { Observable } from 'rxjs';
 export class AdminHeaderComponent {
 
   public user$: Observable<User | null>;
+  public applicationTitle = 'Osefdetalife';
 
   constructor(private auth: AngularFireAuth, private router: Router) {
     this.user$ = this.auth.authState;
