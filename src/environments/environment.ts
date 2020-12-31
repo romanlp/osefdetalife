@@ -6,7 +6,7 @@
 export const environment = {
   production: false,
   firebase: {
-    apiKey: 'AIzaSyBhtprJZ5AifMDqX0sZWyO7w_WmBM4z4K4',
+    apiKey: 'AIzaSyBDS3dsKf4j73ChAtde4r-KspQEx2yGOJU',
     authDomain: 'crackling-fire-4704.firebaseapp.com',
     databaseURL: 'https://crackling-fire-4704.firebaseio.com',
     projectId: 'firebase-crackling-fire-4704',
