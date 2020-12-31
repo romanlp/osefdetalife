@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, NgModule, OnInit } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Router, RouterModule } from '@angular/router';
-import { auth } from 'firebase/app';
+import firebase from 'firebase/app';
 
 @Component({
   templateUrl: './login-page.component.html',
@@ -10,13 +10,14 @@ import { auth } from 'firebase/app';
 })
 export class LoginPageComponent implements OnInit {
 
-  constructor(private authService: AngularFireAuth, private router: Router) { }
+  constructor(private authService: AngularFireAuth, private router: Router) {
+  }
 
   ngOnInit() {
   }
 
   public login() {
-    this.authService.auth.signInWithPopup(new auth.GoogleAuthProvider())
+    this.authService.signInWithPopup(new firebase.auth.GoogleAuthProvider())
       .then(() => this.router.navigate(['admin']))
       .catch(error => console.error(error));
   }
