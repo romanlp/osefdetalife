@@ -5,8 +5,7 @@ before_install:
   - export PATH="$HOME/.yarn/bin:$PATH"
 
 node_js:
-- '12'
-dist: trusty
+  - '14't
 branches:
   only:
   - master
@@ -18,4 +17,4 @@ deploy:
   skip_cleanup: true
   provider: firebase
   token:
-    secure: 1GeE59r2jvqqAKzaqkgu1/09+H1hrCptlMgkvmFrIW1roX/ck7VUZcSbCkytvMEPR5ybb1H4m85e+N9ck5pk9v7B/QLowRFt4/BRpnWADE258gQfYVgM7ZHPCUvQ6t4eeddrSSjTVDwGyYr+qCzq4CuvTihgM9phehmKHXr+Ghx5OzftJaUGpI9Nd+fa8/5ty/4t6QYNONIq+5rHfmobj5vuSPuXzdT2u1PPNRVRwCEDisVYE+U1tesgX5xh8sr+Z5nJKqZ9AX+6ZaYMbm2BMYDTQMt+GIacR3RBWXBYiq6rOgP72G6nklgIAdu9oDwwZfUqLOFFj4/0t7uN0fEQQ5G6P0kEISmp+8ERad5WUUFFzR7GluYAKTwTBQ07vwea54CxjwkNw2UAMJS/ohISNAu1nBsQPlpVget+DoWbVduYJbfY93JDeiKqjLz8FTDxSFqjFMdWy6le509qmW/4+/Iyy0oyOGKZehz3okC5QgHLuT6Ij1NivyZEOzYblbVCWc3raNqzGbIjEEJVEPSI1hw+3IMlPxJQVNOhXWjEryWTlzwtFcD8VCwhEo954ukg9LE6d5fDL784TAhsZ5OAXNcpUqlzOBC+cWnA5pKqk02ndOTD0t7W4zlRduhnwrmlA67QwexW58cImkmk3Voj7wZdPlHrpde2IkVbS/ZikXo=
+  secure: "Wm93dLNjQoRirZBROoTuySznX1dd+7t4GJNPyaERtrjYm69jajCtXHGkYrizxr8C3nto5ixFP5+7sBFlocNhAP343dAwUceHssAlSQPrk9hHvi1Q/kBrtTvi/2Jes9aiNM7RWrLCVX6BPgpar3qcTQ0U2ue3XfOuh0BVvNhMOsqgdfDomKbjAyz2VKmAtZULwQBVjardpma1z0rX/C5GuqV6TrETGvzdJqvAVLfwAoeiJrWyIszPkf2UYRi7yQ3J9Y4kTnL4MzfZa0ni2Gryvv33cieSeuKBGp8u1Ni3lVasMO2JvvcnvCWdWR6gB/NQixRSvZXKyZii0FrNwiAIsI/PbOnjM/gJH5yD+GDSQNrV5OZvDsQ5zGMjkLQ1/ccl/juv6Hex4Oh2Kw7JTSXgogwk4PH8RawdgHhHyiZTBRuLy1WocqVEIhbQu6pwsEyN4a0+V1nlMddVh5TQaaLLXQhDFmqCMm7uTQ1P/HKZDmafB6w5j8TOb9IVXDnnAhtzDMIBufUX40S8cF6X/Jw6IU9kinEsXTjJVhn56nlBYFYb7M1VUt+kkfiITj+I4dZsF6wF7jDMjv/R1c92MfDTWsKPCXNaXrOTamm3Q/MCWHAf/+Mjx8uB3z1fvcBuial+i7Y02xTgOW7i4I8h50ZxDJA4rjBgALI1KHmwShrBktE="
