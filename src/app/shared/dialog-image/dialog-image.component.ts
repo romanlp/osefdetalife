@@ -1,6 +1,6 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { AngularFireStorage } from '@angular/fire/storage';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -12,7 +12,7 @@ export class DialogImageComponent {
   public imageUrl$: Observable<string>;
 
   constructor(private storage: AngularFireStorage,
-              @Inject(MAT_DIALOG_DATA) private data: { folder: string, image: string}) {
+              @Inject(MAT_DIALOG_DATA) private data: { folder: string, image: string }) {
     this.imageUrl$ = this.storage.ref(`${this.data.folder}/${this.data.image}.jpg`).getDownloadURL();
   }
 }
