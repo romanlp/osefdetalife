@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, NgModule, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, NgModule, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireStorage } from '@angular/fire/storage';
 import { MatDialog } from '@angular/material/dialog';
@@ -9,7 +9,8 @@ import { DialogImageComponent } from '../../shared/dialog-image/dialog-image.com
 @Component({
   selector: 'app-article-list',
   templateUrl: './article-list.component.html',
-  styleUrls: ['./article-list.component.scss']
+  styleUrls: ['./article-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ArticleListComponent implements OnInit {
 
@@ -30,7 +31,7 @@ export class ArticleListComponent implements OnInit {
   }
 
   public openImage(index: string) {
-    this.dialog.open(DialogImageComponent, { data: { folder: this.folder, image: this.folder + '-' + index}});
+    this.dialog.open(DialogImageComponent, { data: { folder: this.folder, image: this.folder + '-' + index } });
   }
 
 }

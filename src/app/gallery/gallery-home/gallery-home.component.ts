@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, NgModule, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, NgModule, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-gallery-home',
   templateUrl: './gallery-home.component.html',
-  styleUrls: ['./gallery-home.component.scss']
+  styleUrls: ['./gallery-home.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GalleryHomeComponent implements OnInit {
 
