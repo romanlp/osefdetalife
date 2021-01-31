@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router } from '@angular/router';
+import { ThemingService } from '../../theming.service';
 
 @Component({
   selector: 'app-admin-header',
@@ -15,12 +16,16 @@ export class AdminHeaderComponent {
 
   public applicationTitle = 'Osefdetalife';
 
-  constructor(private auth: AngularFireAuth, private router: Router) {
+  constructor(private auth: AngularFireAuth, private router: Router, private themingService: ThemingService) {
   }
 
   public logout() {
     this.auth.signOut();
     this.router.navigate(['login']);
+  }
+
+  switchTheme() {
+    this.themingService.switch();
   }
 }
 
