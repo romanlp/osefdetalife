@@ -1,5 +1,6 @@
 import { PlatformModule } from '@angular/cdk/platform';
-import { NgModule } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { Inject, NgModule } from '@angular/core';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
@@ -13,6 +14,7 @@ import { AppComponent } from './app.component';
 import { HomeModule } from './home/home.component';
 import { AppRoutingModule } from './routing/app-routing.module';
 import { SharedModule } from './shared/shared.module';
+import { ThemingService } from './theming.service';
 
 @NgModule({
   declarations: [
@@ -35,4 +37,12 @@ import { SharedModule } from './shared/shared.module';
   bootstrap: [AppComponent]
 })
 export class AppModule {
+
+  constructor(@Inject(DOCUMENT) document: Document,
+              themeService: ThemingService) {
+
+    themeService.theme.subscribe((theme: string) => {
+      document.body.className = theme;
+    });
+  }
 }
