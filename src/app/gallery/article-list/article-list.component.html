@@ -1,9 +1,7 @@
-<div class="title">
-  Democratic People's Republic of Korea
-</div>
+<h1 class="title mat-display-2">Democratic People's Republic of Korea</h1>
 
 <div class="images">
   <div class="image" *ngFor="let image$ of images$; let i = index">
-    <img *ngIf="image$ | async as image" class="photo" [src]="image" (click)="openImage(i+1)">
+    <img (click)="openImage(i+1)" *ngIf="image$ | async as image" [alt]="image" [src]="image" class="photo">
   </div>
 </div>

@@ -30,7 +30,7 @@ export class ArticleListComponent implements OnInit {
     this.posts = this.firestore.collection('posts').valueChanges();
   }
 
-  public openImage(index: string) {
+  public openImage(index: number) {
     this.dialog.open(DialogImageComponent, { data: { folder: this.folder, image: this.folder + '-' + index } });
   }
 
