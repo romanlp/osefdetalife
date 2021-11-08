@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, NgModule, OnInit } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router, RouterModule } from '@angular/router';
-import firebase from 'firebase/app';
+import firebase from 'firebase/compat/app';
 
 @Component({
   templateUrl: './login-page.component.html',
