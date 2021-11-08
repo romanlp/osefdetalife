@@ -12,7 +12,6 @@ import { map } from 'rxjs/operators';
 export class HomeComponent {
 
   public viewportSize: { width: number, height: number };
-  public viewportRect: ClientRect;
   public viewportScrollPosition: { top: number; left: number };
   public supportPassiveEvent: boolean;
   public supportedInputTypes: Set<string>;
@@ -25,9 +24,6 @@ export class HomeComponent {
 
     // { width, height }
     this.viewportSize = this._ruler.getViewportSize();
-
-    // { bottom, height, left, right, top, width }
-    this.viewportRect = this._ruler.getViewportRect();
 
     // { top, left }
     this.viewportScrollPosition = this._ruler.getViewportScrollPosition();
