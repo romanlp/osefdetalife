@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, NgModule, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, NgModule } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router, RouterModule } from '@angular/router';
 import firebase from 'firebase/compat/app';
@@ -9,12 +9,9 @@ import firebase from 'firebase/compat/app';
   styleUrls: ['./login-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LoginPageComponent implements OnInit {
+export class LoginPageComponent {
 
   constructor(private authService: AngularFireAuth, private router: Router) {
-  }
-
-  ngOnInit() {
   }
 
   public login() {

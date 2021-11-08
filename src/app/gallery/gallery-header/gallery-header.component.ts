@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, NgModule, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, NgModule } from '@angular/core';
 
 @Component({
   selector: 'app-gallery-header',
@@ -7,12 +7,9 @@ import { ChangeDetectionStrategy, Component, NgModule, OnInit } from '@angular/c
   styleUrls: ['./gallery-header.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class GalleryHeaderComponent implements OnInit {
+export class GalleryHeaderComponent {
 
   constructor() {
-  }
-
-  ngOnInit() {
   }
 
 }

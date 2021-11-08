@@ -7,12 +7,9 @@ import { ChangeDetectionStrategy, Component, NgModule, OnInit } from '@angular/c
   styleUrls: ['./gallery-home.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class GalleryHomeComponent implements OnInit {
+export class GalleryHomeComponent {
 
   constructor() {
-  }
-
-  ngOnInit() {
   }
 
 }

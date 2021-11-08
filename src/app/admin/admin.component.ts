@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-admin',
@@ -7,12 +7,9 @@ import { Component, OnInit } from '@angular/core';
     <router-outlet></router-outlet>
   `
 })
-export class AdminComponent implements OnInit {
+export class AdminComponent {
 
   constructor() {
-  }
-
-  ngOnInit() {
   }
 
 }
