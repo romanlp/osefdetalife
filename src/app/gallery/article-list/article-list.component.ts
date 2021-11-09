@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, NgModule, OnInit } from '@angular/core';
-import { getFirestore, collection } from '@angular/fire/firestore';
-import { Storage, getStorage, ref, getDownloadURL } from '@angular/fire/storage';
+import { Firestore, collection } from '@angular/fire/firestore';
+import { Storage, ref, getDownloadURL } from '@angular/fire/storage';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogImageComponent } from '../../shared/dialog-image/dialog-image.component';
 
@@ -18,6 +18,7 @@ export class ArticleListComponent implements OnInit {
   public folder = 'dprk';
 
   constructor(private storage: Storage,
+              private firestore: Firestore,
               private dialog: MatDialog) {
   }
 
@@ -25,7 +26,7 @@ export class ArticleListComponent implements OnInit {
     for (let i = 1; i <= 9; i++) {
       this.images$.push(getDownloadURL(ref(this.storage, `${this.folder}/thumbs/${this.folder}-${i}.jpg`)));
     }
-    this.posts = collection(getFirestore(), 'posts');
+    this.posts = collection(this.firestore, 'posts');
   }
 
   public openImage(index: number) {
