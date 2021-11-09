@@ -1,8 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, NgModule } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { signInWithPopup, Auth, GoogleAuthProvider } from '@angular/fire/auth';
 import { Router, RouterModule } from '@angular/router';
-import firebase from 'firebase/compat/app';
 
 @Component({
   templateUrl: './login-page.component.html',
@@ -11,11 +10,11 @@ import firebase from 'firebase/compat/app';
 })
 export class LoginPageComponent {
 
-  constructor(private authService: AngularFireAuth, private router: Router) {
+  constructor(private router: Router, private auth: Auth,) {
   }
 
   public login() {
-    this.authService.signInWithPopup(new firebase.auth.GoogleAuthProvider())
+    signInWithPopup(this.auth, new GoogleAuthProvider())
       .then(() => this.router.navigate(['admin']))
       .catch(error => console.error(error));
   }

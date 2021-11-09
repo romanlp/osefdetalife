@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, NgModule } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { signOut, Auth } from '@angular/fire/auth';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -16,11 +16,13 @@ export class AdminHeaderComponent {
 
   public applicationTitle = 'Osefdetalife';
 
-  constructor(private auth: AngularFireAuth, private router: Router, private themingService: ThemingService) {
+  constructor(private router: Router, 
+              private auth: Auth,
+              private themingService: ThemingService) {
   }
 
   public logout() {
-    this.auth.signOut();
+    signOut(this.auth);
     this.router.navigate(['login']);
   }
 

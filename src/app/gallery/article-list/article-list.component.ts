@@ -1,9 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, NgModule, OnInit } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { AngularFireStorage } from '@angular/fire/compat/storage';
+import { getFirestore, collection } from '@angular/fire/firestore';
+import { Storage, getStorage, ref, getDownloadURL } from '@angular/fire/storage';
 import { MatDialog } from '@angular/material/dialog';
-import { Observable } from 'rxjs';
 import { DialogImageComponent } from '../../shared/dialog-image/dialog-image.component';
 
 @Component({
@@ -14,20 +13,19 @@ import { DialogImageComponent } from '../../shared/dialog-image/dialog-image.com
 })
 export class ArticleListComponent implements OnInit {
 
-  public images$: Observable<string>[] = [];
+  public images$: Promise<string>[] = [];
   public posts: any;
   public folder = 'dprk';
 
-  constructor(private firestore: AngularFirestore,
-              private storage: AngularFireStorage,
+  constructor(private storage: Storage,
               private dialog: MatDialog) {
   }
 
   ngOnInit() {
     for (let i = 1; i <= 9; i++) {
-      this.images$.push(this.storage.ref(`${this.folder}/thumbs/${this.folder}-${i}.jpg`).getDownloadURL());
+      this.images$.push(getDownloadURL(ref(this.storage, `${this.folder}/thumbs/${this.folder}-${i}.jpg`)));
     }
-    this.posts = this.firestore.collection('posts').valueChanges();
+    this.posts = collection(getFirestore(), 'posts');
   }
 
   public openImage(index: number) {

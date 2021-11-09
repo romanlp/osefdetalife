@@ -1,11 +1,11 @@
 import { PlatformModule } from '@angular/cdk/platform';
 import { DOCUMENT } from '@angular/common';
 import { Inject, NgModule } from '@angular/core';
-import { AngularFireModule } from '@angular/fire/compat';
-import { AngularFireAuthModule } from '@angular/fire/compat/auth';
-import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
-import { AngularFirePerformanceModule } from '@angular/fire/compat/performance';
-import { AngularFireStorageModule } from '@angular/fire/compat/storage';
+import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
+import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+import { getAuth, provideAuth } from '@angular/fire/auth';
+import { getPerformance, providePerformance } from '@angular/fire/performance';
+import { provideStorage, getStorage } from '@angular/fire/storage';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
@@ -27,11 +27,11 @@ import { ThemingService } from './theming.service';
     PlatformModule,
     SharedModule,
     HomeModule,
-    AngularFireModule.initializeApp(environment.firebase),
-    AngularFirestoreModule,
-    AngularFireAuthModule,
-    AngularFireStorageModule,
-    AngularFirePerformanceModule,
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
+    provideFirestore(() => getFirestore()),
+    provideAuth(() => getAuth()),
+    providePerformance(() => getPerformance()),
+    provideStorage(() => getStorage()),
     ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production }),
   ],
   bootstrap: [AppComponent]
