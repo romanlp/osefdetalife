@@ -1,5 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @use '@angular/material' as mat;
+@use "sass:math";
 @import url('https://fonts.googleapis.com/css?family=Krub');
 
 
@@ -11,6 +12,9 @@
   --color-light: #000000;
 
   --color-item-light: #f1f1f1;
+
+  --bg-color: var(--color-bg-light);
+  --color: var(--color-light);
 }
 
 // Imports for Angular Material Theming
@@ -36,17 +40,10 @@ $dark-theme: mat.define-dark-theme((
  )
 ));
 
-.light-theme {
-  @include mat.core-theme($light-theme);
-  @include mat.all-component-themes($light-theme);
-
-  --bg-color: var(--color-bg-light);
-  --color: var(--color-light);
-}
+@include mat.all-component-themes($light-theme);
 
 .dark-theme {
-  @include mat.core-theme($dark-theme);
-  @include mat.all-component-themes($dark-theme);
+  @include mat.all-component-colors($dark-theme);
 
   --bg-color: var(--color-bg-dark);
   --color: var(--color-dark);
@@ -108,8 +105,8 @@ $amount: 5;
           color: nth($colors, random(length($colors)));
           top: random(100) * 1%;
           left: random(100) * 1%;
-          animation-duration: (random($animationDuration * 10) / 10) * 1s + 10s;
-          animation-delay: random(($animationDuration + 10s) * 10) / 10 * -1s;
+          animation-duration: math.div(random($animationDuration * 10), 10) * 1s + 10s;
+          animation-delay: math.div(random(($animationDuration + 10s) * 10), 10) * -1s;
           transform-origin: (random(50) - 25) * 1vw (random(50) - 25) * 1vh;
           $blurRadius: (random() + 0.5) * $particleSize * 0.5;
           $x: if(random() > 0.5, -1, 1);

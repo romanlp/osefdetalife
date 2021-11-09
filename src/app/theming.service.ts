@@ -24,7 +24,7 @@ export class ThemingService {
     // Watch for changes of the preference
     mediaMatcher.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
       const turnOn = e.matches;
-      this.theme.next(turnOn ? 'dark-theme' : 'light-theme');
+      this.theme.next(turnOn ? 'dark-theme' : '');
 
       // Trigger refresh of UI
       this.ref.tick();
@@ -32,6 +32,6 @@ export class ThemingService {
   }
 
   switch() {
-    this.theme.next(this.theme.getValue() === 'light-theme' ? 'dark-theme' : 'light-theme');
+    this.theme.next(this.theme.getValue() === '' ? 'dark-theme' : '');
   }
 }
