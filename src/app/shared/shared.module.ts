@@ -8,17 +8,16 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { DialogImageComponent } from './dialog-image/dialog-image.component';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    MatButtonModule, MatToolbarModule, MatIconModule, MatDialogModule,
-    MatListModule
-  ],
-  exports: [
-    MatButtonModule, MatToolbarModule, MatIconModule, MatDialogModule,
-    MatListModule
-  ],
-  entryComponents: [DialogImageComponent],
-  declarations: [DialogImageComponent],
+    imports: [
+        CommonModule,
+        MatButtonModule, MatToolbarModule, MatIconModule, MatDialogModule,
+        MatListModule
+    ],
+    exports: [
+        MatButtonModule, MatToolbarModule, MatIconModule, MatDialogModule,
+        MatListModule
+    ],
+    declarations: [DialogImageComponent]
 })
 export class SharedModule {
 }
