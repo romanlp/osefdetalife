@@ -10,16 +10,16 @@ const routes: Routes = [
   },
   {
     path: 'gallery',
-    loadChildren: () => import('app/gallery/gallery.module').then(m => m.GalleryModule),
+    loadChildren: () => import('../gallery/gallery.module').then(m => m.GalleryModule),
   },
   {
     path: 'login',
-    loadChildren: () => import('app/login/login-page/login-page.component').then(m => m.LoginPageModule),
+    loadChildren: () => import('../login/login-page/login-page.component').then(m => m.LoginPageModule),
     canLoad: [AuthenticatedGuard],
   },
   {
     path: 'admin',
-    loadChildren: () => import('app/admin/admin.module').then(m => m.AdminModule),
+    loadChildren: () => import('../admin/admin.module').then(m => m.AdminModule),
     canLoad: [AuthenticatedGuard],
   },
   {

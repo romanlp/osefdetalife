@@ -25,7 +25,6 @@ import { ThemingService } from './theming.service';
     BrowserAnimationsModule,
     AppRoutingModule,
     PlatformModule,
-    SharedModule,
     HomeModule,
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideFirestore(() => getFirestore()),
