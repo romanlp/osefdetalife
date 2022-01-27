@@ -13,7 +13,6 @@ import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
 import { HomeModule } from './home/home.component';
 import { AppRoutingModule } from './routing/app-routing.module';
-import { SharedModule } from './shared/shared.module';
 import { ThemingService } from './theming.service';
 
 @NgModule({
