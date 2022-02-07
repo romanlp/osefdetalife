@@ -4,7 +4,8 @@ import { signOut, Auth } from '@angular/fire/auth';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { tap } from 'rxjs';
 import { ThemingService } from '../../theming.service';
 
 @Component({
@@ -16,14 +17,18 @@ export class AdminHeaderComponent {
 
   public applicationTitle = 'Osefdetalife';
 
-  constructor(private router: Router, 
-              private auth: Auth,
-              private themingService: ThemingService) {
+  constructor(private router: Router,
+    private auth: Auth,
+    private themingService: ThemingService) {
   }
 
   public logout() {
     signOut(this.auth);
     this.router.navigate(['login']);
+  }
+
+  get theme$() {
+    return this.themingService.theme$.pipe(tap(console.log));
   }
 
   switchTheme() {
@@ -32,7 +37,13 @@ export class AdminHeaderComponent {
 }
 
 @NgModule({
-  imports: [CommonModule, MatToolbarModule, MatIconModule, MatButtonModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    MatToolbarModule,
+    MatIconModule,
+    MatButtonModule
+  ],
   declarations: [AdminHeaderComponent],
   exports: [AdminHeaderComponent]
 })

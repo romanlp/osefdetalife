@@ -40,7 +40,7 @@ export class AppModule {
   constructor(@Inject(DOCUMENT) document: Document,
               themeService: ThemingService) {
 
-    themeService.theme.subscribe((theme: string) => {
+    themeService.theme$.subscribe((theme: string) => {
       document.body.className = theme;
     });
   }
