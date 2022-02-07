@@ -3,6 +3,7 @@ import { DOCUMENT } from '@angular/common';
 import { Inject, NgModule } from '@angular/core';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+import { provideAnalytics, getAnalytics } from '@angular/fire/analytics';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getPerformance, providePerformance } from '@angular/fire/performance';
 import { provideStorage, getStorage } from '@angular/fire/storage';
@@ -30,7 +31,7 @@ import { ThemingService } from './theming.service';
     provideAuth(() => getAuth()),
     providePerformance(() => getPerformance()),
     provideStorage(() => getStorage()),
-    ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production }),
+    provideAnalytics(() => getAnalytics()),
   ],
   bootstrap: [AppComponent]
 })
