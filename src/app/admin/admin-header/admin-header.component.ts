@@ -1,11 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, NgModule } from '@angular/core';
-import { signOut, Auth } from '@angular/fire/auth';
+import { Auth, signOut } from '@angular/fire/auth';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router, RouterModule } from '@angular/router';
-import { tap } from 'rxjs';
 import { ThemingService } from '../../theming.service';
 
 @Component({
@@ -28,7 +27,7 @@ export class AdminHeaderComponent {
   }
 
   get theme$() {
-    return this.themingService.theme$.pipe(tap(console.log));
+    return this.themingService.theme$;
   }
 
   switchTheme() {
