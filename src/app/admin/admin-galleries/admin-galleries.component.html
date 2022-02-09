@@ -1,3 +1,26 @@
 <p>admin-galleries works!</p>
 
-{{ docs$ | async | json }}
+<button mat-flat-button  (click)="openDialog()">Create</button>
+
+<div *ngFor="let item of docs$ | async" (click)="showDocument(item.id)">
+  {{ item.name }}
+</div>
+
+{{ doc$ | async | json }}
+
+
+<ng-template #dialogCreateGallery>
+    <h1 mat-dialog-title>Create new gallery</h1>
+<div mat-dialog-content>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Name</mat-label>
+    <input matInput [(ngModel)]="name">
+  </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button mat-button mat-dialog-close >Cancel</button>
+  <button mat-button mat-dialog-close cdkFocusInitial (click)="onCreate(name)">Create</button>
+</div>
+
+</ng-template>
