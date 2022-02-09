@@ -6,6 +6,9 @@ import { environment } from './environments/environment';
 
 if (environment.production) {
   enableProdMode();
+} else {
+  //@ts-ignore
+  window['FIREBASE_APPCHECK_DEBUG_TOKEN'] = true;
 }
 
 platformBrowserDynamic().bootstrapModule(AppModule)

@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ChangeDetectionStrategy, NgModule } from '@angular/core';
-import { Firestore, onSnapshot, collection, docSnapshots, collectionSnapshots } from '@angular/fire/firestore';
-import { doc } from 'firebase/firestore';
+import { ChangeDetectionStrategy, Component, NgModule } from '@angular/core';
+import { collection, collectionData, Firestore } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-admin-galleries',
@@ -13,7 +12,7 @@ export class AdminGalleriesComponent {
 
   doc = collection(this.firestore, 'galleries');
 
-  docs$ = collectionSnapshots(this.doc);
+  docs$ = collectionData(this.doc);
 
   constructor(private firestore: Firestore) { }
 
