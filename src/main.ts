@@ -8,7 +8,7 @@ if (environment.production) {
   enableProdMode();
 } else {
   //@ts-ignore
-  window['FIREBASE_APPCHECK_DEBUG_TOKEN'] = true;
+  window['FIREBASE_APPCHECK_DEBUG_TOKEN'] = environment.appCheckToken;
 }
 
 platformBrowserDynamic().bootstrapModule(AppModule)

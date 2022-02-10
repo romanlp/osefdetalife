@@ -10,5 +10,6 @@ export const environment = {
     appId: '1:162621414987:web:0a71e46dad824299',
     measurementId: 'G-WJXGK09509'
   },
-  recaptcha: '6LfzMmIeAAAAAIrJQ_vt9C-mB195Zp8irPrzwEus'
+  recaptcha: '6LfzMmIeAAAAAIrJQ_vt9C-mB195Zp8irPrzwEus',
+  appCheckToken: undefined
 };
