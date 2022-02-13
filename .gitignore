@@ -26,7 +26,7 @@
 
 # misc
 /.angular
-environment.ts
+environment.dev.ts
 /.sass-cache
 /connect.lock
 /coverage
