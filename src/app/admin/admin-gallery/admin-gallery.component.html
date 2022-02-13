@@ -1,3 +1,16 @@
-{{ document$ | async | json }}
 
-<p>admin-gallery works!</p>
+
+<div *ngIf="document$ | async as document">
+
+  <input type="file" (input)="uploadImage(document.id, $event)">
+
+
+  <h1>{{ document.name}}</h1>
+
+  <mat-grid-list cols="2" rowHeight="2:1">
+    <mat-grid-tile *ngFor="let photo of document.photos">
+      {{ photo }}
+    </mat-grid-tile>
+  </mat-grid-list>
+
+</div>

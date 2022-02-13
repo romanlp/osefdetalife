@@ -7,6 +7,7 @@ import { AdminHeaderModule } from './admin-header/admin-header.component';
 import { AdminComponent } from './admin.component';
 import { HomeComponent } from './home/home.component';
 import { AdminGalleryComponent } from './admin-gallery/admin-gallery.component';
+import {MatGridListModule} from "@angular/material/grid-list";
 
 const routes: Routes = [
   {
@@ -37,6 +38,7 @@ const routes: Routes = [
     SharedModule,
     RouterModule.forChild(routes),
     AdminHeaderModule,
+    MatGridListModule,
   ],
   declarations: [
     AdminComponent,
