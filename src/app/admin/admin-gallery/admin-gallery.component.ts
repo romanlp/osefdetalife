@@ -2,7 +2,7 @@ import {Component} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 import {map, switchMap} from 'rxjs/operators';
 import {collection, CollectionReference, doc, docData, Firestore} from "@angular/fire/firestore";
-import {ref, Storage, uploadBytes} from '@angular/fire/storage';
+import {getDownloadURL, ref, Storage, uploadBytes} from '@angular/fire/storage';
 
 interface GalleryData {
   id: string;
@@ -21,7 +21,14 @@ export class AdminGalleryComponent {
 
   document$ = this.activatedRoute.params.pipe(
     map((params) => params['id']),
-    switchMap((id) => docData<GalleryData>(doc(this.collection, id), {idField: 'id'}))
+    switchMap((id) => docData<GalleryData>(doc(this.collection, id), {idField: 'id'})),
+    map((doc) => ({
+      ...doc,
+      photos: doc.photos.map((photo) => ({
+        name: photo,
+        url: getDownloadURL(ref(this.storage, `${doc.id}/${photo}`))
+      }))
+    }))
   );
 
   constructor(

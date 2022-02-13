@@ -8,6 +8,8 @@ import { AdminComponent } from './admin.component';
 import { HomeComponent } from './home/home.component';
 import { AdminGalleryComponent } from './admin-gallery/admin-gallery.component';
 import {MatGridListModule} from "@angular/material/grid-list";
+import {DragDropModule} from "@angular/cdk/drag-drop";
+import {MatCardModule} from "@angular/material/card";
 
 const routes: Routes = [
   {
@@ -39,6 +41,8 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     AdminHeaderModule,
     MatGridListModule,
+    DragDropModule,
+    MatCardModule,
   ],
   declarations: [
     AdminComponent,
