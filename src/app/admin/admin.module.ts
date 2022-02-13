@@ -6,6 +6,7 @@ import { AdminGalleriesComponent } from './admin-galleries/admin-galleries.compo
 import { AdminHeaderModule } from './admin-header/admin-header.component';
 import { AdminComponent } from './admin.component';
 import { HomeComponent } from './home/home.component';
+import { AdminGalleryComponent } from './admin-gallery/admin-gallery.component';
 
 const routes: Routes = [
   {
@@ -18,7 +19,13 @@ const routes: Routes = [
       },
       {
         path: 'galleries',
-        component: AdminGalleriesComponent
+        component: AdminGalleriesComponent,
+        children: [
+          {
+            path: ':id',
+            component: AdminGalleryComponent
+          },
+        ]
       }
     ]
   }
@@ -33,7 +40,8 @@ const routes: Routes = [
   ],
   declarations: [
     AdminComponent,
-    HomeComponent
+    HomeComponent,
+    AdminGalleryComponent
   ]
 })
 export class AdminModule {
