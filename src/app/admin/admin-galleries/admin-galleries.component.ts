@@ -43,7 +43,7 @@ export class AdminGalleriesComponent {
   }
 
   onCreate(name: string) {
-    addDoc<any>(this.collection, {name});
+    addDoc<any>(this.collection, {id: name, name, photos: []});
   }
 }
 
