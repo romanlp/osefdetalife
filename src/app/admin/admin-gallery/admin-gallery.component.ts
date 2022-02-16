@@ -1,13 +1,13 @@
 import {Component} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 import {map, switchMap} from 'rxjs/operators';
-import {collection, CollectionReference, doc, docData, Firestore} from "@angular/fire/firestore";
+import {arrayUnion, collection, CollectionReference, doc, docData, Firestore, updateDoc} from "@angular/fire/firestore";
 import {getDownloadURL, ref, Storage, uploadBytes} from '@angular/fire/storage';
 
 interface GalleryData {
   id: string;
   name: string;
-  photos: string[];
+  photos: { name: string, url: string }[];
 }
 
 @Component({
@@ -22,13 +22,6 @@ export class AdminGalleryComponent {
   document$ = this.activatedRoute.params.pipe(
     map((params) => params['id']),
     switchMap((id) => docData<GalleryData>(doc(this.collection, id), {idField: 'id'})),
-    map((doc) => ({
-      ...doc,
-      photos: doc.photos.map((photo) => ({
-        name: photo,
-        url: getDownloadURL(ref(this.storage, `${doc.id}/${photo}`))
-      }))
-    }))
   );
 
   constructor(
@@ -48,7 +41,11 @@ export class AdminGalleryComponent {
     console.log(id, storageRef);
 
     uploadBytes(storageRef, image).then(() => {
-      console.log('Uploaded a blob or file!');
+      getDownloadURL(storageRef).then((link) => {
+        updateDoc(doc(this.collection, id), {
+          photos: arrayUnion({name: image.name, url: link})
+        })
+      });
     });
   }
 }

@@ -1,6 +1,6 @@
 import {CommonModule} from '@angular/common';
 import {ChangeDetectionStrategy, Component, NgModule, ViewChild} from '@angular/core';
-import {addDoc, collection, collectionData, CollectionReference, Firestore} from '@angular/fire/firestore';
+import {collection, collectionData, CollectionReference, doc, Firestore, setDoc} from '@angular/fire/firestore';
 import {FormsModule} from '@angular/forms';
 import {MatButtonModule} from '@angular/material/button';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
@@ -43,7 +43,7 @@ export class AdminGalleriesComponent {
   }
 
   onCreate(name: string) {
-    addDoc<any>(this.collection, {id: name, name, photos: []});
+    setDoc<any>(doc(this.collection, name.toLowerCase()), {name, photos: []});
   }
 }
 
