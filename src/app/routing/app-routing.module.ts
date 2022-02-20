@@ -9,7 +9,7 @@ const routes: Routes = [
     component: HomeComponent,
   },
   {
-    path: 'gallery',
+    path: 'galleries',
     loadChildren: () => import('../gallery/gallery.module').then(m => m.GalleryModule),
   },
   {
@@ -24,7 +24,7 @@ const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'gallery',
+    redirectTo: 'galleries',
     pathMatch: 'full'
   },
 ];

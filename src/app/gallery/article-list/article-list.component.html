@@ -1,7 +1,9 @@
-<h1 class="title mat-display-2">Democratic People's Republic of Korea</h1>
+<div *ngIf="document$ | async as document">
+  <h1 class="title mat-display-2">{{ document.name }}</h1>
 
-<div class="images">
-  <div class="image" *ngFor="let image$ of images$; let i = index">
-    <img (click)="openImage(i+1)" *ngIf="image$ | async as image" [alt]="image" [src]="image" class="photo">
+  <div class="images">
+    <div class="image" *ngFor="let image of document.photos; let i = index">
+      <img (click)="openImage(image.url)" [alt]="image" [src]="image.url" class="photo">
+    </div>
   </div>
 </div>

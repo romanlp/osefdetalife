@@ -19,6 +19,9 @@
     padding: 30px;
     background-color: var(--color-item-light);
     transition: 100ms ease-in-out transform;
+    img {
+      max-width: 300px;
+    }
   }
   .image:nth-child(odd) {
     img {

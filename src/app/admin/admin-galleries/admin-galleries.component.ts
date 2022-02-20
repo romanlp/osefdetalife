@@ -8,11 +8,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {Observable} from 'rxjs';
 import {RouterModule} from "@angular/router";
-
-interface GalleryData {
-  id: string;
-  name: string;
-}
+import {GalleryData} from 'src/app/shared/gallery/GalleryData';
 
 @Component({
   selector: 'app-admin-galleries',

@@ -7,8 +7,12 @@ import { GalleryHomeComponent, GalleryHomeModule } from './gallery-home/gallery-
 
 const routes: Routes = [
   {
+    path: ':id',
+    component: ArticleListComponent
+  },
+  {
     path: '',
-    component: ArticleListComponent,
+    redirectTo: 'london',
   },
   {
     path: 'home',

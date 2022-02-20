@@ -3,12 +3,7 @@ import {ActivatedRoute} from "@angular/router";
 import {map, switchMap} from 'rxjs/operators';
 import {arrayUnion, collection, CollectionReference, doc, docData, Firestore, updateDoc} from "@angular/fire/firestore";
 import {getDownloadURL, ref, Storage, uploadBytes} from '@angular/fire/storage';
-
-interface GalleryData {
-  id: string;
-  name: string;
-  photos: { name: string, url: string }[];
-}
+import { GalleryData } from 'src/app/shared/gallery/GalleryData';
 
 @Component({
   selector: 'app-admin-gallery',

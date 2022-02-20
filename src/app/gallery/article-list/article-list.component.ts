@@ -1,9 +1,12 @@
-import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, NgModule, OnInit } from '@angular/core';
-import { Firestore, collection } from '@angular/fire/firestore';
-import { Storage, ref, getDownloadURL } from '@angular/fire/storage';
-import { MatDialog } from '@angular/material/dialog';
-import { DialogImageComponent } from '../../shared/dialog-image/dialog-image.component';
+import {CommonModule} from '@angular/common';
+import {ChangeDetectionStrategy, Component, NgModule} from '@angular/core';
+import {collection, CollectionReference, doc, docData, Firestore} from '@angular/fire/firestore';
+import {Storage} from '@angular/fire/storage';
+import {MatDialog} from '@angular/material/dialog';
+import {DialogImageComponent} from '../../shared/dialog-image/dialog-image.component';
+import {map, switchMap} from "rxjs/operators";
+import {ActivatedRoute} from "@angular/router";
+import {GalleryData} from 'src/app/shared/gallery/GalleryData';
 
 @Component({
   selector: 'app-article-list',
@@ -11,26 +14,25 @@ import { DialogImageComponent } from '../../shared/dialog-image/dialog-image.com
   styleUrls: ['./article-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ArticleListComponent implements OnInit {
+export class ArticleListComponent {
 
-  public images$: Promise<string>[] = [];
-  public posts: any;
+  collection = collection(this.firestore, 'galleries') as CollectionReference<GalleryData>;
+
+  document$ = this.activatedRoute.params.pipe(
+    map((params) => params['id']),
+    switchMap((id) => docData<GalleryData>(doc(this.collection, id), {idField: 'id'})),
+  );
+
   public folder = 'dprk';
 
-  constructor(private storage: Storage,
+  constructor(private activatedRoute: ActivatedRoute,
+              private storage: Storage,
               private firestore: Firestore,
               private dialog: MatDialog) {
   }
 
-  ngOnInit() {
-    for (let i = 1; i <= 9; i++) {
-      this.images$.push(getDownloadURL(ref(this.storage, `${this.folder}/thumbs/${this.folder}-${i}.jpg`)));
-    }
-    this.posts = collection(this.firestore, 'posts');
-  }
-
-  public openImage(index: number) {
-    this.dialog.open(DialogImageComponent, { data: { folder: this.folder, image: this.folder + '-' + index } });
+  public openImage(url: string) {
+    this.dialog.open(DialogImageComponent, {data: {url}});
   }
 
 }
