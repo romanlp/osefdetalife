@@ -3,6 +3,9 @@
 @use "sass:math";
 @import url('https://fonts.googleapis.com/css?family=Krub');
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
   --color-bg-dark: #15171b;
