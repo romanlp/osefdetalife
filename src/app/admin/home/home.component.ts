@@ -1,11 +1,11 @@
-import { getSupportedInputTypes, supportsPassiveEventListeners } from '@angular/cdk/platform';
-import { ViewportRuler } from '@angular/cdk/scrolling';
-import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import {getSupportedInputTypes, supportsPassiveEventListeners} from '@angular/cdk/platform';
+import {ViewportRuler} from '@angular/cdk/scrolling';
+import {Component} from '@angular/core';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
 
 @Component({
-  selector: 'app-home',
+  selector: 'osef-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
