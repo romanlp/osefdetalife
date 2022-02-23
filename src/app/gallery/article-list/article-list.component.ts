@@ -9,7 +9,7 @@ import {ActivatedRoute} from "@angular/router";
 import {GalleryData} from 'src/app/shared/gallery/GalleryData';
 
 @Component({
-  selector: 'app-article-list',
+  selector: 'osef-article-list',
   templateUrl: './article-list.component.html',
   styleUrls: ['./article-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

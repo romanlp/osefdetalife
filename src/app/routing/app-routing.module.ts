@@ -1,13 +1,8 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { HomeComponent } from '../home/home.component';
-import { AuthenticatedGuard } from './guard/authenticated.guard';
+import {NgModule} from '@angular/core';
+import {RouterModule, Routes} from '@angular/router';
+import {AuthenticatedGuard} from './guard/authenticated.guard';
 
 const routes: Routes = [
-  {
-    path: 'home',
-    component: HomeComponent,
-  },
   {
     path: 'galleries',
     loadChildren: () => import('../gallery/gallery.module').then(m => m.GalleryModule),
@@ -30,7 +25,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' })],
+  imports: [RouterModule.forRoot(routes, {relativeLinkResolution: 'legacy'})],
   exports: [RouterModule],
   providers: [AuthenticatedGuard]
 })

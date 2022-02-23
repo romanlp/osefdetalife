@@ -1,0 +1,3 @@
+<a *ngFor="let doc of docs$ | async" [routerLink]="doc.id">
+  {{ doc.name }}
+</a>
