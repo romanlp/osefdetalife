@@ -6,12 +6,11 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
-import {Observable} from 'rxjs';
 import {RouterModule} from "@angular/router";
 import {GalleryData} from 'src/app/shared/gallery/GalleryData';
 
 @Component({
-  selector: 'app-admin-galleries',
+  selector: 'osef-admin-galleries',
   templateUrl: './admin-galleries.component.html',
   styleUrls: ['./admin-galleries.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -23,8 +22,6 @@ export class AdminGalleriesComponent {
 
   collection = collection(this.firestore, 'galleries') as CollectionReference<GalleryData>;
   docs$ = collectionData<GalleryData>(this.collection, {idField: 'id'});
-
-  doc$: Observable<GalleryData> | undefined;
 
   name = '';
 
