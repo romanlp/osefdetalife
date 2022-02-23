@@ -134,11 +134,11 @@
   "defaultProject": "osefdetalife",
   "schematics": {
     "@ngrx/schematics:component": {
-      "prefix": "app",
+      "prefix": "osef",
       "styleext": "scss"
     },
     "@ngrx/schematics:directive": {
-      "prefix": "app"
+      "prefix": "osef"
     }
   }
 }
