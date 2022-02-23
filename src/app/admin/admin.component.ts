@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-admin',
+  selector: 'osef-admin',
   template: `
-    <app-admin-header></app-admin-header>
+    <osef-admin-header></osef-admin-header>
     <router-outlet></router-outlet>
   `
 })

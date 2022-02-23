@@ -6,7 +6,7 @@ import {getDownloadURL, ref, Storage, uploadBytes} from '@angular/fire/storage';
 import { GalleryData } from 'src/app/shared/gallery/GalleryData';
 
 @Component({
-  selector: 'app-admin-gallery',
+  selector: 'osef-admin-gallery',
   templateUrl: './admin-gallery.component.html',
   styleUrls: ['./admin-gallery.component.scss']
 })

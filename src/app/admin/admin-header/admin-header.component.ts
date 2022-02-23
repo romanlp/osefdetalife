@@ -8,7 +8,7 @@ import { Router, RouterModule } from '@angular/router';
 import { ThemingService } from '../../theming.service';
 
 @Component({
-  selector: 'app-admin-header',
+  selector: 'osef-admin-header',
   templateUrl: './admin-header.component.html',
   styleUrls: ['./admin-header.component.scss']
 })
