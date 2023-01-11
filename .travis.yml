@@ -1,16 +1,14 @@
 language: node_js
-
 node_js:
-  - '16'
+- '16'
 branches:
   only:
-    - master
+  - master
 script:
-  - yarn run lint
-  - yarn run build
-
+- yarn run lint
+- yarn run build
 deploy:
   skip_cleanup: true
   provider: firebase
   token:
-    secure: "Wm93dLNjQoRirZBROoTuySznX1dd+7t4GJNPyaERtrjYm69jajCtXHGkYrizxr8C3nto5ixFP5+7sBFlocNhAP343dAwUceHssAlSQPrk9hHvi1Q/kBrtTvi/2Jes9aiNM7RWrLCVX6BPgpar3qcTQ0U2ue3XfOuh0BVvNhMOsqgdfDomKbjAyz2VKmAtZULwQBVjardpma1z0rX/C5GuqV6TrETGvzdJqvAVLfwAoeiJrWyIszPkf2UYRi7yQ3J9Y4kTnL4MzfZa0ni2Gryvv33cieSeuKBGp8u1Ni3lVasMO2JvvcnvCWdWR6gB/NQixRSvZXKyZii0FrNwiAIsI/PbOnjM/gJH5yD+GDSQNrV5OZvDsQ5zGMjkLQ1/ccl/juv6Hex4Oh2Kw7JTSXgogwk4PH8RawdgHhHyiZTBRuLy1WocqVEIhbQu6pwsEyN4a0+V1nlMddVh5TQaaLLXQhDFmqCMm7uTQ1P/HKZDmafB6w5j8TOb9IVXDnnAhtzDMIBufUX40S8cF6X/Jw6IU9kinEsXTjJVhn56nlBYFYb7M1VUt+kkfiITj+I4dZsF6wF7jDMjv/R1c92MfDTWsKPCXNaXrOTamm3Q/MCWHAf/+Mjx8uB3z1fvcBuial+i7Y02xTgOW7i4I8h50ZxDJA4rjBgALI1KHmwShrBktE="
+    secure: ypPbfr0pY04f5QpKvNnh/lsoT6aOtZedckvOEViN9i1hQzgF94IUA9D1YaZZ9U4pvKShoEOjzI+F9FPXknslizo3O45lI97YDu0/zlw0CzFCG+Cm72rOXheG5jzEolWPPfWVy9HiN8vxrCGSMgIyEPYH+0GTI5Z0fsKOlt9TRJBHAqswLVQriNdWpabw7Ni7+t3FDFvAqlC5ug75LrwgiveA5PaSA57nyjQieCFtu+HGADdQJec8Kjjd3Ve/W3QjF5rs2EhN8r4+HkBJyOexyqR1SuF1iEkorUgLzZsboQoo2I0WRuMdcjLlcfsq8F5tpSIpd5VoW07H7QtPd+Zw/NrGR6CTd+Zf6R5dlt8VwpYBtUH5FM2d5wAGJI3pDQY/sDOGMAaVk38DzG/ToVCF4jbMHhVgSaBDVlAknj7drvekrz+jCCI01fJGFcmoMLZYh5vPhgJO+9/sQii6sFeHkCdz7Sa4Ox1Owi7sjPiR6k83c5snLwqHy7JrEPZ6hqlY2j4AxkwWbeAL0LveQwQcVXzJzWwIcQSLYd1iCtM/Vlj0z2o2TwBVqpkyuaVS5ugn/95tO6wikvAZnDo7bLr8H/IEVutyL4i5tbepOtLv58u04kTiw1df9Lu/JYcfaKL2OlNwnJLQAldOXrlBY7F54RUdjGvFsJA6FfDbtAcCeBs=
