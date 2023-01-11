@@ -5,7 +5,9 @@
   "cli": {
     "analytics": false,
     "packageManager": "yarn",
-    "defaultCollection": "@angular-eslint/schematics"
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ]
   },
   "projects": {
     "osefdetalife": {
@@ -131,7 +133,6 @@
       }
     }
   },
-  "defaultProject": "osefdetalife",
   "schematics": {
     "@ngrx/schematics:component": {
       "prefix": "osef",
