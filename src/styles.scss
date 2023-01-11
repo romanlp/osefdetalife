@@ -21,7 +21,8 @@
 }
 
 // Imports for Angular Material Theming
-@include mat.core();
+@include mat.all-legacy-component-typographies();
+@include mat.legacy-core();
 
 // Define a light theme
 $light-primary: mat.define-palette(mat.$indigo-palette);
@@ -43,10 +44,10 @@ $dark-theme: mat.define-dark-theme((
  )
 ));
 
-@include mat.all-component-themes($light-theme);
+@include mat.all-legacy-component-themes($light-theme);
 
 .dark-theme {
-  @include mat.all-component-colors($dark-theme);
+  @include mat.all-legacy-component-colors($dark-theme);
 
   --bg-color: var(--color-bg-dark);
   --color: var(--color-dark);

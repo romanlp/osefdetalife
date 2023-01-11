@@ -2,10 +2,10 @@ import {CommonModule} from '@angular/common';
 import {ChangeDetectionStrategy, Component, NgModule, ViewChild} from '@angular/core';
 import {collection, collectionData, CollectionReference, doc, Firestore, setDoc} from '@angular/fire/firestore';
 import {FormsModule} from '@angular/forms';
-import {MatButtonModule} from '@angular/material/button';
-import {MatDialog, MatDialogModule} from '@angular/material/dialog';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatInputModule} from '@angular/material/input';
+import {MatLegacyButtonModule as MatButtonModule} from '@angular/material/legacy-button';
+import {MatLegacyDialog as MatDialog, MatLegacyDialogModule as MatDialogModule} from '@angular/material/legacy-dialog';
+import {MatLegacyFormFieldModule as MatFormFieldModule} from '@angular/material/legacy-form-field';
+import {MatLegacyInputModule as MatInputModule} from '@angular/material/legacy-input';
 import {RouterModule} from "@angular/router";
 import {GalleryData} from 'src/app/shared/gallery/GalleryData';
 

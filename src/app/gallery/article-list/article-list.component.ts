@@ -2,7 +2,7 @@ import {CommonModule} from '@angular/common';
 import {ChangeDetectionStrategy, Component, NgModule} from '@angular/core';
 import {collection, CollectionReference, doc, docData, Firestore} from '@angular/fire/firestore';
 import {Storage} from '@angular/fire/storage';
-import {MatDialog} from '@angular/material/dialog';
+import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
 import {DialogImageComponent} from '../../shared/dialog-image/dialog-image.component';
 import {map, switchMap} from "rxjs/operators";
 import {ActivatedRoute} from "@angular/router";
