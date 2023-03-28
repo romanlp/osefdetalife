@@ -6,7 +6,8 @@ import {MatDialog} from '@angular/material/dialog';
 import {DialogImageComponent} from '../../shared/dialog-image/dialog-image.component';
 import {map, switchMap} from "rxjs/operators";
 import {ActivatedRoute} from "@angular/router";
-import {GalleryData} from 'src/app/shared/gallery/GalleryData';
+import { GalleryData } from "../../shared/gallery/GalleryData";
+
 
 @Component({
   selector: 'osef-article-list',

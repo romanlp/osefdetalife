@@ -15,6 +15,6 @@ export const environment = {
     appId: '1:162621414987:web:0a71e46dad824299',
     measurementId: 'G-WJXGK09509'
   },
-  recaptcha: 'RECAPTCHA_TOKEN',
-  appCheckToken: 'APP_CHECK_TOKEN'
+  recaptcha: '6LceYDslAAAAAIKVsZ4r0z3q96ZLnfcMB2S-mJ0W',
+  appCheckToken: true
 };
