@@ -9,7 +9,7 @@ import { HomeComponent } from './home/home.component';
 import { AdminGalleryComponent } from './admin-gallery/admin-gallery.component';
 import {MatGridListModule} from "@angular/material/grid-list";
 import {DragDropModule} from "@angular/cdk/drag-drop";
-import {MatLegacyCardModule as MatCardModule} from "@angular/material/legacy-card";
+import {MatCardModule} from "@angular/material/card";
 
 const routes: Routes = [
   {

@@ -9,7 +9,7 @@
 
   <mat-grid-list cdkDropList cols="3" rowHeight="600px" gutterSize="32">
     <mat-grid-tile *ngFor="let photo of document.photos" cdkDrag>
-      <mat-card>
+      <mat-card appearance="outlined">
         <mat-card-header>
           <mat-card-title>{{ photo.name }}</mat-card-title>
         </mat-card-header>
