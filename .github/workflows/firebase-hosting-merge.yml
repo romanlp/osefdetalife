@@ -8,7 +8,7 @@ name: Deploy to Firebase Hosting on merge
       - master
 jobs:
   install_deps:
-    runs-on:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
