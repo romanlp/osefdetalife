@@ -3,7 +3,8 @@
 
   <div class="images">
     <div class="image" *ngFor="let image of document.photos; let i = index">
-      <img (click)="openImage(image.url)" [alt]="image" [src]="image.url" class="photo">
+      {{ image}}
+      <img (click)="openImage(image.url)" [alt]="image.name" [ngSrc]="image.url" class="photo">
     </div>
   </div>
 </div>

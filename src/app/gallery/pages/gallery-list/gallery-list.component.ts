@@ -1,11 +1,20 @@
-import {Component} from '@angular/core';
-import {collection, collectionData, CollectionReference, Firestore} from "@angular/fire/firestore";
-import {GalleryData} from "../../../shared/gallery/GalleryData";
+import { AsyncPipe, NgForOf } from "@angular/common";
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { collection, collectionData, CollectionReference, Firestore } from "@angular/fire/firestore";
+import { RouterLink, RouterModule } from "@angular/router";
+import { GalleryData } from "../../../shared/gallery/GalleryData";
 
 @Component({
   selector: 'osef-gallery-list',
   templateUrl: './gallery-list.component.html',
-  styleUrls: ['./gallery-list.component.scss']
+  styleUrls: ['./gallery-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    NgForOf,
+    AsyncPipe,
+    RouterModule
+  ]
 })
 export class GalleryListComponent {
 
