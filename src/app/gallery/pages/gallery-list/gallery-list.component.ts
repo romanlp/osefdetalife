@@ -1,7 +1,7 @@
 import { AsyncPipe, NgForOf } from "@angular/common";
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { collection, collectionData, CollectionReference, Firestore } from "@angular/fire/firestore";
-import { RouterLink, RouterModule } from "@angular/router";
+import { RouterModule } from "@angular/router";
 import { GalleryData } from "../../../shared/gallery/GalleryData";
 
 @Component({
