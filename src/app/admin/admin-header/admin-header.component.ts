@@ -1,10 +1,10 @@
-import { AsyncPipe, CommonModule, NgIf } from '@angular/common';
-import { Component, NgModule } from '@angular/core';
+import { AsyncPipe, NgIf } from '@angular/common';
+import { Component } from '@angular/core';
 import { Auth, signOut } from '@angular/fire/auth';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { Router, RouterLink, RouterModule } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ThemingService } from '../../theming.service';
 
 @Component({
@@ -26,8 +26,8 @@ export class AdminHeaderComponent {
   public applicationTitle = 'Osefdetalife';
 
   constructor(private router: Router,
-    private auth: Auth,
-    private themingService: ThemingService) {
+              private auth: Auth,
+              private themingService: ThemingService) {
   }
 
   public logout() {
