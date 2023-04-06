@@ -7,13 +7,13 @@ import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {RouterModule} from "@angular/router";
-import {GalleryData} from 'src/app/shared/gallery/GalleryData';
+import {GalleryData} from "../../shared/gallery/GalleryData";
 
 @Component({
   selector: 'osef-admin-galleries',
   templateUrl: './admin-galleries.component.html',
   styleUrls: ['./admin-galleries.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdminGalleriesComponent {
 
