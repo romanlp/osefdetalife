@@ -15,7 +15,6 @@ import { GalleryData } from "../../../shared/gallery/GalleryData";
   styleUrls: ['./article-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-
   imports: [
     NgIf,
     NgForOf,
