@@ -1,4 +1,8 @@
+import { CdkDropList } from "@angular/cdk/drag-drop";
+import { AsyncPipe, NgForOf, NgIf, NgOptimizedImage } from "@angular/common";
 import {Component} from '@angular/core';
+import { MatCardModule } from "@angular/material/card";
+import { MatGridListModule } from "@angular/material/grid-list";
 import {ActivatedRoute} from "@angular/router";
 import {map, switchMap} from 'rxjs/operators';
 import {arrayUnion, collection, CollectionReference, doc, docData, Firestore, updateDoc} from "@angular/fire/firestore";
@@ -8,7 +12,17 @@ import { GalleryData } from 'src/app/shared/gallery/GalleryData';
 @Component({
   selector: 'osef-admin-gallery',
   templateUrl: './admin-gallery.component.html',
-  styleUrls: ['./admin-gallery.component.scss']
+  styleUrls: ['./admin-gallery.component.scss'],
+  standalone: true,
+  imports: [
+    NgIf,
+    NgForOf,
+    AsyncPipe,
+    MatGridListModule,
+    MatCardModule,
+    CdkDropList,
+    NgOptimizedImage
+  ]
 })
 export class AdminGalleryComponent {
 

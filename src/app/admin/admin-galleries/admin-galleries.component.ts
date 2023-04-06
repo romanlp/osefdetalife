@@ -14,6 +14,16 @@ import {GalleryData} from "../../shared/gallery/GalleryData";
   templateUrl: './admin-galleries.component.html',
   styleUrls: ['./admin-galleries.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatButtonModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule,
+    RouterModule,
+  ],
 })
 export class AdminGalleriesComponent {
 
@@ -38,20 +48,4 @@ export class AdminGalleriesComponent {
   onCreate(name: string) {
     setDoc<any>(doc(this.collection, name.toLowerCase()), {name, photos: []});
   }
-}
-
-@NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatButtonModule,
-    MatDialogModule,
-    MatFormFieldModule,
-    MatInputModule,
-    RouterModule,
-  ],
-  declarations: [AdminGalleriesComponent],
-  exports: [AdminGalleriesComponent]
-})
-export class AdminGalleriesComponentModule {
 }
