@@ -1,9 +1,0 @@
-<div *ngIf="document$ | async as document" class="container mx-auto px-4">
-  <h1 class="title mat-headline-3">{{ document.name }}</h1>
-
-  <div class="images">
-    <div class="image" *ngFor="let image of document.photos; let i = index">
-      <img (click)="openImage(image.url)" [alt]="image" [src]="image.url" class="photo">
-    </div>
-  </div>
-</div>
