@@ -65,12 +65,13 @@ body {
   position: absolute;
   width: 100vw;
   height: 100vh;
-  background: #3E1E68;
+  background: #1e0f33;
+  overflow: hidden;
 }
 
-$particleSize: 60vmin;
+$particleSize: 30vmin;
 $animationDuration: 60s;
-$amount: 5;
+$amount: 10;
 .background span {
   width: $particleSize;
   height: $particleSize;
@@ -81,7 +82,7 @@ $amount: 5;
   animation-duration: $animationDuration;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
-  $colors: ( #583C87, #E45A84, #FFACAC);
+  $colors: ( #362554, #7a3149, #805555);
   @for $i from 1 through $amount {
       &:nth-child(#{$i}) {
           color: nth($colors, random(length($colors)));
