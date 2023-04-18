@@ -1,5 +1,6 @@
 import {getSupportedInputTypes, supportsPassiveEventListeners} from '@angular/cdk/platform';
 import {ViewportRuler} from '@angular/cdk/scrolling';
+import { AsyncPipe, NgForOf } from "@angular/common";
 import {Component} from '@angular/core';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
@@ -7,7 +8,12 @@ import {map} from 'rxjs/operators';
 @Component({
   selector: 'osef-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  styleUrls: ['./home.component.scss'],
+  standalone: true,
+  imports: [
+    NgForOf,
+    AsyncPipe
+  ]
 })
 export class HomeComponent {
 

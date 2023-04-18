@@ -2,14 +2,14 @@ import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {AuthenticatedGuard} from './guard/authenticated.guard';
 
-const routes: Routes = [
+export const routes: Routes = [
   {
     path: 'galleries',
     loadChildren: () => import('../gallery/gallery.module').then(m => m.GalleryModule),
   },
   {
     path: 'login',
-    loadChildren: () => import('../login/login-page/login-page.component').then(m => m.LoginPageModule),
+    loadComponent: () => import('../login/login-page/login-page.component').then(m => m.LoginPageComponent),
     canLoad: [AuthenticatedGuard],
   },
   {

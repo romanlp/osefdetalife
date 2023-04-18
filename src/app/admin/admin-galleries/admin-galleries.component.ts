@@ -1,27 +1,41 @@
-import {CommonModule} from '@angular/common';
-import {ChangeDetectionStrategy, Component, NgModule, ViewChild} from '@angular/core';
-import {collection, collectionData, CollectionReference, doc, Firestore, setDoc} from '@angular/fire/firestore';
-import {FormsModule} from '@angular/forms';
-import {MatButtonModule} from '@angular/material/button';
-import {MatDialog, MatDialogModule} from '@angular/material/dialog';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatInputModule} from '@angular/material/input';
-import {RouterModule} from "@angular/router";
-import {GalleryData} from "../../shared/gallery/GalleryData";
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
+import { collection, collectionData, CollectionReference, doc, Firestore, setDoc } from '@angular/fire/firestore';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from "@angular/material/icon";
+import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from "@angular/material/list";
+import { RouterModule } from "@angular/router";
+import { GalleryData } from "../../shared/gallery/GalleryData";
 
 @Component({
   selector: 'osef-admin-galleries',
   templateUrl: './admin-galleries.component.html',
   styleUrls: ['./admin-galleries.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatButtonModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule,
+    RouterModule,
+    MatListModule,
+    MatIconModule,
+  ],
 })
 export class AdminGalleriesComponent {
 
-  @ViewChild('dialogCreateGallery', {static: true})
+  @ViewChild('dialogCreateGallery', { static: true })
   dialogCreateGallery: any;
 
   collection = collection(this.firestore, 'galleries') as CollectionReference<GalleryData>;
-  docs$ = collectionData<GalleryData>(this.collection, {idField: 'id'});
+  docs$ = collectionData<GalleryData>(this.collection, { idField: 'id' });
 
   name = '';
 
@@ -36,22 +50,6 @@ export class AdminGalleriesComponent {
   }
 
   onCreate(name: string) {
-    setDoc<any>(doc(this.collection, name.toLowerCase()), {name, photos: []});
+    setDoc<any>(doc(this.collection, name.toLowerCase()), { name, photos: [] });
   }
-}
-
-@NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatButtonModule,
-    MatDialogModule,
-    MatFormFieldModule,
-    MatInputModule,
-    RouterModule,
-  ],
-  declarations: [AdminGalleriesComponent],
-  exports: [AdminGalleriesComponent]
-})
-export class AdminGalleriesComponentModule {
 }
