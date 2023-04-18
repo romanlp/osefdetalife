@@ -1,10 +1,12 @@
-<p>admin-galleries works!</p>
+<button mat-fab (click)="openDialog()">
+  <mat-icon>add</mat-icon>
+</button>
 
-<button mat-flat-button (click)="openDialog()">Create</button>
-
-<div *ngFor="let item of docs$ | async" [routerLink]="[item.id]">
-  {{ item.name }}
-</div>
+<mat-nav-list role="list">
+  <a mat-list-item *ngFor="let item of docs$ | async" [routerLink]="[item.id]">
+    {{ item.name }}
+  </a>
+</mat-nav-list>
 
 <router-outlet></router-outlet>
 
