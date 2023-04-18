@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Auth, authState } from '@angular/fire/auth';
-import { CanLoad, Route, Router } from '@angular/router';
+import { Route, Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthenticatedGuard implements CanLoad {
+export class AuthenticatedGuard  {
 
   constructor(private router: Router, private auth: Auth) {
   }
