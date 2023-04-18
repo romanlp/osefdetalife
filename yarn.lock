@@ -213,10 +213,10 @@
   dependencies:
     tslib "^2.3.0"
 
-"@angular/cdk@16.0.0-next.4":
-  version "16.0.0-next.4"
-  resolved "https://registry.yarnpkg.com/@angular/cdk/-/cdk-16.0.0-next.4.tgz#3df929a45872c521e765d706fa730fb37aff0a8c"
-  integrity sha512-koXN/hdSTcKbm6YEq1CCp74j1xTKZaJB8ixsw0LfOCrV0pxIekxMzghyHymqguLqu688rs1HzGwoJ+cU+lkr2g==
+"@angular/cdk@16.0.0-rc.0":
+  version "16.0.0-rc.0"
+  resolved "https://registry.yarnpkg.com/@angular/cdk/-/cdk-16.0.0-rc.0.tgz#d84cae1b2d35b453d8e58d775bbb606d7fdf43ef"
+  integrity sha512-WVREWmTf5ZI0sUBTFbId1dxbjw6Zh1GMEO1bFkiVIp/3BPpUR4DcRbE/NTs7X9+bkP+aGCAaqJNJIn3Yu63p9w==
   dependencies:
     tslib "^2.3.0"
   optionalDependencies:
@@ -316,10 +316,10 @@
   resolved "https://registry.yarnpkg.com/@angular/language-service/-/language-service-16.0.0-rc.1.tgz#73ce8b6b69c31bc2d6756a9aaa2aa20aae86da80"
   integrity sha512-yHIYqrLot/02qAiun/ZuzsYupNDzs++zSlxcLmbRcSD5lRH4SSrdJpd+KFVHnnmLUUbb1JUZeZwA2JKxMJW/dg==
 
-"@angular/material@16.0.0-next.4":
-  version "16.0.0-next.4"
-  resolved "https://registry.yarnpkg.com/@angular/material/-/material-16.0.0-next.4.tgz#9292586811024572802cd15362a4b4cb00e3d1f7"
-  integrity sha512-vUJVFEeMNftmrnpQZzeP0kL2FiJdoJ7c/G+J7QywND8XGGHdPG4SbwXHhChBApCiwSbKNTMomMG8gzTRcGfQ6w==
+"@angular/material@16.0.0-rc.0":
+  version "16.0.0-rc.0"
+  resolved "https://registry.yarnpkg.com/@angular/material/-/material-16.0.0-rc.0.tgz#92aeb8c8e6dc8627720e724dc28d7bb0d640fdc0"
+  integrity sha512-aRlGYdgkc4WmgedoVuH0QMcAd7XW79IDIfvtXJyfrEBCucaWPRN6fxhxQw5eY4S2qBlQoOEArdsuu05KMcuSAw==
   dependencies:
     "@material/animation" "15.0.0-canary.684e33d25.0"
     "@material/auto-init" "15.0.0-canary.684e33d25.0"
