@@ -8,7 +8,7 @@ describe('DialogImageComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [DialogImageComponent]
+      imports: [DialogImageComponent]
     })
       .compileComponents();
   }));

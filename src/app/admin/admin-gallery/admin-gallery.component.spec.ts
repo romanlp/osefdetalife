@@ -8,7 +8,7 @@ describe('AdminGalleryComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AdminGalleryComponent ]
+      imports: [AdminGalleryComponent]
     })
     .compileComponents();
   });

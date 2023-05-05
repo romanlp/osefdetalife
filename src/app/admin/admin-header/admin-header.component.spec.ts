@@ -8,7 +8,7 @@ describe('AdminHeaderComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [AdminHeaderComponent]
+      imports: [AdminHeaderComponent]
     })
       .compileComponents();
   }));

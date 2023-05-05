@@ -8,7 +8,7 @@ describe('ArticleListComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ArticleListComponent]
+      imports: [ArticleListComponent]
     })
       .compileComponents();
   }));
