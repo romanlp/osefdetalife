@@ -1,11 +1,11 @@
 import { AsyncPipe, NgForOf, NgIf, NgOptimizedImage } from '@angular/common';
-import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {collection, CollectionReference, doc, docData, Firestore} from '@angular/fire/firestore';
-import {Storage} from '@angular/fire/storage';
-import {MatDialog} from '@angular/material/dialog';
-import {DialogImageComponent} from '../../../shared/dialog-image/dialog-image.component';
-import {map, switchMap} from "rxjs/operators";
-import {ActivatedRoute} from "@angular/router";
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { collection, CollectionReference, doc, docData, Firestore } from '@angular/fire/firestore';
+import { Storage } from '@angular/fire/storage';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { ActivatedRoute } from "@angular/router";
+import { map, switchMap } from "rxjs/operators";
+import { DialogImageComponent } from '../../../shared/dialog-image/dialog-image.component';
 import { GalleryData } from "../../../shared/gallery/GalleryData";
 
 
@@ -19,7 +19,8 @@ import { GalleryData } from "../../../shared/gallery/GalleryData";
     NgIf,
     NgForOf,
     AsyncPipe,
-    NgOptimizedImage
+    NgOptimizedImage,
+    MatDialogModule
   ]
 })
 export class ArticleListComponent {
