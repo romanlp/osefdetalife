@@ -1,22 +1,9 @@
-import {PlatformModule} from '@angular/cdk/platform';
-import {DOCUMENT} from '@angular/common';
-import {Inject, NgModule} from '@angular/core';
-import {initializeApp, provideFirebaseApp} from '@angular/fire/app';
-import {initializeAppCheck, provideAppCheck, ReCaptchaV3Provider} from "@angular/fire/app-check";
-import {getFirestore, provideFirestore} from '@angular/fire/firestore';
-import {getAnalytics, provideAnalytics} from '@angular/fire/analytics';
-import {getAuth, provideAuth} from '@angular/fire/auth';
-import {getPerformance, providePerformance} from '@angular/fire/performance';
-import {getStorage, provideStorage} from '@angular/fire/storage';
-import {BrowserModule} from '@angular/platform-browser';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {environment} from '../environments/environment';
-import {AppComponent} from './app.component';
-import {AppRoutingModule} from './routing/app-routing.module';
-import {ThemingService} from './theming.service';
-import {getApp} from 'firebase/app';
+import { DOCUMENT } from '@angular/common';
+import { Inject, NgModule } from '@angular/core';
+import { ThemingService } from './theming.service';
 
-@NgModule({
+@NgModule(/* TODO(standalone-migration): clean up removed NgModule class manually.
+{
   declarations: [
     AppComponent,
   ],
@@ -35,7 +22,7 @@ import {getApp} from 'firebase/app';
     provideAnalytics(() => getAnalytics()),
   ],
   bootstrap: [AppComponent]
-})
+} */)
 export class AppModule {
 
   constructor(@Inject(DOCUMENT) document: Document,
