@@ -1,6 +1,4 @@
-import { DOCUMENT } from '@angular/common';
-import { Inject, NgModule } from '@angular/core';
-import { ThemingService } from './theming.service';
+import { NgModule } from '@angular/core';
 
 @NgModule(/* TODO(standalone-migration): clean up removed NgModule class manually.
 {
@@ -25,11 +23,5 @@ import { ThemingService } from './theming.service';
 } */)
 export class AppModule {
 
-  constructor(@Inject(DOCUMENT) document: Document,
-              themeService: ThemingService) {
 
-    themeService.theme$.subscribe((theme: string) => {
-      document.body.className = theme;
-    });
-  }
 }
