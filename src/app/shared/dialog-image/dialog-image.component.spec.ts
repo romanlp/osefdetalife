@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DialogImageComponent } from './dialog-image.component';
 
 describe('DialogImageComponent', () => {
@@ -8,7 +9,10 @@ describe('DialogImageComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [DialogImageComponent]
+      imports: [DialogImageComponent],
+      providers: [
+        {provide: MAT_DIALOG_DATA, useValue: { url: 'image.jpg'}}
+      ]
     })
       .compileComponents();
   }));

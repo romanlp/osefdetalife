@@ -1,7 +1,6 @@
 import { AsyncPipe, NgForOf, NgIf, NgOptimizedImage } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { collection, CollectionReference, doc, docData, Firestore } from '@angular/fire/firestore';
-import { Storage } from '@angular/fire/storage';
+import { CollectionReference, Firestore, collection, doc, docData } from '@angular/fire/firestore';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ActivatedRoute } from "@angular/router";
 import { map, switchMap } from "rxjs/operators";
@@ -33,7 +32,6 @@ export class ArticleListComponent {
   );
 
   constructor(private activatedRoute: ActivatedRoute,
-              private storage: Storage,
               private firestore: Firestore,
               private dialog: MatDialog) {
   }

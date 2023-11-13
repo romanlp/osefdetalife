@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 
+import { MatDialogModule } from '@angular/material/dialog';
 import { ArticleListComponent } from './article-list.component';
 
 describe('ArticleListComponent', () => {
@@ -8,7 +10,7 @@ describe('ArticleListComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [ArticleListComponent]
+      imports: [ArticleListComponent, RouterTestingModule, MatDialogModule],
     })
       .compileComponents();
   }));
