@@ -29,6 +29,10 @@ export class ThemingService {
       // Trigger refresh of UI
       this.ref.tick();
     });
+
+    this.theme$.subscribe((theme: string) => {
+      document.body.className = theme;
+    });
   }
 
   switch() {
