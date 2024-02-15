@@ -1,9 +1,10 @@
-import {getSupportedInputTypes, supportsPassiveEventListeners} from '@angular/cdk/platform';
-import {ViewportRuler} from '@angular/cdk/scrolling';
+import { getSupportedInputTypes, supportsPassiveEventListeners } from '@angular/cdk/platform';
+import { ViewportRuler } from '@angular/cdk/scrolling';
 import { AsyncPipe, NgForOf } from "@angular/common";
-import {Component} from '@angular/core';
-import {Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
+import { Component } from '@angular/core';
+import { MatAnchor, MatButton } from "@angular/material/button";
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'osef-home',
@@ -12,7 +13,9 @@ import {map} from 'rxjs/operators';
   standalone: true,
   imports: [
     NgForOf,
-    AsyncPipe
+    AsyncPipe,
+    MatButton,
+    MatAnchor
   ]
 })
 export class HomeComponent {
