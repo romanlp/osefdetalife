@@ -9,7 +9,6 @@ import { getPerformance, providePerformance } from '@angular/fire/performance';
 import { getStorage, provideStorage } from '@angular/fire/storage';
 import { bootstrapApplication, BrowserModule } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { getApp } from 'firebase/app';
 import { AppComponent } from './app/app.component';
 import { AppRoutingModule } from './app/routing/app-routing.module';
 import { environment } from './environments/environment';
@@ -30,7 +29,7 @@ bootstrapApplication(AppComponent, {
       provideFirebaseApp(() => initializeApp(environment.firebase)),
       provideFirestore(() => getFirestore()),
       provideAuth(() => getAuth()),
-      provideAppCheck(() => initializeAppCheck(getApp(), {
+      provideAppCheck(() => initializeAppCheck(undefined, {
         provider: new ReCaptchaV3Provider(environment.recaptcha),
         isTokenAutoRefreshEnabled: true
       })),
