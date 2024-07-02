@@ -1,6 +1,6 @@
 import { AsyncPipe, NgForOf, NgIf, NgOptimizedImage } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { CollectionReference, Firestore, collection, doc, docData } from '@angular/fire/firestore';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { collection, CollectionReference, doc, docData, Firestore } from '@angular/fire/firestore';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ActivatedRoute } from "@angular/router";
 import { map, switchMap } from "rxjs/operators";
@@ -24,6 +24,7 @@ import { GalleryData } from "../../../shared/gallery/GalleryData";
 })
 export class ArticleListComponent {
 
+  firestore: Firestore = inject(Firestore);
   collection = collection(this.firestore, 'galleries') as CollectionReference<GalleryData>;
 
   document$ = this.activatedRoute.params.pipe(
@@ -32,7 +33,6 @@ export class ArticleListComponent {
   );
 
   constructor(private activatedRoute: ActivatedRoute,
-              private firestore: Firestore,
               private dialog: MatDialog) {
   }
 
