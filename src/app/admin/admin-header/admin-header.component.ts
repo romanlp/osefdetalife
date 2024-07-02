@@ -1,5 +1,5 @@
 import { AsyncPipe, NgIf } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Auth, signOut } from '@angular/fire/auth';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -23,10 +23,10 @@ import { ThemingService } from '../../theming.service';
 })
 export class AdminHeaderComponent {
 
+  private auth = inject(Auth);
   public applicationTitle = 'Osefdetalife';
 
   constructor(private router: Router,
-              private auth: Auth,
               private themingService: ThemingService) {
   }
 

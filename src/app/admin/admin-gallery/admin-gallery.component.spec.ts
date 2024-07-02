@@ -1,20 +1,15 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { ComponentFixture } from '@angular/core/testing';
+import { MockBuilder, MockRender } from "ng-mocks";
+import { AdminModule } from "../admin.module";
 import { AdminGalleryComponent } from './admin-gallery.component';
 
-describe('AdminGalleryComponent', () => {
+fdescribe('AdminGalleryComponent', () => {
   let component: AdminGalleryComponent;
   let fixture: ComponentFixture<AdminGalleryComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [AdminGalleryComponent]
-    })
-    .compileComponents();
-  });
-
-  beforeEach(() => {
-    fixture = TestBed.createComponent(AdminGalleryComponent);
+    MockBuilder(AdminGalleryComponent, AdminModule);
+    fixture = MockRender(AdminGalleryComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

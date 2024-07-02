@@ -111,8 +111,9 @@
           }
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:jest",
+          "builder": "@angular-builders/jest:run",
           "options": {
+            "setupFilesAfterEnv": "./src/setup-jest.ts",
             "polyfills": [
               "zone.js",
               "zone.js/testing"

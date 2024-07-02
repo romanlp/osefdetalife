@@ -9,12 +9,12 @@ export const routes: Routes = [
   {
     path: 'login',
     loadComponent: () => import('../login/login-page/login-page.component').then(m => m.LoginPageComponent),
-    canLoad: [AuthenticatedGuard],
+    canMatch: [AuthenticatedGuard],
   },
   {
     path: 'admin',
     loadChildren: () => import('../admin/admin.module').then(m => m.AdminModule),
-    canLoad: [AuthenticatedGuard],
+    canMatch: [AuthenticatedGuard],
   },
   {
     path: '',
