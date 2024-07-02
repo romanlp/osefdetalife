@@ -1,6 +1,5 @@
-import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
-import {AuthenticatedGuard} from './guard/authenticated.guard';
+import { Routes } from '@angular/router';
+import { AuthenticatedGuard } from './guard/authenticated.guard';
 
 export const routes: Routes = [
   {
@@ -23,11 +22,3 @@ export const routes: Routes = [
     pathMatch: 'full'
   },
 ];
-
-@NgModule({
-  imports: [RouterModule.forRoot(routes, {})],
-  exports: [RouterModule],
-  providers: [AuthenticatedGuard]
-})
-export class AppRoutingModule {
-}
