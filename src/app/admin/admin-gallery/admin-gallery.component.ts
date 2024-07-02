@@ -1,13 +1,21 @@
 import { CdkDropList } from "@angular/cdk/drag-drop";
 import { AsyncPipe, NgForOf, NgIf, NgOptimizedImage } from "@angular/common";
-import {Component} from '@angular/core';
+import { Component } from '@angular/core';
+import {
+  arrayUnion,
+  collection,
+  CollectionReference,
+  doc,
+  docData,
+  Firestore,
+  updateDoc
+} from "@angular/fire/firestore";
+import { getDownloadURL, ref, Storage, uploadBytes } from '@angular/fire/storage';
 import { MatCardModule } from "@angular/material/card";
 import { MatGridListModule } from "@angular/material/grid-list";
-import {ActivatedRoute} from "@angular/router";
-import {map, switchMap} from 'rxjs/operators';
-import {arrayUnion, collection, CollectionReference, doc, docData, Firestore, updateDoc} from "@angular/fire/firestore";
-import {getDownloadURL, ref, Storage, uploadBytes} from '@angular/fire/storage';
-import { GalleryData } from 'src/app/shared/gallery/GalleryData';
+import { ActivatedRoute } from "@angular/router";
+import { map, switchMap } from 'rxjs/operators';
+import { GalleryData } from "../../shared/gallery/GalleryData";
 
 @Component({
   selector: 'osef-admin-gallery',
