@@ -3,11 +3,10 @@ import { signInWithPopup, Auth, GoogleAuthProvider } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 
 @Component({
-  templateUrl: './login-page.component.html',
-  styleUrls: ['./login-page.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: []
+    templateUrl: './login-page.component.html',
+    styleUrls: ['./login-page.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: []
 })
 export class LoginPageComponent {
 

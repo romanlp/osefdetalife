@@ -12,22 +12,21 @@ import { RouterModule } from "@angular/router";
 import { GalleryData } from "../../shared/gallery/GalleryData";
 
 @Component({
-  selector: 'osef-admin-galleries',
-  templateUrl: './admin-galleries.component.html',
-  styleUrls: ['./admin-galleries.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatButtonModule,
-    MatDialogModule,
-    MatFormFieldModule,
-    MatInputModule,
-    RouterModule,
-    MatListModule,
-    MatIconModule,
-  ],
+    selector: 'osef-admin-galleries',
+    templateUrl: './admin-galleries.component.html',
+    styleUrls: ['./admin-galleries.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        CommonModule,
+        FormsModule,
+        MatButtonModule,
+        MatDialogModule,
+        MatFormFieldModule,
+        MatInputModule,
+        RouterModule,
+        MatListModule,
+        MatIconModule,
+    ]
 })
 export class AdminGalleriesComponent {
 

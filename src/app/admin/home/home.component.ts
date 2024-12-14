@@ -7,16 +7,15 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Component({
-  selector: 'osef-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss'],
-  standalone: true,
-  imports: [
-    NgForOf,
-    AsyncPipe,
-    MatButton,
-    MatAnchor
-  ]
+    selector: 'osef-home',
+    templateUrl: './home.component.html',
+    styleUrls: ['./home.component.scss'],
+    imports: [
+        NgForOf,
+        AsyncPipe,
+        MatButton,
+        MatAnchor
+    ]
 })
 export class HomeComponent {
 

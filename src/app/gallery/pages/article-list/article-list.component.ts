@@ -9,18 +9,17 @@ import { GalleryData } from "../../../shared/gallery/GalleryData";
 
 
 @Component({
-  selector: 'osef-gallery-item',
-  templateUrl: './article-list.component.html',
-  styleUrls: ['./article-list.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [
-    NgIf,
-    NgForOf,
-    AsyncPipe,
-    NgOptimizedImage,
-    MatDialogModule
-  ]
+    selector: 'osef-gallery-item',
+    templateUrl: './article-list.component.html',
+    styleUrls: ['./article-list.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        NgIf,
+        NgForOf,
+        AsyncPipe,
+        NgOptimizedImage,
+        MatDialogModule
+    ]
 })
 export class ArticleListComponent {
 

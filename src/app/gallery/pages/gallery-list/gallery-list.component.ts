@@ -5,16 +5,15 @@ import { RouterModule } from "@angular/router";
 import { GalleryData } from "../../../shared/gallery/GalleryData";
 
 @Component({
-  selector: 'osef-gallery-list',
-  templateUrl: './gallery-list.component.html',
-  styleUrls: ['./gallery-list.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [
-    NgForOf,
-    AsyncPipe,
-    RouterModule
-  ]
+    selector: 'osef-gallery-list',
+    templateUrl: './gallery-list.component.html',
+    styleUrls: ['./gallery-list.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        NgForOf,
+        AsyncPipe,
+        RouterModule
+    ]
 })
 export class GalleryListComponent {
 

@@ -8,18 +8,17 @@ import { Router, RouterLink } from '@angular/router';
 import { ThemingService } from '../../theming.service';
 
 @Component({
-  selector: 'osef-admin-header',
-  templateUrl: './admin-header.component.html',
-  styleUrls: ['./admin-header.component.scss'],
-  standalone: true,
-  imports: [
-    NgIf,
-    RouterLink,
-    MatToolbarModule,
-    MatIconModule,
-    MatButtonModule,
-    AsyncPipe
-  ],
+    selector: 'osef-admin-header',
+    templateUrl: './admin-header.component.html',
+    styleUrls: ['./admin-header.component.scss'],
+    imports: [
+        NgIf,
+        RouterLink,
+        MatToolbarModule,
+        MatIconModule,
+        MatButtonModule,
+        AsyncPipe
+    ]
 })
 export class AdminHeaderComponent {
 

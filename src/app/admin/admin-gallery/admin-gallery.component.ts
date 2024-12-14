@@ -10,19 +10,18 @@ import { map, switchMap } from 'rxjs/operators';
 import { GalleryData } from "../../shared/gallery/GalleryData";
 
 @Component({
-  selector: 'osef-admin-gallery',
-  templateUrl: './admin-gallery.component.html',
-  styleUrls: ['./admin-gallery.component.scss'],
-  standalone: true,
-  imports: [
-    NgIf,
-    NgForOf,
-    AsyncPipe,
-    MatGridListModule,
-    MatCardModule,
-    CdkDropList,
-    NgOptimizedImage
-  ]
+    selector: 'osef-admin-gallery',
+    templateUrl: './admin-gallery.component.html',
+    styleUrls: ['./admin-gallery.component.scss'],
+    imports: [
+        NgIf,
+        NgForOf,
+        AsyncPipe,
+        MatGridListModule,
+        MatCardModule,
+        CdkDropList,
+        NgOptimizedImage
+    ]
 })
 export class AdminGalleryComponent {
 
