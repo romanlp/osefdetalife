@@ -1,4 +1,4 @@
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { Auth, signOut } from '@angular/fire/auth';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,13 +12,12 @@ import { ThemingService } from '../../theming.service';
     templateUrl: './admin-header.component.html',
     styleUrls: ['./admin-header.component.scss'],
     imports: [
-        NgIf,
-        RouterLink,
-        MatToolbarModule,
-        MatIconModule,
-        MatButtonModule,
-        AsyncPipe
-    ]
+    RouterLink,
+    MatToolbarModule,
+    MatIconModule,
+    MatButtonModule,
+    AsyncPipe
+]
 })
 export class AdminHeaderComponent {
 

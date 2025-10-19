@@ -1,5 +1,5 @@
 import { CdkDropList } from '@angular/cdk/drag-drop';
-import { AsyncPipe, NgForOf, NgIf, NgOptimizedImage } from '@angular/common';
+import { AsyncPipe, NgOptimizedImage } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import {
   arrayUnion,
@@ -27,14 +27,12 @@ import { GalleryData } from '../../shared/gallery/GalleryData';
   templateUrl: './admin-gallery.component.html',
   styleUrls: ['./admin-gallery.component.scss'],
   imports: [
-    NgIf,
-    NgForOf,
     AsyncPipe,
     MatGridListModule,
     MatCardModule,
     CdkDropList,
-    NgOptimizedImage,
-  ],
+    NgOptimizedImage
+],
 })
 export class AdminGalleryComponent {
   firestore: Firestore = inject(Firestore);

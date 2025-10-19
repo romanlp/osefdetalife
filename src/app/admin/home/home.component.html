@@ -26,5 +26,7 @@
 </div>
 
 <ul>
-  <li *ngFor="let type of supportedInputTypes">{{ type }}</li>
+  @for (type of supportedInputTypes; track type) {
+  <li>{{ type }}</li>
+  }
 </ul>

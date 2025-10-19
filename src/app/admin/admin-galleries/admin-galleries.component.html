@@ -3,9 +3,11 @@
 </button>
 
 <mat-nav-list role="list">
-  <a mat-list-item *ngFor="let item of docs$ | async" [routerLink]="[item.id]">
+  @for (item of docs$ | async; track item.id) {
+  <a mat-list-item [routerLink]="[item.id]">
     {{ item.name }}
   </a>
+  }
 </mat-nav-list>
 
 <router-outlet></router-outlet>

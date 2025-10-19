@@ -1,22 +1,18 @@
-
-
-<div *ngIf="document$ | async as document">
-
-  <input type="file" (input)="uploadImage(document.id, $event)">
-
-
-  <h1>{{ document.name}}</h1>
-
-  <mat-grid-list cdkDropList cols="3" rowHeight="600px" gutterSize="32">
-    <mat-grid-tile *ngFor="let photo of document.photos" cdkDrag>
-      <mat-card appearance="outlined">
-        <mat-card-header>
-          <mat-card-title>{{ photo.name }}</mat-card-title>
-        </mat-card-header>
-
-        <img mat-card-image [ngSrc]="photo.url" [alt]="photo.name">
-      </mat-card>
-    </mat-grid-tile>
-  </mat-grid-list>
-
-</div>
+@if (document$ | async; as document) {
+  <div>
+    <input type="file" (input)="uploadImage(document.id, $event)">
+    <h1>{{ document.name}}</h1>
+    <mat-grid-list cdkDropList cols="3" rowHeight="600px" gutterSize="32">
+      @for (photo of document.photos; track photo) {
+        <mat-grid-tile cdkDrag>
+          <mat-card appearance="outlined">
+            <mat-card-header>
+              <mat-card-title>{{ photo.name }}</mat-card-title>
+            </mat-card-header>
+            <img mat-card-image [ngSrc]="photo.url" [alt]="photo.name">
+          </mat-card>
+        </mat-grid-tile>
+      }
+    </mat-grid-list>
+  </div>
+}

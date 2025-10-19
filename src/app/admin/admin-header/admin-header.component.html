@@ -5,10 +5,16 @@
   <a [routerLink]="['./galleries']" routerLinkActive="active" mat-button>Galleries</a>
   <span class="example-spacer"></span>
 
-  <button (click)="switchTheme()" mat-icon-button *ngIf="theme$ | async as theme">
-    <mat-icon *ngIf="theme === 'dark-theme'">light_mode</mat-icon>
-    <mat-icon *ngIf="theme === 'light-theme'">nightlight_round</mat-icon>
-  </button>
+  @if (theme$ | async; as theme) {
+    <button (click)="switchTheme()" mat-icon-button>
+      @if (theme === 'dark-theme') {
+        <mat-icon>light_mode</mat-icon>
+      }
+      @if (theme === 'light-theme') {
+        <mat-icon>nightlight_round</mat-icon>
+      }
+    </button>
+  }
 
   <button (click)="logout()" mat-button>
     <mat-icon>exit_to_app</mat-icon>

@@ -21,6 +21,8 @@
   <span></span>
 </div>
 
-<a *ngFor="let doc of docs$ | async" [routerLink]="doc.id">
-  {{ doc.name }}
-</a>
+@for (doc of docs$ | async; track doc) {
+  <a [routerLink]="doc.id">
+    {{ doc.name }}
+  </a>
+}

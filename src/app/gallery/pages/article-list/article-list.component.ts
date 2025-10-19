@@ -1,4 +1,4 @@
-import { AsyncPipe, NgForOf, NgIf, NgOptimizedImage } from '@angular/common';
+import { AsyncPipe, NgOptimizedImage } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { collection, CollectionReference, doc, docData, Firestore } from '@angular/fire/firestore';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -14,12 +14,10 @@ import { GalleryData } from "../../../shared/gallery/GalleryData";
     styleUrls: ['./article-list.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
-        NgIf,
-        NgForOf,
-        AsyncPipe,
-        NgOptimizedImage,
-        MatDialogModule
-    ]
+    AsyncPipe,
+    NgOptimizedImage,
+    MatDialogModule
+]
 })
 export class ArticleListComponent {
 

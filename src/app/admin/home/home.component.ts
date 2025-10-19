@@ -1,6 +1,6 @@
 import { getSupportedInputTypes, supportsPassiveEventListeners } from '@angular/cdk/platform';
 import { ViewportRuler } from '@angular/cdk/scrolling';
-import { AsyncPipe, NgForOf } from "@angular/common";
+import { AsyncPipe } from "@angular/common";
 import { Component } from '@angular/core';
 import { MatAnchor, MatButton } from "@angular/material/button";
 import { Observable } from 'rxjs';
@@ -11,11 +11,10 @@ import { map } from 'rxjs/operators';
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.scss'],
     imports: [
-        NgForOf,
-        AsyncPipe,
-        MatButton,
-        MatAnchor
-    ]
+    AsyncPipe,
+    MatButton,
+    MatAnchor
+]
 })
 export class HomeComponent {
 

@@ -1,4 +1,4 @@
-import { AsyncPipe, NgForOf } from "@angular/common";
+import { AsyncPipe } from "@angular/common";
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { collection, collectionData, CollectionReference, Firestore } from "@angular/fire/firestore";
 import { RouterModule } from "@angular/router";
@@ -10,10 +10,9 @@ import { GalleryData } from "../../../shared/gallery/GalleryData";
     styleUrls: ['./gallery-list.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
-        NgForOf,
-        AsyncPipe,
-        RouterModule
-    ]
+    AsyncPipe,
+    RouterModule
+]
 })
 export class GalleryListComponent {
 
