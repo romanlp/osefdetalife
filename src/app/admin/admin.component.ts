@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AdminHeaderComponent } from './admin-header/admin-header.component';
 
@@ -8,6 +8,7 @@ import { AdminHeaderComponent } from './admin-header/admin-header.component';
     <osef-admin-header></osef-admin-header>
     <router-outlet></router-outlet>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [AdminHeaderComponent, RouterOutlet],
 })
 export class AdminComponent {

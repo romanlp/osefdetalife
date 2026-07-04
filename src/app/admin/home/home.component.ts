@@ -1,7 +1,7 @@
 import { getSupportedInputTypes, supportsPassiveEventListeners } from '@angular/cdk/platform';
 import { ViewportRuler } from '@angular/cdk/scrolling';
 import { AsyncPipe } from "@angular/common";
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { MatAnchor, MatButton } from "@angular/material/button";
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -10,6 +10,7 @@ import { map } from 'rxjs/operators';
     selector: 'osef-home',
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     imports: [
     AsyncPipe,
     MatButton,

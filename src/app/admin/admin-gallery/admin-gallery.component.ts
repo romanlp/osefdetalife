@@ -1,6 +1,6 @@
 import { CdkDropList } from '@angular/cdk/drag-drop';
 import { AsyncPipe, NgOptimizedImage } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import {
   arrayUnion,
   collection,
@@ -26,6 +26,7 @@ import { GalleryData } from '../../shared/gallery/GalleryData';
   selector: 'osef-admin-gallery',
   templateUrl: './admin-gallery.component.html',
   styleUrls: ['./admin-gallery.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     AsyncPipe,
     MatGridListModule,

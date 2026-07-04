@@ -1,11 +1,12 @@
 import { NgOptimizedImage } from "@angular/common";
-import {Component, Inject} from '@angular/core';
+import {Component, Inject, ChangeDetectionStrategy} from '@angular/core';
 import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 
 @Component({
     selector: 'osef-dialog-image',
     templateUrl: './dialog-image.component.html',
     styleUrls: ['./dialog-image.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     imports: [
         NgOptimizedImage
     ]
