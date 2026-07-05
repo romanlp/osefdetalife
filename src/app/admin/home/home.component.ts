@@ -1,32 +1,33 @@
-import { getSupportedInputTypes, supportsPassiveEventListeners } from '@angular/cdk/platform';
+import {
+  getSupportedInputTypes,
+  supportsPassiveEventListeners,
+} from '@angular/cdk/platform';
 import { ViewportRuler } from '@angular/cdk/scrolling';
-import { AsyncPipe } from "@angular/common";
-import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { MatAnchor, MatButton } from "@angular/material/button";
+import { AsyncPipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { MatAnchor, MatButton } from '@angular/material/button';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { AddressComponent } from '../../address/address.component';
 
 @Component({
-    selector: 'osef-home',
-    templateUrl: './home.component.html',
-    styleUrls: ['./home.component.scss'],
-    changeDetection: ChangeDetectionStrategy.Eager,
-    imports: [
-    AsyncPipe,
-    MatButton,
-    MatAnchor
-]
+  selector: 'osef-home',
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [AsyncPipe, MatButton, MatAnchor, AddressComponent],
 })
 export class HomeComponent {
+  private _ruler = inject(ViewportRuler);
 
-  public viewportSize: { width: number, height: number };
+  public viewportSize: { width: number; height: number };
   public viewportScrollPosition: { top: number; left: number };
   public supportPassiveEvent: boolean;
   public supportedInputTypes: Set<string>;
   public viewportWidth$: Observable<number>;
   public viewportHeight$: Observable<number>;
 
-  constructor(private _ruler: ViewportRuler) {
+  constructor() {
     this.supportPassiveEvent = supportsPassiveEventListeners();
     this.supportedInputTypes = getSupportedInputTypes();
 
@@ -37,11 +38,13 @@ export class HomeComponent {
     this.viewportScrollPosition = this._ruler.getViewportScrollPosition();
 
     // native resize event object
-    this.viewportWidth$ = this._ruler.change()
-      .pipe(map(event => (event.target as Window).innerWidth));
+    this.viewportWidth$ = this._ruler
+      .change()
+      .pipe(map((event) => (event.target as Window).innerWidth));
 
     // native resize event object
-    this.viewportHeight$ = this._ruler.change()
-      .pipe(map(event => (event.target as Window).innerHeight));
+    this.viewportHeight$ = this._ruler
+      .change()
+      .pipe(map((event) => (event.target as Window).innerHeight));
   }
 }

@@ -1,6 +1,6 @@
 import { CdkDropList } from '@angular/cdk/drag-drop';
 import { AsyncPipe, NgOptimizedImage } from '@angular/common';
-import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {
   arrayUnion,
   collection,
@@ -32,25 +32,25 @@ import { GalleryData } from '../../shared/gallery/GalleryData';
     MatGridListModule,
     MatCardModule,
     CdkDropList,
-    NgOptimizedImage
-],
+    NgOptimizedImage,
+  ],
 })
 export class AdminGalleryComponent {
+  private activatedRoute = inject(ActivatedRoute);
+
   firestore: Firestore = inject(Firestore);
   storage: Storage = inject(Storage);
   collection = collection(
     this.firestore,
-    'galleries'
+    'galleries',
   ) as CollectionReference<GalleryData>;
 
   document$ = this.activatedRoute.params.pipe(
     map((params) => params['id']),
     switchMap((id) =>
-      docData<GalleryData>(doc(this.collection, id), { idField: 'id' })
-    )
+      docData<GalleryData>(doc(this.collection, id), { idField: 'id' }),
+    ),
   );
-
-  constructor(private activatedRoute: ActivatedRoute) {}
 
   uploadImage(id: string, event: Event) {
     // @ts-ignore

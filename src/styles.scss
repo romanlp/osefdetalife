@@ -1,11 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
-@use '@angular/material' as mat;
+@use "@angular/material" as mat;
 @use "sass:math";
-@import url('https://fonts.googleapis.com/css?family=Krub');
+@import url("https://fonts.googleapis.com/css?family=Krub");
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 :root {
   --color-bg-dark: #15171b;
@@ -20,42 +18,33 @@
   --color: var(--color-light);
 }
 
-// Imports for Angular Material Theming
-@include mat.all-component-typographies();
-@include mat.elevation-classes();
-@include mat.app-background();
-
-$theme: mat.define-theme((
-  color: (
-    theme-type: light,
-    primary: mat.$blue-palette,
-  )
-));
-
-// Define a dark theme
-$dark-theme: mat.define-theme((
- color: (
-   theme-type: dark,
-   primary: mat.$magenta-palette,
- )
-));
-
 html {
-  @include mat.all-component-themes($theme);
+  color-scheme: light dark;
+  @include mat.theme(
+    (
+      color: mat.$violet-palette,
+      typography: Krub,
+      density: 0,
+    )
+  );
+}
+
+body {
+  background: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
 }
 
 .dark-theme {
-  @include mat.all-component-colors($dark-theme);
+  color-scheme: dark;
 
   --bg-color: var(--color-bg-dark);
   --color: var(--color-dark);
 }
 
-
 body {
   background-color: var(--bg-color);
   margin: 0;
-  font-family: 'Krub', sans-serif;
+  font-family: "Krub", sans-serif;
   color: var(--color);
 }
 
@@ -80,24 +69,27 @@ $amount: 10;
   animation-duration: $animationDuration;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
-  $colors: ( #362554, #7a3149, #805555);
+  $colors: (#362554, #7a3149, #805555);
   @for $i from 1 through $amount {
-      &:nth-child(#{$i}) {
-          color: nth($colors, random(length($colors)));
-          top: random(100) * 1%;
-          left: random(100) * 1%;
-          animation-duration: math.div(random($animationDuration * 10), 10) * 1s + 10s;
-          animation-delay: math.div(random(($animationDuration + 10s) * 10), 10) * -1s;
-          transform-origin: (random(50) - 25) * 1vw (random(50) - 25) * 1vh;
-          $blurRadius: (random() + 0.5) * $particleSize * 0.5;
-          $x: if(random() > 0.5, -1, 1);
-          box-shadow: ($particleSize * 2 * $x) 0 $blurRadius currentColor;
-      }
+    &:nth-child(#{$i}) {
+      color: nth($colors, random(length($colors)));
+      top: random(100) * 1%;
+      left: random(100) * 1%;
+      animation-duration: math.div(random($animationDuration * 10), 10) *
+        1s +
+        10s;
+      animation-delay: math.div(random(($animationDuration + 10s) * 10), 10) *
+        -1s;
+      transform-origin: (random(50) - 25) * 1vw (random(50) - 25) * 1vh;
+      $blurRadius: (random() + 0.5) * $particleSize * 0.5;
+      $x: if(random() > 0.5, -1, 1);
+      box-shadow: ($particleSize * 2 * $x) 0 $blurRadius currentColor;
+    }
   }
 }
 
 @keyframes move {
   100% {
-      transform: translate3d(0, 0, 1px) rotate(360deg);
+    transform: translate3d(0, 0, 1px) rotate(360deg);
   }
 }
