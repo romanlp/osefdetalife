@@ -1,9 +1,9 @@
 import { ComponentFixture } from '@angular/core/testing';
-import { MockBuilder, MockRender } from "ng-mocks";
-import { AdminModule } from "../admin.module";
+import { MockBuilder, MockRender } from 'ng-mocks';
+import { AdminModule } from '../admin.module';
 import { AdminGalleryComponent } from './admin-gallery.component';
 
-fdescribe('AdminGalleryComponent', () => {
+describe.only('AdminGalleryComponent', () => {
   let component: AdminGalleryComponent;
   let fixture: ComponentFixture<AdminGalleryComponent>;
 

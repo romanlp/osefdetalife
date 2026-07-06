@@ -1,5 +1,11 @@
-<p>
-  login-page works!
-</p>
-
-<button (click)="login()">Login</button>
+<div class="h-screen flex items-center justify-center">
+  <mat-card appearance="outlined" class="w-96 m-auto">
+    <mat-card-header>
+      <mat-card-title> Sign in</mat-card-title>
+      <mat-card-subtitle>Use your Google account</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-actions>
+      <button matButton="filled" (click)="login()">Login</button>
+    </mat-card-actions>
+  </mat-card>
+</div>

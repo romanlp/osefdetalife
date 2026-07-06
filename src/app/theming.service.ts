@@ -1,16 +1,15 @@
 import { MediaMatcher } from '@angular/cdk/layout';
-import { ApplicationRef, Injectable, inject } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { Injectable, effect, inject, signal } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ThemingService {
-  private ref = inject(ApplicationRef);
   private mediaMatcher = inject(MediaMatcher);
 
   themes = ['dark-theme', 'light-theme']; // <- list all themes in this array
-  theme$ = new BehaviorSubject('light-theme');
+
+  currentTheme = signal('light-theme');
 
   constructor() {
     const mediaMatcher = this.mediaMatcher;
@@ -22,7 +21,7 @@ export class ThemingService {
 
     // If dark mode is enabled then directly switch to the dark-theme
     if (darkModeOn) {
-      this.theme$.next('dark-theme');
+      this.currentTheme.set('dark-theme');
     }
 
     // Watch for changes of the preference
@@ -30,20 +29,17 @@ export class ThemingService {
       .matchMedia('(prefers-color-scheme: dark)')
       .addEventListener('change', (e) => {
         const turnOn = e.matches;
-        this.theme$.next(turnOn ? 'dark-theme' : 'light-theme');
-
-        // Trigger refresh of UI
-        this.ref.tick();
+        this.currentTheme.set(turnOn ? 'dark-theme' : 'light-theme');
       });
 
-    this.theme$.subscribe((theme: string) => {
-      document.body.className = theme;
+    effect(() => {
+      document.body.className = this.currentTheme();
     });
   }
 
   switch() {
-    this.theme$.next(
-      this.theme$.getValue() === 'light-theme' ? 'dark-theme' : 'light-theme',
-    );
+    const newTheme =
+      this.currentTheme() === 'light-theme' ? 'dark-theme' : 'light-theme';
+    this.currentTheme.set(newTheme);
   }
 }

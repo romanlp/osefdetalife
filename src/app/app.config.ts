@@ -6,23 +6,21 @@ import {
   provideAppCheck,
   ReCaptchaV3Provider,
 } from '@angular/fire/app-check';
-import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getPerformance, providePerformance } from '@angular/fire/performance';
 import { getStorage, provideStorage } from '@angular/fire/storage';
 import { provideRouter } from '@angular/router';
 import { environment } from '../environments/environment';
 
-import { routes } from './routing/app-routing.module';
+import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
+    provideZoneChangeDetection({ eventCoalescing: true }),
 
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideFirestore(() => getFirestore()),
-    provideAuth(() => getAuth()),
     provideAppCheck(() =>
       initializeAppCheck(undefined, {
         provider: new ReCaptchaV3Provider(environment.recaptcha),
