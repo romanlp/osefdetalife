@@ -1,15 +1,22 @@
-import { AsyncPipe, NgOptimizedImage } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { NgOptimizedImage } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import {
   collection,
   CollectionReference,
   doc,
-  docData,
-  Firestore,
-} from '@angular/fire/firestore';
+  onSnapshot,
+} from 'firebase/firestore';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
-import { map, switchMap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
+import { Firebase } from '../../../common/firebase';
 import { DialogImageComponent } from '../../../shared/dialog-image/dialog-image.component';
 import { GalleryData } from '../../../shared/gallery/GalleryData';
 
@@ -18,24 +25,40 @@ import { GalleryData } from '../../../shared/gallery/GalleryData';
   templateUrl: './article-list.component.html',
   styleUrls: ['./article-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AsyncPipe, NgOptimizedImage, MatDialogModule],
+  imports: [NgOptimizedImage, MatDialogModule],
 })
 export class ArticleListComponent {
   private activatedRoute = inject(ActivatedRoute);
   private dialog = inject(MatDialog);
+  private firebase = inject(Firebase);
 
-  firestore: Firestore = inject(Firestore);
-  collection = collection(
-    this.firestore,
+  private galleryCollection = collection(
+    this.firebase.firestore,
     'galleries',
   ) as CollectionReference<GalleryData>;
 
-  document$ = this.activatedRoute.params.pipe(
-    map((params) => params['id']),
-    switchMap((id) =>
-      docData<GalleryData>(doc(this.collection, id), { idField: 'id' }),
-    ),
+  private idParam = toSignal(
+    this.activatedRoute.params.pipe(map((params) => params['id'] as string)),
   );
+
+  document = signal<GalleryData | undefined>(undefined);
+
+  constructor() {
+    effect((onCleanup) => {
+      const id = this.idParam();
+      if (!id) return;
+
+      const docRef = doc(this.galleryCollection, id);
+      const unsub = onSnapshot(docRef, (snapshot) => {
+        this.document.set({
+          id: snapshot.id,
+          ...snapshot.data(),
+        } as GalleryData);
+      });
+
+      onCleanup(() => unsub());
+    });
+  }
 
   public openImage(url: string) {
     this.dialog.open(DialogImageComponent, { data: { url } });

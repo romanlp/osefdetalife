@@ -9,10 +9,9 @@ import {
   provideAppCheck as provideAppCheckLegacy,
   ReCaptchaV3Provider,
 } from '@angular/fire/app-check';
-import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+import { getFirestore, provideFirestore as provideFirestoreLegacy } from '@angular/fire/firestore';
 import { getPerformance, providePerformance as providePerformanceLegacy } from '@angular/fire/performance';
-
-import { getStorage, provideStorage } from '@angular/fire/storage';
+import { getStorage, provideStorage as provideStorageLegacy } from '@angular/fire/storage';
 import { provideRouter } from '@angular/router';
 import { initializeApp } from 'firebase/app';
 import { environment } from '../environments/environment';
@@ -22,6 +21,8 @@ import {
   provideAppCheck,
   providePerformance,
   provideFirebaseApp,
+  provideFirestore,
+  provideStorage,
 } from './common/firebase';
 
 export const appConfig: ApplicationConfig = {
@@ -34,10 +35,12 @@ export const appConfig: ApplicationConfig = {
     provideAppCheck(),
     provideAnalytics(),
     providePerformance(),
+    provideFirestore(),
+    provideStorage(),
 
     // Old Angularfire configuration for compatibility with existing code
     provideFirebaseAppLegacy(() => initializeAppLegacy(environment.firebase)),
-    provideFirestore(() => getFirestore()),
+    provideFirestoreLegacy(() => getFirestore()),
     provideAppCheckLegacy(() =>
       initializeAppCheck(undefined, {
         provider: new ReCaptchaV3Provider(environment.recaptcha),
@@ -45,11 +48,7 @@ export const appConfig: ApplicationConfig = {
       }),
     ),
     providePerformanceLegacy(() => getPerformance()),
-    provideStorage(() => getStorage()),
+    provideStorageLegacy(() => getStorage()),
     provideAnalyticsLegacy(() => getAnalytics()),
-    // provideAppCheck(),
-    // providePerformance(),
-    provideStorage(() => getStorage()),
-    // provideAnalytics(),
   ],
 };

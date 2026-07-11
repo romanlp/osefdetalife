@@ -1,25 +1,31 @@
 import { CdkDropList } from '@angular/cdk/drag-drop';
-import { AsyncPipe, NgOptimizedImage } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { NgOptimizedImage } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import {
   arrayUnion,
   collection,
   CollectionReference,
   doc,
-  Firestore,
+  onSnapshot,
   updateDoc,
-} from '@angular/fire/firestore';
+} from 'firebase/firestore';
 import {
   getDownloadURL,
   ref,
-  Storage,
   uploadBytes,
-} from '@angular/fire/storage';
+} from 'firebase/storage';
 import { MatCardModule } from '@angular/material/card';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { ActivatedRoute } from '@angular/router';
-import { docData } from 'rxfire/firestore';
-import { map, switchMap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
+import { Firebase } from '../../common/firebase';
 import { GalleryData } from '../../shared/gallery/GalleryData';
 
 @Component({
@@ -28,7 +34,6 @@ import { GalleryData } from '../../shared/gallery/GalleryData';
   styleUrls: ['./admin-gallery.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
-    AsyncPipe,
     MatGridListModule,
     MatCardModule,
     CdkDropList,
@@ -37,32 +42,45 @@ import { GalleryData } from '../../shared/gallery/GalleryData';
 })
 export class AdminGalleryComponent {
   private activatedRoute = inject(ActivatedRoute);
+  private firebase = inject(Firebase);
 
-  firestore: Firestore = inject(Firestore);
-  storage: Storage = inject(Storage);
-  collection = collection(
-    this.firestore,
+  private galleryCollection = collection(
+    this.firebase.firestore,
     'galleries',
   ) as CollectionReference<GalleryData>;
 
-  document$ = this.activatedRoute.params.pipe(
-    map((params) => params['id']),
-    switchMap((id) =>
-      docData<GalleryData>(doc(this.collection, id), { idField: 'id' }),
-    ),
+  private idParam = toSignal(
+    this.activatedRoute.params.pipe(map((params) => params['id'] as string)),
   );
+
+  document = signal<GalleryData | undefined>(undefined);
+
+  constructor() {
+    effect((onCleanup) => {
+      const id = this.idParam();
+      if (!id) return;
+
+      const docRef = doc(this.galleryCollection, id);
+      const unsub = onSnapshot(docRef, (snapshot) => {
+        this.document.set({
+          id: snapshot.id,
+          ...snapshot.data(),
+        } as GalleryData);
+      });
+
+      onCleanup(() => unsub());
+    });
+  }
 
   uploadImage(id: string, event: Event) {
     // @ts-ignore
     const image = (event.target as HTMLInputElement).files[0];
 
-    const storageRef = ref(this.storage, `${id}/${image.name}`);
-
-    console.log(id, storageRef);
+    const storageRef = ref(this.firebase.storage, `${id}/${image.name}`);
 
     uploadBytes(storageRef, image).then(() => {
       getDownloadURL(storageRef).then((link) => {
-        updateDoc(doc(this.collection, id), {
+        updateDoc(doc(this.galleryCollection, id), {
           photos: arrayUnion({ name: image.name, url: link }),
         });
       });

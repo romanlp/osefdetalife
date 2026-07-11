@@ -1,18 +1,18 @@
-import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   ViewChild,
+  effect,
   inject,
+  signal,
 } from '@angular/core';
 import {
-  CollectionReference,
-  Firestore,
   collection,
-  collectionData,
+  CollectionReference,
   doc,
+  onSnapshot,
   setDoc,
-} from '@angular/fire/firestore';
+} from 'firebase/firestore';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -21,6 +21,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { RouterModule } from '@angular/router';
+import { Firebase } from '../../common/firebase';
 import { GalleryData } from '../../shared/gallery/GalleryData';
 
 @Component({
@@ -29,7 +30,6 @@ import { GalleryData } from '../../shared/gallery/GalleryData';
   styleUrls: ['./admin-galleries.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     FormsModule,
     MatButtonModule,
     MatDialogModule,
@@ -41,26 +41,42 @@ import { GalleryData } from '../../shared/gallery/GalleryData';
   ],
 })
 export class AdminGalleriesComponent {
-  private firestore = inject(Firestore);
+  private firebase = inject(Firebase);
   private dialog = inject(MatDialog);
 
   @ViewChild('dialogCreateGallery', { static: true })
   dialogCreateGallery: any;
 
-  collection = collection(
-    this.firestore,
+  private galleryCollection = collection(
+    this.firebase.firestore,
     'galleries',
   ) as CollectionReference<GalleryData>;
-  docs$ = collectionData<GalleryData>(this.collection, { idField: 'id' });
+
+  docs = signal<GalleryData[]>([]);
 
   name = '';
+
+  constructor() {
+    effect((onCleanup) => {
+      const unsub = onSnapshot(this.galleryCollection, (snapshot) => {
+        this.docs.set(
+          snapshot.docs.map((d) => ({
+            ...d.data(),
+            id: d.id,
+          })) as GalleryData[],
+        );
+      });
+
+      onCleanup(() => unsub());
+    });
+  }
 
   openDialog() {
     this.dialog.open(this.dialogCreateGallery);
   }
 
   onCreate(name: string) {
-    setDoc<any, any>(doc(this.collection, name.toLowerCase()), {
+    setDoc<any, any>(doc(this.galleryCollection, name.toLowerCase()), {
       name,
       photos: [],
     });

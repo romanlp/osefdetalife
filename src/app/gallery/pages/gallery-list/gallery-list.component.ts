@@ -6,9 +6,8 @@ import {
   resource,
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { collection, getDocs, getFirestore } from 'firebase/firestore';
+import { collection, getDocs } from 'firebase/firestore';
 import { Firebase } from '../../../common/firebase';
-import { getApp } from 'firebase/app';
 
 @Component({
   selector: 'osef-gallery-list',
@@ -23,7 +22,7 @@ export class GalleryListComponent {
   public userResource = resource({
     loader: async () => {
       const request = await getDocs(
-        collection(getFirestore(getApp()), 'galleries'),
+        collection(this.firebase.firestore, 'galleries'),
       );
       return request.docs.map((doc) => ({
         id: doc.id,

@@ -19,9 +19,9 @@ import {
   getPerformance,
   type FirebasePerformance,
 } from 'firebase/performance';
+import { getFirestore, type Firestore } from 'firebase/firestore';
+import { getStorage, type FirebaseStorage } from 'firebase/storage';
 import { environment } from '../../environments/environment';
-import { getApp } from 'firebase/app';
-
 
 /**
  * Injection token for the Firebase app instance.
@@ -44,6 +44,16 @@ export const ANALYTICS = new InjectionToken<Analytics>('ANALYTICS');
  * Injection token for the Firebase Performance Monitoring instance.
  */
 export const PERFORMANCE = new InjectionToken<FirebasePerformance>('PERFORMANCE');
+
+/**
+ * Injection token for the Firebase Firestore instance.
+ */
+export const FIRESTORE = new InjectionToken<Firestore>('FIRESTORE');
+
+/**
+ * Injection token for the Firebase Storage instance.
+ */
+export const STORAGE = new InjectionToken<FirebaseStorage>('STORAGE');
 
 function firebaseAppFactory(fn: (injector: Injector) => FirebaseApp) {
   return (injector: Injector) => {
@@ -104,19 +114,45 @@ export function providePerformance(): EnvironmentProviders {
         const app = inject(PROVIDED_FIREBASE_APP);
         return getPerformance(app);
       },
-            deps: [PROVIDED_FIREBASE_APP],
+      deps: [PROVIDED_FIREBASE_APP],
     },
   ]);
 }
 
+export function provideFirestore(): EnvironmentProviders {
+  return makeEnvironmentProviders([
+    {
+      provide: FIRESTORE,
+      useFactory: () => {
+        const app = inject(PROVIDED_FIREBASE_APP);
+        return getFirestore(app);
+      },
+      deps: [PROVIDED_FIREBASE_APP],
+    },
+  ]);
+}
+
+export function provideStorage(): EnvironmentProviders {
+  return makeEnvironmentProviders([
+    {
+      provide: STORAGE,
+      useFactory: () => {
+        const app = inject(PROVIDED_FIREBASE_APP);
+        return getStorage(app);
+      },
+      deps: [PROVIDED_FIREBASE_APP],
+    },
+  ]);
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class Firebase {
-  public appTest = getApp();
   public app = inject(PROVIDED_FIREBASE_APP);
   public appCheck = inject(APP_CHECK);
   public analytics = inject(ANALYTICS);
   public performance = inject(PERFORMANCE);
+  public firestore = inject(FIRESTORE);
+  public storage = inject(STORAGE);
 }

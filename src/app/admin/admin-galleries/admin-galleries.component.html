@@ -3,7 +3,7 @@
 </button>
 
 <mat-nav-list role="list">
-  @for (item of docs$ | async; track item.id) {
+  @for (item of docs(); track item.id) {
   <a mat-list-item [routerLink]="[item.id]">
     {{ item.name }}
   </a>

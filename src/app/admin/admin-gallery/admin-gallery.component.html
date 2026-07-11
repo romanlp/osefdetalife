@@ -1,4 +1,4 @@
-@if (document$ | async; as document) {
+@if (document(); as document) {
   <div>
     <input type="file" (input)="uploadImage(document.id, $event)">
     <h1>{{ document.name}}</h1>
