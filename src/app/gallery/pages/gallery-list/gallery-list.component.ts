@@ -1,29 +1,37 @@
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {
-  collection,
-  collectionData,
-  CollectionReference,
-  Firestore,
-} from '@angular/fire/firestore';
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  resource,
+} from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { GalleryData } from '../../../shared/gallery/GalleryData';
+import { collection, getDocs, getFirestore } from 'firebase/firestore';
+import { Firebase } from '../../../common/firebase';
+import { getApp } from 'firebase/app';
 
 @Component({
   selector: 'osef-gallery-list',
   templateUrl: './gallery-list.component.html',
   styleUrls: ['./gallery-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AsyncPipe, RouterModule],
+  imports: [RouterModule],
 })
 export class GalleryListComponent {
-  private firestore = inject(Firestore);
+  private firebase = inject(Firebase);
 
-  collection = collection(
-    this.firestore,
-    'galleries',
-  ) as CollectionReference<GalleryData>;
-  docs$ = collectionData<GalleryData>(this.collection, { idField: 'id' });
+  public userResource = resource({
+    loader: async () => {
+      const request = await getDocs(
+        collection(getFirestore(getApp()), 'galleries'),
+      );
+      return request.docs.map((doc) => ({
+        id: doc.id,
+        name: doc.data()['name'],
+        ...doc.data(),
+      }));
+    },
+  });
 
-  name = '';
+  public docs = computed(() => this.userResource.value() ?? []);
 }

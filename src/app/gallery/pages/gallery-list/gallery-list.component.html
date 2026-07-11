@@ -21,8 +21,8 @@
   <span></span>
 </div>
 
-@for (doc of docs$ | async; track doc) {
-  <a [routerLink]="doc.id">
-    {{ doc.name }}
-  </a>
+@for (doc of docs(); track doc.id) {
+<a [routerLink]="doc.id">
+  {{ doc.name }}
+</a>
 }
