@@ -14,7 +14,7 @@ import { AddressComponent } from '../../address/address.component';
   selector: 'osef-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AsyncPipe, MatButton, MatAnchor, AddressComponent],
 })
 export class HomeComponent {

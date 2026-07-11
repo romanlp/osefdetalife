@@ -32,7 +32,7 @@ import { GalleryData } from '../../shared/gallery/GalleryData';
   selector: 'osef-admin-gallery',
   templateUrl: './admin-gallery.component.html',
   styleUrls: ['./admin-gallery.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatGridListModule,
     MatCardModule,
