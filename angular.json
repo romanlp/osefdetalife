@@ -6,7 +6,8 @@
     "analytics": false,
     "packageManager": "npm",
     "schematicCollections": [
-      "@angular-eslint/schematics"
+      "@angular-eslint/schematics",
+      "playwright-ng-schematics"
     ]
   },
   "projects": {
@@ -114,6 +115,17 @@
               "src/**/*.ts",
               "src/**/*.html"
             ]
+          }
+        },
+        "e2e": {
+          "builder": "playwright-ng-schematics:playwright",
+          "options": {
+            "devServerTarget": "osefdetalife:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "osefdetalife:serve:production"
+            }
           }
         }
       }

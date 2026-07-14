@@ -1,22 +1,25 @@
-import { waitForAsync } from '@angular/core/testing';
-import { MockBuilder, MockRender } from "ng-mocks";
-import { HomeComponent } from "./admin/home/home.component";
+import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
-
   beforeEach(async () => {
-    MockBuilder(HomeComponent);
+    await TestBed.configureTestingModule({
+      imports: [AppComponent],
+      providers: [provideRouter([])],
+    }).compileComponents();
   });
 
-  it('should create the app', waitForAsync(() => {
-    const fixture = MockRender(HomeComponent);
-    const app = fixture.debugElement.componentInstance;
+  it('should create the app', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
     expect(app).toBeTruthy();
-  }));
-  it('should render title in a h1 tag', waitForAsync(() => {
-    const fixture = MockRender(HomeComponent);
+  });
+
+  it('should render router-outlet', () => {
+    const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
-    const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('h1').textContent).toContain('Welcome to app!');
-  }));
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('router-outlet')).not.toBeNull();
+  });
 });
