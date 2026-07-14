@@ -40,7 +40,7 @@ jobs:
         run: npx ng test --no-watch
 
       - name: Run E2E tests
-        run: npx ng e2e
+        run: npx playwright test
 
       - name: Upload coverage reports
         if: always()
