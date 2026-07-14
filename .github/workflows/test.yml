@@ -37,7 +37,7 @@ jobs:
         run: sleep 10
 
       - name: Run unit tests
-        run: npx ng test --watch=false --code-coverage
+        run: npx ng test --no-watch
 
       - name: Run E2E tests
         run: npx ng e2e
