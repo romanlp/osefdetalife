@@ -6,7 +6,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
   selector: 'osef-dialog-image',
   templateUrl: './dialog-image.component.html',
   styleUrls: ['./dialog-image.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [NgOptimizedImage],
 })
 export class DialogImageComponent {

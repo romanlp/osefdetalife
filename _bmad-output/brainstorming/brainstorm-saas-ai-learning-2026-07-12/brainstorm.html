@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brainstorm Keepsake — SaaS AI Co-pilot Learning Project</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0a0a0f;--surface:#12121a;--surface2:#1a1a26;
+    --text:#e8e6f0;--text-dim:#8a88a0;--text-faint:#55536a;
+    --prov:#ff6b6b;--prov-bg:rgba(255,107,107,.08);--prov-glow:rgba(255,107,107,.25);
+    --ent:#6bcaff;--ent-bg:rgba(107,202,255,.08);--ent-glow:rgba(107,202,255,.25);
+    --ret:#b86bff;--ret-bg:rgba(184,107,255,.08);--ret-glow:rgba(184,107,255,.25);
+    --ship:#6bffb8;--ship-bg:rgba(107,255,184,.08);--ship-glow:rgba(107,255,184,.25);
+    --synth:#ffd76b;--synth-bg:rgba(255,215,107,.08);--synth-glow:rgba(255,215,107,.25);
+    --radius:12px;--radius-sm:8px;
+  }
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    background:var(--bg);color:var(--text);
+    line-height:1.6;overflow-x:hidden;
+  }
+
+  /* ── HERO ── */
+  .hero{
+    min-height:100vh;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;text-align:center;
+    padding:2rem;position:relative;overflow:hidden;
+  }
+  .hero::before{
+    content:'';position:absolute;inset:0;
+    background:
+      radial-gradient(ellipse 600px 400px at 30% 40%,rgba(255,107,107,.1),transparent),
+      radial-gradient(ellipse 500px 500px at 70% 60%,rgba(107,202,255,.08),transparent),
+      radial-gradient(ellipse 400px 300px at 50% 80%,rgba(184,107,255,.06),transparent);
+    animation:heroPulse 8s ease-in-out infinite alternate;
+  }
+  @keyframes heroPulse{
+    0%{opacity:.6;transform:scale(1)}
+    100%{opacity:1;transform:scale(1.05)}
+  }
+  .hero-content{position:relative;z-index:1;max-width:800px}
+  .hero h1{
+    font-size:clamp(2.4rem,6vw,4.2rem);font-weight:800;
+    letter-spacing:-.03em;line-height:1.15;
+    background:linear-gradient(135deg,var(--prov),var(--ent),var(--ret),var(--ship),var(--synth));
+    background-size:300% 300%;
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    background-clip:text;
+    animation:gradientShift 6s ease infinite;
+  }
+  @keyframes gradientShift{
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+  }
+  .hero .subtitle{
+    font-size:clamp(1rem,2.5vw,1.35rem);color:var(--text-dim);
+    margin-top:1rem;max-width:600px;margin-inline:auto;
+  }
+  .hero .meta{
+    margin-top:2rem;display:flex;gap:1.5rem;flex-wrap:wrap;
+    justify-content:center;font-size:.85rem;color:var(--text-faint);
+  }
+  .hero .meta span{display:flex;align-items:center;gap:.4rem}
+  .hero .meta .dot{
+    width:8px;height:8px;border-radius:50%;display:inline-block;
+  }
+  .scroll-hint{
+    position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);
+    animation:bob 2s ease-in-out infinite;color:var(--text-faint);font-size:.8rem;
+  }
+  @keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
+
+  /* ── LAYOUT ── */
+  .container{max-width:1200px;margin:0 auto;padding:0 1.5rem}
+
+  /* ── NAV PILLS ── */
+  .nav{
+    position:sticky;top:0;z-index:100;
+    background:rgba(10,10,15,.85);backdrop-filter:blur(12px);
+    border-bottom:1px solid rgba(255,255,255,.06);
+    padding:.75rem 0;
+  }
+  .nav-inner{
+    display:flex;gap:.5rem;overflow-x:auto;
+    padding:0 1.5rem;max-width:1200px;margin:0 auto;
+    scrollbar-width:none;
+  }
+  .nav-inner::-webkit-scrollbar{display:none}
+  .nav-pill{
+    flex-shrink:0;padding:.5rem 1rem;border-radius:20px;
+    font-size:.8rem;font-weight:600;cursor:pointer;
+    border:1px solid rgba(255,255,255,.08);
+    background:var(--surface);color:var(--text-dim);
+    transition:all .25s ease;white-space:nowrap;
+    text-decoration:none;
+  }
+  .nav-pill:hover,.nav-pill.active{
+    color:var(--text);border-color:rgba(255,255,255,.15);
+    background:var(--surface2);
+  }
+  .nav-pill[data-tech="provocation"]{--pill:var(--prov)}
+  .nav-pill[data-tech="entanglement"]{--pill:var(--ent)}
+  .nav-pill[data-tech="retrofuture"]{--pill:var(--ret)}
+  .nav-pill[data-tech="ship"]{--pill:var(--ship)}
+  .nav-pill[data-tech="synthesis"]{--pill:var(--synth)}
+  .nav-pill:hover,.nav-pill.active{color:var(--pill);border-color:var(--pill)}
+
+  /* ── SEARCH ── */
+  .search-wrap{
+    max-width:500px;margin:0 auto;padding:2rem 1.5rem 0;
+  }
+  .search-box{
+    width:100%;padding:.75rem 1.2rem .75rem 3rem;
+    border-radius:var(--radius);border:1px solid rgba(255,255,255,.08);
+    background:var(--surface);color:var(--text);
+    font-size:.95rem;outline:none;transition:border-color .2s;
+  }
+  .search-box:focus{border-color:rgba(255,255,255,.2)}
+  .search-box::placeholder{color:var(--text-faint)}
+  .search-wrap{position:relative}
+  .search-icon{
+    position:absolute;left:2.5rem;top:50%;margin-top:1.5rem;
+    color:var(--text-faint);pointer-events:none;font-size:1rem;
+  }
+
+  /* ── SECTION ── */
+  .section{padding:4rem 0}
+  .section-header{
+    text-align:center;margin-bottom:3rem;
+  }
+  .section-header h2{
+    font-size:clamp(1.6rem,4vw,2.4rem);font-weight:700;
+    letter-spacing:-.02em;
+  }
+  .section-header p{
+    color:var(--text-dim);max-width:600px;margin:.75rem auto 0;
+    font-size:.95rem;
+  }
+  .section-header .technique-badge{
+    display:inline-block;padding:.3rem .9rem;border-radius:20px;
+    font-size:.75rem;font-weight:700;text-transform:uppercase;
+    letter-spacing:.08em;margin-bottom:.75rem;
+  }
+
+  /* ── TECHNIQUE CARDS ── */
+  .tech-section{position:relative}
+  .tech-section::before{
+    content:'';position:absolute;top:-60px;left:50%;
+    transform:translateX(-50%);
+    width:200px;height:200px;border-radius:50%;
+    filter:blur(100px);opacity:.3;pointer-events:none;
+  }
+  .tech-section[data-t="provocation"]::before{background:var(--prov)}
+  .tech-section[data-t="entanglement"]::before{background:var(--ent)}
+  .tech-section[data-t="retrofuture"]::before{background:var(--ret)}
+  .tech-section[data-t="ship"]::before{background:var(--ship)}
+
+  .cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));
+    gap:1rem;
+  }
+  .card{
+    background:var(--surface);
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:var(--radius);
+    padding:1.25rem 1.25rem 1rem;
+    transition:all .3s ease;
+    position:relative;overflow:hidden;
+    animation:fadeUp .5s ease both;
+  }
+  .card::before{
+    content:'';position:absolute;top:0;left:0;right:0;height:2px;
+    opacity:0;transition:opacity .3s;
+  }
+  .card:hover{
+    transform:translateY(-2px);
+    border-color:rgba(255,255,255,.12);
+    box-shadow:0 8px 32px rgba(0,0,0,.3);
+  }
+  .card:hover::before{opacity:1}
+  .card .num{
+    font-size:.7rem;font-weight:700;letter-spacing:.08em;
+    text-transform:uppercase;margin-bottom:.5rem;
+  }
+  .card .idea-text{
+    font-size:.95rem;line-height:1.55;color:var(--text);
+  }
+  .card.hidden{display:none}
+
+  /* per-technique card accents */
+  [data-t="provocation"] .card::before{background:linear-gradient(90deg,var(--prov),transparent)}
+  [data-t="provocation"] .card .num{color:var(--prov)}
+  [data-t="provocation"] .card:hover{box-shadow:0 8px 32px var(--prov-glow)}
+
+  [data-t="entanglement"] .card::before{background:linear-gradient(90deg,var(--ent),transparent)}
+  [data-t="entanglement"] .card .num{color:var(--ent)}
+  [data-t="entanglement"] .card:hover{box-shadow:0 8px 32px var(--ent-glow)}
+
+  [data-t="retrofuture"] .card::before{background:linear-gradient(90deg,var(--ret),transparent)}
+  [data-t="retrofuture"] .card .num{color:var(--ret)}
+  [data-t="retrofuture"] .card:hover{box-shadow:0 8px 32px var(--ret-glow)}
+
+  [data-t="ship"] .card::before{background:linear-gradient(90deg,var(--ship),transparent)}
+  [data-t="ship"] .card .num{color:var(--ship)}
+  [data-t="ship"] .card:hover{box-shadow:0 8px 32px var(--ship-glow)}
+
+  @keyframes fadeUp{
+    from{opacity:0;transform:translateY(16px)}
+    to{opacity:1;transform:translateY(0)}
+  }
+
+  /* ── TECHNIQUE DESCRIPTIONS ── */
+  .tech-desc{
+    background:var(--surface);border:1px solid rgba(255,255,255,.06);
+    border-radius:var(--radius);padding:1.5rem;margin-bottom:2rem;
+    font-size:.9rem;color:var(--text-dim);line-height:1.6;
+  }
+  .tech-desc strong{color:var(--text)}
+
+  /* ── SYNTHESIS / CLIMAX ── */
+  .synthesis{padding:5rem 0;position:relative;overflow:hidden}
+  .synthesis::before{
+    content:'';position:absolute;inset:0;
+    background:
+      radial-gradient(ellipse 600px 400px at 20% 30%,rgba(255,215,107,.06),transparent),
+      radial-gradient(ellipse 500px 400px at 80% 70%,rgba(107,255,184,.04),transparent);
+  }
+  .synthesis .section-header h2{
+    background:linear-gradient(135deg,var(--synth),#ffe4a0);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    background-clip:text;
+  }
+  .theme-cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));
+    gap:1.25rem;position:relative;z-index:1;
+  }
+  .theme-card{
+    background:linear-gradient(135deg,var(--surface),var(--surface2));
+    border:1px solid rgba(255,215,107,.12);
+    border-radius:var(--radius);padding:1.75rem;
+    transition:all .3s ease;
+  }
+  .theme-card:hover{
+    border-color:rgba(255,215,107,.25);
+    box-shadow:0 8px 40px rgba(255,215,107,.08);
+    transform:translateY(-2px);
+  }
+  .theme-card h3{
+    font-size:1.15rem;font-weight:700;color:var(--synth);
+    margin-bottom:.5rem;
+  }
+  .theme-card p{font-size:.9rem;color:var(--text-dim);line-height:1.6}
+  .theme-card .connections{
+    margin-top:1rem;display:flex;flex-wrap:wrap;gap:.4rem;
+  }
+  .theme-card .conn-tag{
+    font-size:.7rem;padding:.2rem .6rem;border-radius:12px;
+    background:rgba(255,215,107,.08);color:var(--synth);
+    border:1px solid rgba(255,215,107,.15);
+  }
+
+  /* ── RECO BANNER ── */
+  .reco{
+    margin-top:3rem;padding:2rem;
+    background:linear-gradient(135deg,rgba(255,215,107,.06),rgba(107,255,184,.06));
+    border:1px solid rgba(255,215,107,.15);
+    border-radius:var(--radius);text-align:center;
+    position:relative;z-index:1;
+  }
+  .reco h3{font-size:1.1rem;color:var(--synth);margin-bottom:.5rem}
+  .reco p{color:var(--text-dim);font-size:.95rem;max-width:500px;margin:0 auto}
+
+  /* ── NO RESULTS ── */
+  .no-results{
+    text-align:center;padding:3rem;color:var(--text-faint);
+    font-size:.95rem;display:none;
+  }
+  .no-results.show{display:block}
+
+  /* ── FOOTER ── */
+  footer{
+    text-align:center;padding:3rem 1.5rem;
+    color:var(--text-faint);font-size:.75rem;
+    border-top:1px solid rgba(255,255,255,.04);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media(max-width:640px){
+    .section{padding:2.5rem 0}
+    .cards{grid-template-columns:1fr}
+    .theme-cards{grid-template-columns:1fr}
+    .hero{min-height:80vh}
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════ HERO ═══════ -->
+<section class="hero">
+  <div class="hero-content">
+    <h1>SaaS AI Co-pilot<br>Brainstorm</h1>
+    <p class="subtitle">Exploring AI-assisted development by building a simple SaaS product — a creative keepsake from a 4-technique brainstorming session.</p>
+    <div class="meta">
+      <span><span class="dot" style="background:var(--prov)"></span> 4 Techniques</span>
+      <span><span class="dot" style="background:var(--ent)"></span> 60 Ideas</span>
+      <span><span class="dot" style="background:var(--ret)"></span> Angular + Firebase</span>
+      <span><span class="dot" style="background:var(--ship)"></span> Solo Developer</span>
+    </div>
+  </div>
+  <div class="scroll-hint">↓ scroll to explore</div>
+</section>
+
+<!-- ═══════ NAV ═══════ -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-pill" data-tech="provocation" href="#provocation">🔥 Provocation</a>
+    <a class="nav-pill" data-tech="entanglement" href="#entanglement">🔗 Entanglement</a>
+    <a class="nav-pill" data-tech="retrofuture" href="#retrofuture">🔮 Retro-Future</a>
+    <a class="nav-pill" data-tech="ship" href="#ship">🚀 Ship in 60 Min</a>
+    <a class="nav-pill" data-tech="synthesis" href="#synthesis">✨ Synthesis</a>
+  </div>
+</nav>
+
+<!-- ═══════ SEARCH ═══════ -->
+<div class="search-wrap">
+  <span class="search-icon">⌕</span>
+  <input type="text" class="search-box" id="searchInput" placeholder="Search all 65 ideas…" autocomplete="off">
+</div>
+
+<!-- ═══════ PROVOCATION TECHNIQUE ═══════ -->
+<section class="section tech-section" data-t="provocation" id="provocation">
+  <div class="container">
+    <div class="section-header">
+      <span class="technique-badge" style="background:var(--prov-bg);color:var(--prov);border:1px solid rgba(255,107,107,.2)">Technique 01</span>
+      <h2>Provocation Technique</h2>
+      <p>Deliberately absurd or counterintuitive prompts to jolt the mind out of habitual thinking. Each provocation forces a "why not?" response.</p>
+    </div>
+    <div class="tech-desc">
+      <strong>How it works:</strong> State something deliberately wrong, extreme, or impossible — then work backward to find the useful kernel. "SaaS billing based on outcomes" is a provocation against subscription norms. The breakthrough is finding which part of the provocation is actually desirable.
+    </div>
+    <div class="cards">
+      <div class="card" style="animation-delay:.02s"><span class="num">Idea 01</span><p class="idea-text">Task manager that questions your priorities before accepting them</p></div>
+      <div class="card" style="animation-delay:.04s"><span class="num">Idea 02</span><p class="idea-text">SaaS billing based on outcomes, not subscriptions</p></div>
+      <div class="card" style="animation-delay:.06s"><span class="num">Idea 03</span><p class="idea-text">Smart calendar blocking focus time based on energy levels</p></div>
+      <div class="card" style="animation-delay:.08s"><span class="num">Idea 04</span><p class="idea-text">Note-taking tool with expiration dates — notes fade if not revisited</p></div>
+      <div class="card" style="animation-delay:.10s"><span class="num">Idea 05</span><p class="idea-text">Tool piggybacking on free tiers of other services to stay nearly free</p></div>
+      <div class="card" style="animation-delay:.12s"><span class="num">Idea 06</span><p class="idea-text">Email client gamifying inbox zero with points and badges</p></div>
+      <div class="card" style="animation-delay:.14s"><span class="num">Idea 07</span><p class="idea-text">Landing page builder generating full pages from product descriptions overnight</p></div>
+      <div class="card" style="animation-delay:.16s"><span class="num">Idea 08</span><p class="idea-text">Analytics tool highlighting metrics you haven't checked in a while</p></div>
+      <div class="card" style="animation-delay:.18s"><span class="num">Idea 09</span><p class="idea-text">Pay-per-use API at $0.01 per generation</p></div>
+      <div class="card" style="animation-delay:.20s"><span class="num">Idea 10</span><p class="idea-text">CSV upload generating written report with insights and charts</p></div>
+      <div class="card" style="animation-delay:.22s"><span class="num">Idea 11</span><p class="idea-text">Tool offering premium features only to active growing users</p></div>
+      <div class="card" style="animation-delay:.24s"><span class="num">Idea 12</span><p class="idea-text">Productivity tool designed for airplane mode with sync on reconnect</p></div>
+      <div class="card" style="animation-delay:.26s"><span class="num">Idea 13</span><p class="idea-text">AI co-pilot taking half-baked ideas and writing full pitch decks</p></div>
+      <div class="card" style="animation-delay:.28s"><span class="num">Idea 14</span><p class="idea-text">Tool letting creators sell digital products without handling payments</p></div>
+      <div class="card" style="animation-delay:.30s"><span class="num">Idea 15</span><p class="idea-text">CI tool auto-generating test cases from codebase</p></div>
+      <div class="card" style="animation-delay:.32s"><span class="num">Idea 16</span><p class="idea-text">Slack integration detecting action items and creating tickets</p></div>
+      <div class="card" style="animation-delay:.34s"><span class="num">Idea 17</span><p class="idea-text">Tool monitoring competitor websites and alerting on changes or outages</p></div>
+      <div class="card" style="animation-delay:.36s"><span class="num">Idea 18</span><p class="idea-text">Dev blog generator turning commit messages into readable posts</p></div>
+      <div class="card" style="animation-delay:.38s"><span class="num">Idea 19</span><p class="idea-text">Tool taking small percentage of revenue it helps generate</p></div>
+      <div class="card" style="animation-delay:.40s"><span class="num">Idea 20</span><p class="idea-text">Social media scheduler auto-removing underperforming posts</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ ENTANGLEMENT THINKING ═══════ -->
+<section class="section tech-section" data-t="entanglement" id="entanglement">
+  <div class="container">
+    <div class="section-header">
+      <span class="technique-badge" style="background:var(--ent-bg);color:var(--ent);border:1px solid rgba(107,202,255,.2)">Technique 02</span>
+      <h2>Entanglement Thinking</h2>
+      <p>Twist two independent concepts together and discover emergent properties neither had alone. Where do ideas collide?</p>
+    </div>
+    <div class="tech-desc">
+      <strong>How it works:</strong> Take two unrelated properties — "personalization" and "privacy" — and force them to coexist. The tension between them generates ideas neither concept would produce solo. Each card here entangles two forces.
+    </div>
+    <div class="cards">
+      <div class="card" style="animation-delay:.02s"><span class="num">Idea 21</span><p class="idea-text">Task manager adapting task suggestions to your current energy state</p></div>
+      <div class="card" style="animation-delay:.04s"><span class="num">Idea 22</span><p class="idea-text">Tool showing 'you saved X hours this month' to justify its cost</p></div>
+      <div class="card" style="animation-delay:.06s"><span class="num">Idea 23</span><p class="idea-text">SaaS with deliberately minimal feature set — one thing done brilliantly</p></div>
+      <div class="card" style="animation-delay:.08s"><span class="num">Idea 24</span><p class="idea-text">AI code reviewer giving solo developers team-level quality feedback</p></div>
+      <div class="card" style="animation-delay:.10s"><span class="num">Idea 25</span><p class="idea-text">Tool cleaning and enriching your data while analyzing it</p></div>
+      <div class="card" style="animation-delay:.12s"><span class="num">Idea 26</span><p class="idea-text">Decision journal tracking when you make your best decisions</p></div>
+      <div class="card" style="animation-delay:.14s"><span class="num">Idea 27</span><p class="idea-text">Tool evolving its UI based on your expertise level</p></div>
+      <div class="card" style="animation-delay:.16s"><span class="num">Idea 28</span><p class="idea-text">Tool showing how many people are NOT using it — social scarcity</p></div>
+      <div class="card" style="animation-delay:.18s"><span class="num">Idea 29</span><p class="idea-text">AI writing assistant taking 1 sentence and producing a full draft</p></div>
+      <div class="card" style="animation-delay:.20s"><span class="num">Idea 30</span><p class="idea-text">Tool getting cheaper the more you customize it — rewarding power users</p></div>
+      <div class="card" style="animation-delay:.22s"><span class="num">Idea 31</span><p class="idea-text">Tool introducing one new feature each time you log in</p></div>
+      <div class="card" style="animation-delay:.24s"><span class="num">Idea 32</span><p class="idea-text">Tool encouraging experimentation by making failure cheap and reversible</p></div>
+      <div class="card" style="animation-delay:.26s"><span class="num">Idea 33</span><p class="idea-text">Tool giving full data export but managing everything for you</p></div>
+      <div class="card" style="animation-delay:.28s"><span class="num">Idea 34</span><p class="idea-text">Tool offering quick mode and deep mode with clear tradeoffs</p></div>
+      <div class="card" style="animation-delay:.30s"><span class="num">Idea 35</span><p class="idea-text">Tool personalizing using only local data never sending to servers</p></div>
+      <div class="card" style="animation-delay:.32s"><span class="num">Idea 36</span><p class="idea-text">Tool with automation levels — you choose how much it does on its own</p></div>
+      <div class="card" style="animation-delay:.34s"><span class="num">Idea 37</span><p class="idea-text">Tool with focus mode hiding all social features</p></div>
+      <div class="card" style="animation-delay:.36s"><span class="num">Idea 38</span><p class="idea-text">Tool teaching advanced features through use not documentation</p></div>
+      <div class="card" style="animation-delay:.38s"><span class="num">Idea 39</span><p class="idea-text">Tool letting users choose their price — pay what you want</p></div>
+      <div class="card" style="animation-delay:.40s"><span class="num">Idea 40</span><p class="idea-text">Tool staying simple by design even as it grows</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ RETRO-FUTURE SLICING ═══════ -->
+<section class="section tech-section" data-t="retrofuture" id="retrofuture">
+  <div class="container">
+    <div class="section-header">
+      <span class="technique-badge" style="background:var(--ret-bg);color:var(--ret);border:1px solid rgba(184,107,255,.2)">Technique 03</span>
+      <h2>Retro-Future Slicing</h2>
+      <p>An invented technique: imagine the 2035 version of a tool, then slice backward to find the smallest first step that contains its DNA.</p>
+    </div>
+    <div class="tech-desc">
+      <strong>How it works:</strong> Start with a bold future vision — "AI development orchestrator" — then ask: what's the thinnest slice of that future I can ship today? Each idea is a 2035 concept compressed into a 2026-viable prototype.
+    </div>
+    <div class="cards">
+      <div class="card" style="animation-delay:.02s"><span class="num">Idea 41</span><p class="idea-text">One-sentence product description generator</p></div>
+      <div class="card" style="animation-delay:.06s"><span class="num">Idea 42</span><p class="idea-text">AI project dashboard with intelligent next-step recommendations</p></div>
+      <div class="card" style="animation-delay:.10s"><span class="num">Idea 43</span><p class="idea-text">Natural language to Angular component generator</p></div>
+      <div class="card" style="animation-delay:.14s"><span class="num">Idea 44</span><p class="idea-text">AI code review assistant for solo developers</p></div>
+      <div class="card" style="animation-delay:.18s"><span class="num">Idea 45</span><p class="idea-text">End-to-end AI development orchestrator</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ SHIP IN 60 MINUTES ═══════ -->
+<section class="section tech-section" data-t="ship" id="ship">
+  <div class="container">
+    <div class="section-header">
+      <span class="technique-badge" style="background:var(--ship-bg);color:var(--ship);border:1px solid rgba(107,255,184,.2)">Technique 04</span>
+      <h2>Ship in 60 Minutes</h2>
+      <p>Radical constraint: what can actually be built in an hour? No theorizing — only ideas that survive contact with a real deploy button.</p>
+    </div>
+    <div class="tech-desc">
+      <strong>How it works:</strong> Strip away all ambition and ask: what's the simplest thing that works? These ideas are validated against Angular + Firebase reality. If you can't demo it in an hour, it doesn't belong here.
+    </div>
+    <div class="cards">
+      <div class="card" style="animation-delay:.02s"><span class="num">Idea 46</span><p class="idea-text">Landing page with waitlist form — collect emails, validate with Firebase</p></div>
+      <div class="card" style="animation-delay:.04s"><span class="num">Idea 47</span><p class="idea-text">Contact form storing submissions in Firestore with email notification</p></div>
+      <div class="card" style="animation-delay:.06s"><span class="num">Idea 48</span><p class="idea-text">Personal dashboard showing GitHub stats with Angular charts</p></div>
+      <div class="card" style="animation-delay:.08s"><span class="num">Idea 49</span><p class="idea-text">Simple URL shortener — paste link, get short URL, track clicks in Firestore</p></div>
+      <div class="card" style="animation-delay:.10s"><span class="num">Idea 50</span><p class="idea-text">Basic poll-survey tool — create question, share link, see results real-time</p></div>
+      <div class="card" style="animation-delay:.12s"><span class="num">Idea 51</span><p class="idea-text">Simple note-taking app — write notes, save to Firestore, view on any device</p></div>
+      <div class="card" style="animation-delay:.14s"><span class="num">Idea 52</span><p class="idea-text">Basic expense tracker — log expenses, categorize, see monthly summary chart</p></div>
+      <div class="card" style="animation-delay:.16s"><span class="num">Idea 53</span><p class="idea-text">Simple bookmark manager — save URLs with tags, search and organize</p></div>
+      <div class="card" style="animation-delay:.18s"><span class="num">Idea 54</span><p class="idea-text">Basic habit tracker — check off daily habits, see your streak</p></div>
+      <div class="card" style="animation-delay:.20s"><span class="num">Idea 55</span><p class="idea-text">Simple countdown timer — set date, share link, see ticking clock</p></div>
+      <div class="card" style="animation-delay:.22s"><span class="num">Idea 56</span><p class="idea-text">Basic QR code generator — paste text or URL, get QR code image</p></div>
+      <div class="card" style="animation-delay:.24s"><span class="num">Idea 57</span><p class="idea-text">Simple feedback widget — embed "Was this helpful?" button, collect responses</p></div>
+      <div class="card" style="animation-delay:.26s"><span class="num">Idea 58</span><p class="idea-text">Basic link-in-bio page — your links, your profile, one clean page</p></div>
+      <div class="card" style="animation-delay:.28s"><span class="num">Idea 59</span><p class="idea-text">Simple mood tracker — log how you feel, see patterns over time</p></div>
+      <div class="card" style="animation-delay:.30s"><span class="num">Idea 60</span><p class="idea-text">Basic password generator — click to generate, copy to clipboard, done</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ SYNTHESIS (CLIMAX) ═══════ -->
+<section class="synthesis" id="synthesis">
+  <div class="container">
+    <div class="section-header">
+      <span class="technique-badge" style="background:var(--synth-bg);color:var(--synth);border:1px solid rgba(255,215,107,.2)">Climax</span>
+      <h2>Synthesis & Themes</h2>
+      <p>Where the four techniques converge — patterns that emerged across all 65 ideas.</p>
+    </div>
+
+    <div class="theme-cards">
+      <div class="theme-card">
+        <h3>🤖 AI as Co-pilot Cluster</h3>
+        <p>The most persistent thread: AI doesn't replace the developer, it amplifies them. From pitch decks to code review to commit-to-blog, the pattern is always "human intent → AI execution."</p>
+        <div class="connections">
+          <span class="conn-tag">Idea 13</span>
+          <span class="conn-tag">Idea 18</span>
+          <span class="conn-tag">Idea 24</span>
+          <span class="conn-tag">Idea 29</span>
+          <span class="conn-tag">Idea 43</span>
+          <span class="conn-tag">Idea 44</span>
+        </div>
+      </div>
+
+      <div class="theme-card">
+        <h3>🚀 Simple & Ship Cluster</h3>
+        <p>Radical simplicity wins. The best ideas aren't the most ambitious — they're the ones you can build this afternoon. Constraints breed creativity, not limitation.</p>
+        <div class="connections">
+          <span class="conn-tag">Idea 23</span>
+          <span class="conn-tag">Idea 40</span>
+          <span class="conn-tag">Idea 46</span>
+          <span class="conn-tag">Idea 49–60</span>
+        </div>
+      </div>
+
+      <div class="theme-card">
+        <h3>📊 Anti-Dashboard Insight</h3>
+        <p>Dashboards that show what you <em>haven't</em> done, not what you have. Analytics that surface neglect, not vanity. The inverse metric is more powerful than the obvious one.</p>
+        <div class="connections">
+          <span class="conn-tag">Idea 08</span>
+          <span class="conn-tag">Idea 22</span>
+          <span class="conn-tag">Idea 48</span>
+        </div>
+      </div>
+
+      <div class="theme-card">
+        <h3>⚡ Friction as Feature</h3>
+        <p>What if friction wasn't a bug? Notes that fade, tasks that question you, tools that show scarcity. Deliberate friction can create value that frictionless UX destroys.</p>
+        <div class="connections">
+          <span class="conn-tag">Idea 01</span>
+          <span class="conn-tag">Idea 04</span>
+          <span class="conn-tag">Idea 28</span>
+          <span class="conn-tag">Idea 31</span>
+        </div>
+      </div>
+
+      <div class="theme-card">
+        <h3>💰 Micro-SaaS Economics</h3>
+        <p>Outcome-based pricing, pay-per-use, parasitic infrastructure, revenue sharing. The subscription model isn't the only way — and for a solo dev, it might not be the best.</p>
+        <div class="connections">
+          <span class="conn-tag">Idea 02</span>
+          <span class="conn-tag">Idea 05</span>
+          <span class="conn-tag">Idea 09</span>
+          <span class="conn-tag">Idea 19</span>
+          <span class="conn-tag">Idea 30</span>
+        </div>
+      </div>
+
+      <div class="theme-card">
+        <h3>🔗 Non-obvious Connections</h3>
+        <p>Parasitic infra meets URL shortener. AI pitch deck meets waitlist page. Anti-dashboard meets GitHub stats. The most interesting ideas live at the intersection of distant concepts.</p>
+        <div class="connections">
+          <span class="conn-tag">05 × 49</span>
+          <span class="conn-tag">13 × 46</span>
+          <span class="conn-tag">08 × 48</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="reco">
+      <h3>⭐ Top Recommendation</h3>
+      <p><strong>GitHub Stats Dashboard with Anti-Dashboard twist</strong> — a personal dashboard showing your dev activity, but surfacing what you've <em>neglected</em>, not what you've shipped. Ship in 60 min, evolve with AI.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ NO RESULTS ═══════ -->
+<div class="no-results" id="noResults">No ideas match your search. Try different keywords.</div>
+
+<footer>
+  <p>Brainstorm keepsake generated 2026-07-12 · SaaS AI Co-pilot Learning Project · 4 techniques · 60 ideas</p>
+</footer>
+
+<script>
+(function(){
+  const input=document.getElementById('searchInput');
+  const noResults=document.getElementById('noResults');
+  const allCards=document.querySelectorAll('.card');
+
+  input.addEventListener('input',function(){
+    const q=this.value.toLowerCase().trim();
+    let visible=0;
+    allCards.forEach(c=>{
+      const text=c.querySelector('.idea-text').textContent.toLowerCase();
+      const num=c.querySelector('.num').textContent.toLowerCase();
+      const match=!q||text.includes(q)||num.includes(q);
+      c.classList.toggle('hidden',!match);
+      if(match)visible++;
+    });
+    noResults.classList.toggle('show',visible===0);
+  });
+
+  // Intersection observer for nav active state
+  const sections=document.querySelectorAll('.tech-section, .synthesis');
+  const pills=document.querySelectorAll('.nav-pill');
+  const observer=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        const id=e.target.id;
+        pills.forEach(p=>{
+          p.classList.toggle('active',p.getAttribute('href')==='#'+id);
+        });
+      }
+    });
+  },{threshold:.3,rootMargin:'-60px 0px -50% 0px'});
+  sections.forEach(s=>observer.observe(s));
+
+  // Stagger card animations on scroll
+  const cardObserver=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        e.target.style.animationPlayState='running';
+        cardObserver.unobserve(e.target);
+      }
+    });
+  },{threshold:.1});
+  allCards.forEach(c=>{
+    c.style.animationPlayState='paused';
+    cardObserver.observe(c);
+  });
+})();
+</script>
+</body>
+</html>

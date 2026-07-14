@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Design Directions — Restaurant Booking Widget</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --border: #334155;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 2rem;
+    }
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #38bdf8, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .subtitle {
+      text-align: center;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+    }
+    .directions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .direction {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .direction-header {
+      padding: 1.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .direction-name {
+      font-size: 1.125rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+    .direction-persona {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+    .phone-frame {
+      margin: 1.5rem auto;
+      width: 375px;
+      min-height: 600px;
+      border-radius: 24px;
+      overflow: hidden;
+      position: relative;
+    }
+    .direction-notes {
+      padding: 1.25rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+    }
+    .direction-notes strong {
+      color: var(--text);
+    }
+    .token-chips {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-top: 0.75rem;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+    .chip-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    /* === DIRECTION 1: Warm Minimal === */
+    .d1-phone {
+      background: #FAFAF8;
+      color: #1A1A1A;
+      font-family: 'Inter', sans-serif;
+    }
+    .d1-header {
+      padding: 2rem 1.5rem 1rem;
+      text-align: center;
+    }
+    .d1-restaurant-name {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1A1A1A;
+      margin-bottom: 0.25rem;
+    }
+    .d1-address {
+      font-size: 0.875rem;
+      color: #6B6B6B;
+    }
+    .d1-hero {
+      height: 160px;
+      margin: 1rem 1.5rem;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #E8D5B7, #C4A882);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .d1-hero-text {
+      color: #fff;
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+    .d1-cta {
+      margin: 1.5rem;
+      padding: 1rem;
+      background: #1A1A1A;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      width: calc(100% - 3rem);
+    }
+    .d1-footer {
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.75rem;
+      color: #999;
+    }
+
+    /* === DIRECTION 2: Bold Contrast === */
+    .d2-phone {
+      background: #000000;
+      color: #FFFFFF;
+      font-family: 'Inter', sans-serif;
+    }
+    .d2-header {
+      padding: 2rem 1.5rem 1rem;
+    }
+    .d2-restaurant-name {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #FFFFFF;
+      letter-spacing: -0.02em;
+    }
+    .d2-address {
+      font-size: 0.875rem;
+      color: #888;
+      margin-top: 0.25rem;
+    }
+    .d2-hero {
+      height: 180px;
+      margin: 1rem 1.5rem;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #FF6B35, #F7C948);
+      display: flex;
+      align-items: flex-end;
+      padding: 1rem;
+    }
+    .d2-hero-tag {
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+      padding: 0.375rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .d2-cta {
+      margin: 1.5rem;
+      padding: 1rem;
+      background: #FF6B35;
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      width: calc(100% - 3rem);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .d2-footer {
+      padding: 1rem 1.5rem;
+      font-size: 0.75rem;
+      color: #555;
+    }
+
+    /* === DIRECTION 3: Soft Elevation === */
+    .d3-phone {
+      background: #F5F0EB;
+      color: #2D2A26;
+      font-family: 'Inter', sans-serif;
+    }
+    .d3-header {
+      padding: 2rem 1.5rem 1rem;
+    }
+    .d3-restaurant-name {
+      font-size: 1.375rem;
+      font-weight: 600;
+      color: #2D2A26;
+    }
+    .d3-address {
+      font-size: 0.8125rem;
+      color: #8A8580;
+      margin-top: 0.25rem;
+    }
+    .d3-hero {
+      height: 160px;
+      margin: 1rem 1.5rem;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #B8C5A3, #8FA67A);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .d3-hero-text {
+      color: #fff;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+    .d3-cta {
+      margin: 1.5rem;
+      padding: 1rem;
+      background: #2D2A26;
+      color: #F5F0EB;
+      border: none;
+      border-radius: 16px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      width: calc(100% - 3rem);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .d3-footer {
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.75rem;
+      color: #AAA5A0;
+    }
+
+    /* === DIRECTION 4: Material Fresh === */
+    .d4-phone {
+      background: #FFFBFE;
+      color: #1C1B1F;
+      font-family: 'Roboto', 'Inter', sans-serif;
+    }
+    .d4-header {
+      padding: 2rem 1.5rem 1rem;
+    }
+    .d4-restaurant-name {
+      font-size: 1.5rem;
+      font-weight: 400;
+      color: #1C1B1F;
+      letter-spacing: -0.01em;
+    }
+    .d4-address {
+      font-size: 0.875rem;
+      color: #49454F;
+      margin-top: 0.25rem;
+    }
+    .d4-hero {
+      height: 160px;
+      margin: 1rem 1.5rem;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #6750A4, #B388FF);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .d4-hero-text {
+      color: #fff;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+    .d4-cta {
+      margin: 1.5rem;
+      padding: 1rem;
+      background: #6750A4;
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      width: calc(100% - 3rem);
+    }
+    .d4-footer {
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.75rem;
+      color: #79747E;
+    }
+  </style>
+</head>
+<body>
+  <h1>Design Directions</h1>
+  <p class="subtitle">Widget landing screen — 4 visual personalities</p>
+
+  <div class="directions">
+    <!-- Direction 1: Warm Minimal -->
+    <div class="direction">
+      <div class="direction-header">
+        <div class="direction-name">1. Warm Minimal</div>
+        <div class="direction-persona">"A quiet neighborhood bistro that doesn't need to shout."</div>
+        <div class="token-chips">
+          <div class="chip"><div class="chip-dot" style="background: #1A1A1A;"></div>Primary</div>
+          <div class="chip"><div class="chip-dot" style="background: #E8D5B7;"></div>Secondary</div>
+          <div class="chip"><div class="chip-dot" style="background: #FAFAF8;"></div>Surface</div>
+          <div class="chip"><div class="chip-dot" style="background: #6B6B6B;"></div>Muted</div>
+        </div>
+      </div>
+      <div class="phone-frame d1-phone">
+        <div class="d1-header">
+          <div class="d1-restaurant-name">The Blue Bistro</div>
+          <div class="d1-address">123 High Street, London</div>
+        </div>
+        <div class="d1-hero">
+          <div class="d1-hero-text">Restaurant photo</div>
+        </div>
+        <button class="d1-cta">Book a Table</button>
+        <div class="d1-footer">Powered by Bookable</div>
+      </div>
+      <div class="direction-notes">
+        <strong>Rationale:</strong> Warm neutrals, generous whitespace, quiet confidence. Feels like a trusted local. High contrast text on light surface. CTA is bold black — impossible to miss.
+      </div>
+    </div>
+
+    <!-- Direction 2: Bold Contrast -->
+    <div class="direction">
+      <div class="direction-header">
+        <div class="direction-name">2. Bold Contrast</div>
+        <div class="direction-persona">"A late-night spot with attitude. You know the name."</div>
+        <div class="token-chips">
+          <div class="chip"><div class="chip-dot" style="background: #FF6B35;"></div>Primary</div>
+          <div class="chip"><div class="chip-dot" style="background: #F7C948;"></div>Accent</div>
+          <div class="chip"><div class="chip-dot" style="background: #000000;"></div>Surface</div>
+          <div class="chip"><div class="chip-dot" style="background: #888888;"></div>Muted</div>
+        </div>
+      </div>
+      <div class="phone-frame d2-phone">
+        <div class="d2-header">
+          <div class="d2-restaurant-name">FIRE & SMOKE</div>
+          <div class="d2-address">42 Brick Lane, London</div>
+        </div>
+        <div class="d2-hero">
+          <div class="d2-hero-tag">🔥 Chef's Table Available</div>
+        </div>
+        <button class="d2-cta">Reserve Now</button>
+        <div class="d2-footer">Bookable — flat-fee booking</div>
+      </div>
+      <div class="direction-notes">
+        <strong>Rationale:</strong> Dark background, saturated accent, uppercase headings. Feels premium and bold. Good for restaurants with strong brand identity. High energy, low subtlety.
+      </div>
+    </div>
+
+    <!-- Direction 3: Soft Elevation -->
+    <div class="direction">
+      <div class="direction-header">
+        <div class="direction-name">3. Soft Elevation</div>
+        <div class="direction-persona">"A farm-to-table place where everything feels considered."</div>
+        <div class="token-chips">
+          <div class="chip"><div class="chip-dot" style="background: #2D2A26;"></div>Primary</div>
+          <div class="chip"><div class="chip-dot" style="background: #B8C5A3;"></div>Secondary</div>
+          <div class="chip"><div class="chip-dot" style="background: #F5F0EB;"></div>Surface</div>
+          <div class="chip"><div class="chip-dot" style="background: #8A8580;"></div>Muted</div>
+        </div>
+      </div>
+      <div class="phone-frame d3-phone">
+        <div class="d3-header">
+          <div class="d3-restaurant-name">The Garden Table</div>
+          <div class="d3-address">7 Marylebone Lane, London</div>
+        </div>
+        <div class="d3-hero">
+          <div class="d3-hero-text">Restaurant photo</div>
+        </div>
+        <button class="d3-cta">Book a Table</button>
+        <div class="d3-footer">Powered by Bookable</div>
+      </div>
+      <div class="direction-notes">
+        <strong>Rationale:</strong> Earthy tones, soft shadows, rounded corners. Feels organic and trustworthy. Subtle elevation creates depth without harsh borders. Great for wellness-oriented restaurants.
+      </div>
+    </div>
+
+    <!-- Direction 4: Material Fresh -->
+    <div class="direction">
+      <div class="direction-header">
+        <div class="direction-name">4. Material Fresh</div>
+        <div class="direction-persona">"A modern casual chain. Clean, fast, no fuss."</div>
+        <div class="token-chips">
+          <div class="chip"><div class="chip-dot" style="background: #6750A4;"></div>Primary</div>
+          <div class="chip"><div class="chip-dot" style="background: #B388FF;"></div>Secondary</div>
+          <div class="chip"><div class="chip-dot" style="background: #FFFBFE;"></div>Surface</div>
+          <div class="chip"><div class="chip-dot" style="background: #49454F;"></div>Muted</div>
+        </div>
+      </div>
+      <div class="phone-frame d4-phone">
+        <div class="d4-header">
+          <div class="d4-restaurant-name">Nori Kitchen</div>
+          <div class="d4-address">88 Soho Square, London</div>
+        </div>
+        <div class="d4-hero">
+          <div class="d4-hero-text">Restaurant photo</div>
+        </div>
+        <button class="d4-cta">Book a Table</button>
+        <div class="d4-footer">Powered by Bookable</div>
+      </div>
+      <div class="direction-notes">
+        <strong>Rationale:</strong> MD3-inspired, tonal surfaces, rounded shapes. Feels modern and approachable. Purple is a placeholder — restaurants will override with their own colors. Clean hierarchy, no visual noise.
+      </div>
+    </div>
+  </div>
+</body>
+</html>

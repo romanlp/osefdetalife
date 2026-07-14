@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Onboarding Step 1 — Bookable</title>
+  <style>
+    /* Spine: DESIGN.md (Colors, Components — onboarding card)
+       Mocks: Onboarding card, form inputs, primary CTA */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    :root {
+      --surface-base: #F5F0EB;
+      --surface-raised: #FFFFFF;
+      --ink-primary: #1A1A1A;
+      --ink-secondary: #6B6B6B;
+      --accent: #8FA67A;
+      --border: #E5E0DB;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--surface-base);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    .card {
+      background: var(--surface-raised);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      width: 480px;
+      padding: 40px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .step-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      background: rgba(143, 166, 122, 0.12);
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+    .heading {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--ink-primary);
+      margin-bottom: 4px;
+    }
+    .subheading {
+      font-size: 0.875rem;
+      color: var(--ink-secondary);
+      margin-bottom: 32px;
+    }
+    .field {
+      margin-bottom: 20px;
+    }
+    .label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--ink-primary);
+      margin-bottom: 6px;
+    }
+    .input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.875rem;
+      color: var(--ink-primary);
+      background: var(--surface-raised);
+    }
+    .input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(143, 166, 122, 0.15);
+    }
+    .input::placeholder {
+      color: var(--ink-secondary);
+    }
+    .slug-preview {
+      font-size: 0.75rem;
+      color: var(--ink-secondary);
+      margin-top: 6px;
+    }
+    .slug-preview code {
+      background: rgba(143, 166, 122, 0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+    }
+    .cta {
+      width: 100%;
+      padding: 14px;
+      background: var(--ink-primary);
+      color: var(--surface-base);
+      border: none;
+      border-radius: 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 12px;
+    }
+    .skip {
+      display: block;
+      text-align: center;
+      margin-top: 12px;
+      font-size: 0.875rem;
+      color: var(--ink-secondary);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+    }
+    .skip:hover {
+      color: var(--ink-primary);
+    }
+    .optional-tag {
+      font-size: 0.6875rem;
+      color: var(--ink-disabled);
+      font-weight: 400;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="step-badge">Step 1 of 3</div>
+    <div class="heading">Restaurant basics</div>
+    <div class="subheading">Tell us about your restaurant</div>
+    <div class="field">
+      <label class="label">Restaurant name</label>
+      <input class="input" type="text" value="La Trattoria" placeholder="e.g. The Blue Bistro">
+    </div>
+    <div class="field">
+      <label class="label">Slug</label>
+      <input class="input" type="text" value="la-trattoria-london" placeholder="e.g. the-blue-bistro">
+      <div class="slug-preview">Your booking link: <code>bookable.co/<strong>la-trattoria-london</strong></code></div>
+    </div>
+    <div class="field">
+      <label class="label">Address <span class="optional-tag">(optional)</span></label>
+      <input class="input" type="text" placeholder="e.g. 123 High Street, London">
+    </div>
+    <button class="cta">Continue</button>
+    <button class="skip">Skip for now</button>
+  </div>
+</body>
+</html>

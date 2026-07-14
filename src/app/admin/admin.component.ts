@@ -8,7 +8,7 @@ import { AdminHeaderComponent } from './admin-header/admin-header.component';
     <osef-admin-header></osef-admin-header>
     <router-outlet></router-outlet>
   `,
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AdminHeaderComponent, RouterOutlet],
 })
 export class AdminComponent {
