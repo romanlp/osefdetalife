@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Widget Party Size — Bookable</title>
+  <style>
+    /* Spine: DESIGN.md (Colors, Components — party size selector)
+       Mocks: Party size grid, back button, step header */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    :root {
+      --surface-base: #F5F0EB;
+      --surface-raised: #FFFFFF;
+      --ink-primary: #1A1A1A;
+      --ink-secondary: #6B6B6B;
+      --accent: #8FA67A;
+      --border: #E5E0DB;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0f172a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    .frame {
+      background: var(--surface-base);
+      width: 375px;
+      min-height: 667px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+    }
+    .header {
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .back {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--ink-primary);
+      font-size: 1.25rem;
+    }
+    .step-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--ink-primary);
+    }
+    .content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 8px 24px 32px;
+    }
+    .heading {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--ink-primary);
+      margin-bottom: 4px;
+    }
+    .subheading {
+      font-size: 0.875rem;
+      color: var(--ink-secondary);
+      margin-bottom: 24px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+    .size-btn {
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      background: var(--surface-raised);
+      color: var(--ink-primary);
+      font-family: 'Inter', sans-serif;
+      font-size: 1.125rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .size-btn.selected {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .size-btn:hover:not(.selected) {
+      border-color: var(--ink-secondary);
+    }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <div class="header">
+      <button class="back">←</button>
+      <span class="step-title">Party size</span>
+    </div>
+    <div class="content">
+      <div class="heading">How many guests?</div>
+      <div class="subheading">Select your party size</div>
+      <div class="grid">
+        <button class="size-btn">1</button>
+        <button class="size-btn">2</button>
+        <button class="size-btn selected">3</button>
+        <button class="size-btn">4</button>
+        <button class="size-btn">5</button>
+        <button class="size-btn">6</button>
+        <button class="size-btn">7</button>
+        <button class="size-btn">8</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

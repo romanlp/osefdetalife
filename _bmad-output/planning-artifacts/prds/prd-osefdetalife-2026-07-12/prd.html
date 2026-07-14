@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PRD — Restaurant Booking Platform</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface-hover: #334155;
+      --border: #334155;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-dim: #0ea5e9;
+      --green: #4ade80;
+      --orange: #fb923c;
+      --red: #f87171;
+      --purple: #a78bfa;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, var(--accent), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .meta {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    .meta-item strong {
+      color: var(--text);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .badge-draft { background: var(--orange); color: var(--bg); }
+    .badge-final { background: var(--green); color: var(--bg); }
+
+    section {
+      margin-bottom: 3rem;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    h2::before {
+      content: '';
+      width: 4px;
+      height: 1.5rem;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+
+    h3 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin: 1.5rem 0 0.75rem;
+      color: var(--text);
+    }
+
+    p {
+      margin-bottom: 1rem;
+      color: var(--text-muted);
+    }
+
+    .vision-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .vision-box strong {
+      color: var(--accent);
+    }
+
+    .glossary-grid {
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    .glossary-row {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 1rem;
+      padding: 0.75rem 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.875rem;
+    }
+
+    .glossary-row.header {
+      background: var(--surface-hover);
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .glossary-row:not(.header) {
+      color: var(--text-muted);
+    }
+
+    .glossary-term {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      transition: border-color 0.2s;
+    }
+
+    .feature-card:hover {
+      border-color: var(--accent);
+    }
+
+    .feature-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .feature-id {
+      background: var(--accent);
+      color: var(--bg);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      min-width: 3rem;
+      text-align: center;
+    }
+
+    .feature-title {
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .feature-desc {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .fr-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .fr-item {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    .fr-item:last-child {
+      border-bottom: none;
+    }
+
+    .fr-id {
+      font-weight: 700;
+      color: var(--accent);
+      margin-right: 0.5rem;
+    }
+
+    .fr-name {
+      font-weight: 600;
+      color: var(--text);
+      margin-right: 0.5rem;
+    }
+
+    .non-goals-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .non-goal-item {
+      padding: 0.75rem 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    .non-goal-item strong {
+      color: var(--text);
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .metric-item {
+      padding: 0.75rem 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    .metric-item strong {
+      color: var(--text);
+    }
+
+    .metric-target {
+      color: var(--green);
+      font-weight: 600;
+    }
+
+    .uj-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .uj-title {
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--text);
+      margin-bottom: 0.75rem;
+    }
+
+    .uj-details {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.25rem 1rem;
+      font-size: 0.875rem;
+    }
+
+    .uj-label {
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .uj-value {
+      color: var(--text-muted);
+    }
+
+    .scope-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .scope-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+    }
+
+    .scope-box h4 {
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: var(--text);
+    }
+
+    .scope-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .scope-list li {
+      padding: 0.375rem 0;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    .scope-list li::before {
+      content: '•';
+      color: var(--accent);
+      margin-right: 0.5rem;
+    }
+
+    .scope-in .scope-list li::before {
+      content: '✓';
+      color: var(--green);
+    }
+
+    .scope-out .scope-list li::before {
+      content: '✗';
+      color: var(--red);
+    }
+
+    .questions-grid {
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    .question-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 1rem;
+      padding: 0.75rem 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.875rem;
+      align-items: center;
+    }
+
+    .question-num {
+      font-weight: 700;
+      color: var(--accent);
+      min-width: 2rem;
+      text-align: center;
+    }
+
+    .question-text {
+      color: var(--text-muted);
+    }
+
+    .question-answer {
+      font-weight: 600;
+      color: var(--green);
+    }
+
+    .assumptions-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .assumptions-list li {
+      padding: 0.5rem 0;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .assumptions-list li:last-child {
+      border-bottom: none;
+    }
+
+    footer {
+      text-align: center;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+
+    @media (max-width: 768px) {
+      .scope-grid {
+        grid-template-columns: 1fr;
+      }
+      .glossary-row {
+        grid-template-columns: 1fr;
+      }
+      .question-row {
+        grid-template-columns: 1fr;
+        gap: 0.25rem;
+      }
+      .question-num {
+        text-align: left;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>PRD: Restaurant Booking Platform</h1>
+      <p style="font-size: 1.25rem; color: var(--text); margin-bottom: 0.5rem;">White-label embeddable booking widget for small restaurants</p>
+      <div class="meta">
+        <div class="meta-item"><strong>Status:</strong> <span class="badge badge-final">final</span></div>
+        <div class="meta-item"><strong>Created:</strong> 2026-07-12</div>
+        <div class="meta-item"><strong>Updated:</strong> 2026-07-13</div>
+        <div class="meta-item"><strong>Features:</strong> 4</div>
+        <div class="meta-item"><strong>FRs:</strong> 53</div>
+      </div>
+    </header>
+
+    <section>
+      <h2>Vision</h2>
+      <div class="vision-box">
+        <p>A white-label, embeddable booking widget for small independent restaurants in the United Kingdom. The widget renders on the restaurant's own website via a script tag, letting diners book tables without leaving the restaurant's site. Restaurants manage bookings from a simple Angular dashboard.</p>
+        <p>The platform targets small restaurants (~50 covers) who want to take online bookings without paying per-cover commissions to platforms like OpenTable. A flat monthly subscription fee makes costs predictable. The widget is fully white-labeled — it appears as part of the restaurant's website, with customizable colors and optional custom fields.</p>
+        <p>For MVP, the system provides: a diner-facing booking widget (landing → party size → date → time → details → confirmation), a restaurant-facing dashboard (settings + read-only booking list), and a guided onboarding flow. No integrations, no payments, no AI — just a simple, beautiful booking experience.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Glossary</h2>
+      <div class="glossary-grid">
+        <div class="glossary-row header">
+          <div>Term</div>
+          <div>Definition</div>
+        </div>
+        <div class="glossary-row">
+          <div class="glossary-term">Table Group</div>
+          <div>A set of identical tables (e.g., "3 × four-tops"). The basic unit for availability calculation.</div>
+        </div>
+        <div class="glossary-row">
+          <div class="glossary-term">Slug</div>
+          <div>URL-safe unique identifier for a restaurant (e.g., "the-blue-bistro"). Used in widget embed and URL resolution.</div>
+        </div>
+        <div class="glossary-row">
+          <div class="glossary-term">Compute-on-Read</div>
+          <div>Availability calculated at query time by checking existing bookings against table groups. No pre-computed slots stored.</div>
+        </div>
+        <div class="glossary-row">
+          <div class="glossary-term">15-Minute Slot</div>
+          <div>Time granularity for available booking times (e.g., 18:00, 18:15, 18:30, 18:45).</div>
+        </div>
+        <div class="glossary-row">
+          <div class="glossary-term">White-Label</div>
+          <div>Widget renders under restaurant's brand (colors, name) with no platform branding visible to diners.</div>
+        </div>
+        <div class="glossary-row">
+          <div class="glossary-term">Embed Code</div>
+          <div>HTML snippet restaurant adds to their website: &lt;script&gt; tag + &lt;booking-widget&gt; custom element.</div>
+        </div>
+        <div class="glossary-row">
+          <div class="glossary-term">Onboarding Wizard</div>
+          <div>Guided setup flow after sign up, walking restaurant through all configurable settings.</div>
+        </div>
+        <div class="glossary-row">
+          <div class="glossary-term">Restaurant Profile</div>
+          <div>Firestore document containing restaurant metadata (name, slug, address, colors, custom field).</div>
+        </div>
+        <div class="glossary-row">
+          <div class="glossary-term">Booking Status</div>
+          <div>Current state of a booking: "confirmed" (default) or "cancelled". Read-only in MVP dashboard.</div>
+        </div>
+        <div class="glossary-row">
+          <div class="glossary-term">Custom Field</div>
+          <div>Optional single text field on booking form, label defined by restaurant, enabled/disabled toggle.</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>User Journeys</h2>
+      <div class="uj-card">
+        <div class="uj-title">UJ-1. Diner books a table via the widget.</div>
+        <div class="uj-details">
+          <span class="uj-label">Persona:</span><span class="uj-value">Alex, a diner visiting a restaurant's website to book dinner for 4.</span>
+          <span class="uj-label">Entry:</span><span class="uj-value">On restaurant's website, clicks "Book a Table" button.</span>
+          <span class="uj-label">Path:</span><span class="uj-value">Widget opens → selects party size (4) → sees available time slots for today → selects 19:00 → fills name + email → submits.</span>
+          <span class="uj-label">Climax:</span><span class="uj-value">Confirmation screen shows booking details. Diner knows the table is reserved.</span>
+          <span class="uj-label">Resolution:</span><span class="uj-value">Diner receives confirmation (displayed on screen). Widget closes or stays open for another booking.</span>
+          <span class="uj-label">Edge case:</span><span class="uj-value">No availability for party of 4 today. Widget shows next available date.</span>
+        </div>
+      </div>
+
+      <div class="uj-card">
+        <div class="uj-title">UJ-2. Restaurant owner sets up their account.</div>
+        <div class="uj-details">
+          <span class="uj-label">Persona:</span><span class="uj-value">Maria, a restaurant owner who wants to start taking online bookings.</span>
+          <span class="uj-label">Entry:</span><span class="uj-value">On platform website, clicks "Sign Up".</span>
+          <span class="uj-label">Path:</span><span class="uj-value">Creates account (email/password or Google) → onboarding wizard guides through: restaurant name, slug, address, opening hours, table groups, colors, custom field → completes setup.</span>
+          <span class="uj-label">Climax:</span><span class="uj-value">Dashboard shows empty booking list. Embed code page provides the script tag. Maria copies the code.</span>
+          <span class="uj-label">Resolution:</span><span class="uj-value">Maria pastes embed code into her website. Widget is live. She can now see bookings in the dashboard.</span>
+          <span class="uj-label">Edge case:</span><span class="uj-value">Maria skips optional steps (colors, custom field) and completes them later in Settings.</span>
+        </div>
+      </div>
+
+      <div class="uj-card">
+        <div class="uj-title">UJ-3. Restaurant owner checks today's bookings.</div>
+        <div class="uj-details">
+          <span class="uj-label">Persona:</span><span class="uj-value">Maria, during service prep, opens the dashboard.</span>
+          <span class="uj-label">Entry:</span><span class="uj-value">Authenticated, on dashboard.</span>
+          <span class="uj-label">Path:</span><span class="uj-value">Dashboard loads → shows today's bookings by default → Maria sees list of bookings with times, party sizes, names.</span>
+          <span class="uj-label">Climax:</span><span class="uj-value">Maria knows exactly what to expect for tonight's service.</span>
+          <span class="uj-label">Resolution:</span><span class="uj-value">Maria closes dashboard. Bookings are confirmed, no action needed.</span>
+          <span class="uj-label">Edge case:</span><span class="uj-value">No bookings today. Dashboard shows empty state with encouragement to share the widget.</span>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Feature 1: Booking Widget</h2>
+      <div class="feature-card">
+        <div class="feature-header">
+          <span class="feature-id">F1</span>
+          <span class="feature-title">Booking Widget (Diner-Facing)</span>
+        </div>
+        <div class="feature-desc">An embeddable Web Component that renders on the restaurant's website. Diners go through a multi-step flow: landing → party size → date → time → details → confirmation. The widget is white-labeled with restaurant colors. Realizes UJ-1, UJ-3.</div>
+        <ul class="fr-list">
+          <li class="fr-item"><span class="fr-id">FR-1</span><span class="fr-name">Widget Landing</span>Widget renders as &lt;booking-widget&gt; custom element. Shows restaurant name and address (if configured) on landing step with "Book now" button.</li>
+          <li class="fr-item"><span class="fr-id">FR-2</span><span class="fr-name">Party Size Selection</span>Party size selector shows options 1-8. Party size is required before proceeding.</li>
+          <li class="fr-item"><span class="fr-id">FR-3</span><span class="fr-name">Date Selection</span>Calendar shows only dates where restaurant is open (based on hours config). Closed dates are hidden.</li>
+          <li class="fr-item"><span class="fr-id">FR-4</span><span class="fr-name">Time Selection</span>Time picker shows available 15-minute slots for selected party size and date. If no availability, show "No availability for this date" message.</li>
+          <li class="fr-item"><span class="fr-id">FR-5</span><span class="fr-name">Booking Details Form</span>Details form shows: Name (required), Email (required), Custom field (optional, label set by restaurant). If custom field not configured, field is not visible.</li>
+          <li class="fr-item"><span class="fr-id">FR-6</span><span class="fr-name">Booking Submission</span>On submit: booking created in Firestore with status "confirmed". Confirmation screen shows summary: date, time, party size.</li>
+          <li class="fr-item"><span class="fr-id">FR-7</span><span class="fr-name">Back Navigation</span>Back button available on all steps except landing. Returns to previous step with selection preserved.</li>
+          <li class="fr-item"><span class="fr-id">FR-8</span><span class="fr-name">Loading States</span>Loading spinner shown during step transitions and data fetches.</li>
+          <li class="fr-item"><span class="fr-id">FR-9</span><span class="fr-name">Error Handling</span>Invalid slug: "Restaurant not found" message. Firebase down: "Something went wrong. Please try again." message.</li>
+          <li class="fr-item"><span class="fr-id">FR-10</span><span class="fr-name">Responsive Design</span>Widget adapts to mobile and desktop. Fixed width, full width of container.</li>
+          <li class="fr-item"><span class="fr-id">FR-11</span><span class="fr-name">Demo Page</span>Project includes a standalone HTML page that embeds the widget for development and testing. Page allows entering a restaurant slug and renders the widget.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>Feature 2: Restaurant Dashboard</h2>
+      <div class="feature-card">
+        <div class="feature-header">
+          <span class="feature-id">F2</span>
+          <span class="feature-title">Restaurant Dashboard (Restaurant-Facing)</span>
+        </div>
+        <div class="feature-desc">An Angular web app where restaurant owners manage settings and view bookings. Dashboard shows today's bookings by default with a date picker to navigate. Settings pages allow configuration of restaurant info, table groups, white-label colors, and account. Realizes UJ-2, UJ-3.</div>
+        <h3 style="margin-top: 1rem; font-size: 0.875rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em;">Dashboard Home</h3>
+        <ul class="fr-list">
+          <li class="fr-item"><span class="fr-id">FR-12</span><span class="fr-name">View Today's Bookings</span>Dashboard home shows list of bookings for today. Each booking shows: time, party size, diner name, custom field value (if configured).</li>
+          <li class="fr-item"><span class="fr-id">FR-13</span><span class="fr-name">Navigate to Other Dates</span>Date picker allows selecting any date. "Today" button returns to today's view.</li>
+          <li class="fr-item"><span class="fr-id">FR-14</span><span class="fr-name">Empty State</span>When no bookings for selected date, show "No bookings for this date" message.</li>
+          <li class="fr-item"><span class="fr-id">FR-15</span><span class="fr-name">Real-Time Updates</span>Bookings appear in dashboard immediately when created via widget (no refresh required).</li>
+        </ul>
+        <h3 style="margin-top: 1rem; font-size: 0.875rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em;">Settings — Restaurant Info</h3>
+        <ul class="fr-list">
+          <li class="fr-item"><span class="fr-id">FR-16</span><span class="fr-name">Edit Restaurant Name</span>Restaurant owner can update restaurant name. Changes saved immediately.</li>
+          <li class="fr-item"><span class="fr-id">FR-17</span><span class="fr-name">Configure Opening Hours</span>Restaurant owner can set open/close times for each day of week. Each day can be marked as closed.</li>
+          <li class="fr-item"><span class="fr-id">FR-18</span><span class="fr-name">Edit Address</span>Restaurant owner can update address. Displayed on widget landing page.</li>
+          <li class="fr-item"><span class="fr-id">FR-19</span><span class="fr-name">Timezone</span>Timezone auto-assigned to UTC on creation. Editable via dropdown for future flexibility.</li>
+        </ul>
+        <h3 style="margin-top: 1rem; font-size: 0.875rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em;">Settings — Table Groups</h3>
+        <ul class="fr-list">
+          <li class="fr-item"><span class="fr-id">FR-20</span><span class="fr-name">Add Table Groups</span>Restaurant owner can add table groups by entering capacity (number) and count (number). Multiple groups supported.</li>
+          <li class="fr-item"><span class="fr-id">FR-21</span><span class="fr-name">Edit Table Groups</span>Restaurant owner can edit capacity and count of existing table groups.</li>
+          <li class="fr-item"><span class="fr-id">FR-22</span><span class="fr-name">Delete Table Groups</span>Restaurant owner can delete a table group. Existing bookings for that capacity are preserved.</li>
+        </ul>
+        <h3 style="margin-top: 1rem; font-size: 0.875rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em;">Settings — White Label</h3>
+        <ul class="fr-list">
+          <li class="fr-item"><span class="fr-id">FR-23</span><span class="fr-name">Set Primary Color</span>Restaurant owner can set primary color (hex picker). Applied to widget accent elements.</li>
+          <li class="fr-item"><span class="fr-id">FR-24</span><span class="fr-name">Set Secondary Color</span>Restaurant owner can set secondary color (hex picker). Applied to widget secondary elements.</li>
+          <li class="fr-item"><span class="fr-id">FR-25</span><span class="fr-name">Configure Custom Field</span>Restaurant owner can set: label (text), required (toggle), enabled (toggle). If disabled, field is not shown on widget.</li>
+        </ul>
+        <h3 style="margin-top: 1rem; font-size: 0.875rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em;">Settings — Account</h3>
+        <ul class="fr-list">
+          <li class="fr-item"><span class="fr-id">FR-26</span><span class="fr-name">Change Password</span>Restaurant owner can change password from dashboard. Requires current password confirmation.</li>
+          <li class="fr-item"><span class="fr-id">FR-27</span><span class="fr-name">Sign Out</span>Sign out button in header/nav. Returns to login page.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>Feature 3: Restaurant Onboarding</h2>
+      <div class="feature-card">
+        <div class="feature-header">
+          <span class="feature-id">F3</span>
+          <span class="feature-title">Restaurant Onboarding</span>
+        </div>
+        <div class="feature-desc">A guided setup flow that walks restaurant owners through all configurable settings after sign up. Includes account creation (email/password or Google), onboarding wizard, and embed code deployment page. Realizes UJ-2.</div>
+        <ul class="fr-list">
+          <li class="fr-item"><span class="fr-id">FR-28</span><span class="fr-name">Sign Up with Email/Password</span>Restaurant owner can create account with email and password.</li>
+          <li class="fr-item"><span class="fr-id">FR-29</span><span class="fr-name">Sign Up with Google</span>Restaurant owner can create account via Google OAuth.</li>
+          <li class="fr-item"><span class="fr-id">FR-30</span><span class="fr-name">Login Page</span>Login page shows both sign up options.</li>
+          <li class="fr-item"><span class="fr-id">FR-31</span><span class="fr-name">Guided Setup Flow</span>After first sign up, restaurant owner is redirected to onboarding wizard.</li>
+          <li class="fr-item"><span class="fr-id">FR-32</span><span class="fr-name">Step 1 - Restaurant Name</span>Required step in onboarding wizard.</li>
+          <li class="fr-item"><span class="fr-id">FR-33</span><span class="fr-name">Step 2 - Slug</span>Required step in onboarding wizard.</li>
+          <li class="fr-item"><span class="fr-id">FR-34</span><span class="fr-name">Step 3 - Address</span>Optional step in onboarding wizard.</li>
+          <li class="fr-item"><span class="fr-id">FR-35</span><span class="fr-name">Step 4 - Opening Hours</span>Required step in onboarding wizard.</li>
+          <li class="fr-item"><span class="fr-id">FR-36</span><span class="fr-name">Step 5 - Table Groups</span>Required step in onboarding wizard.</li>
+          <li class="fr-item"><span class="fr-id">FR-37</span><span class="fr-name">Step 6 - White-Label Colors</span>Optional step in onboarding wizard.</li>
+          <li class="fr-item"><span class="fr-id">FR-38</span><span class="fr-name">Step 7 - Custom Field</span>Optional step in onboarding wizard.</li>
+          <li class="fr-item"><span class="fr-id">FR-39</span><span class="fr-name">Skip Optional Steps</span>Restaurant owner can skip optional steps.</li>
+          <li class="fr-item"><span class="fr-id">FR-40</span><span class="fr-name">Onboarding Completion</span>After wizard completes, restaurant owner is redirected to dashboard.</li>
+          <li class="fr-item"><span class="fr-id">FR-41</span><span class="fr-name">Embed Code Page</span>Dashboard includes a "Deploy" page showing embed code snippet.</li>
+          <li class="fr-item"><span class="fr-id">FR-42</span><span class="fr-name">Copy Embed Code</span>One-click copy button for embed code.</li>
+          <li class="fr-item"><span class="fr-id">FR-43</span><span class="fr-name">Demo Page Link</span>Embed code page includes link to demo page.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>Feature 4: Firebase Infrastructure</h2>
+      <div class="feature-card">
+        <div class="feature-header">
+          <span class="feature-id">F4</span>
+          <span class="feature-title">Firebase Infrastructure</span>
+        </div>
+        <div class="feature-desc">Backend layer using Firebase services. Firestore for data storage, Firebase Auth for authentication, Security Rules for access control. Direct client-side access (no API layer). Realizes all user journeys.</div>
+        <ul class="fr-list">
+          <li class="fr-item"><span class="fr-id">FR-44</span><span class="fr-name">Restaurant Profile Data Model</span>System stores restaurant profile in Firestore.</li>
+          <li class="fr-item"><span class="fr-id">FR-45</span><span class="fr-name">Table Groups Data Model</span>System stores table groups as subcollection.</li>
+          <li class="fr-item"><span class="fr-id">FR-46</span><span class="fr-name">Opening Hours Data Model</span>System stores opening hours as field on restaurant document.</li>
+          <li class="fr-item"><span class="fr-id">FR-47</span><span class="fr-name">Bookings Data Model</span>System stores bookings as subcollection. Stores: date, time, partySize, name, email, customFieldValue, status, createdAt.</li>
+          <li class="fr-item"><span class="fr-id">FR-48</span><span class="fr-name">Slug Resolution</span>System resolves slug to restaurant ID.</li>
+          <li class="fr-item"><span class="fr-id">FR-49</span><span class="fr-name">Security Rules - Public Read</span>Any user can read restaurant profile, hours, and tables.</li>
+          <li class="fr-item"><span class="fr-id">FR-50</span><span class="fr-name">Security Rules - Owner Write</span>Authenticated owner can manage own restaurant.</li>
+          <li class="fr-item"><span class="fr-id">FR-51</span><span class="fr-name">Security Rules - Diner Booking</span>Diner can create bookings without authentication. System validates document shape and restaurant existence.</li>
+          <li class="fr-item"><span class="fr-id">FR-52</span><span class="fr-name">Compute-on-Read Availability</span>System calculates availability at query time.</li>
+          <li class="fr-item"><span class="fr-id">FR-53</span><span class="fr-name">Slug Uniqueness Enforcement</span>System enforces unique slugs across all restaurants.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>Non-Goals (Explicit)</h2>
+      <div class="non-goals-grid">
+        <div class="non-goal-item"><strong>Integrations:</strong> Google Reserve, POS sync, delivery platforms — complexity, requires partnerships.</div>
+        <div class="non-goal-item"><strong>Payments:</strong> Deposit/prepayment, Stripe integration — PCI compliance overhead, not critical for MVP.</div>
+        <div class="non-goal-item"><strong>AI Features:</strong> Voice booking, chatbot, demand forecasting — future differentiation, not MVP.</div>
+        <div class="non-goal-item"><strong>Multi-Location:</strong> Multiple restaurants per account, chain management — one restaurant per account for MVP.</div>
+        <div class="non-goal-item"><strong>Advanced Booking:</strong> Table splitting, waitlist, walk-in management — complexity, defer to iteration 2.</div>
+        <div class="non-goal-item"><strong>Communication:</strong> Email/SMS confirmations, reminders, marketing — requires email service integration.</div>
+        <div class="non-goal-item"><strong>Analytics:</strong> Reporting, dashboards, insights — nice-to-have, not MVP.</div>
+        <div class="non-goal-item"><strong>Mobile Apps:</strong> Native iOS/Android apps — web-first, responsive design.</div>
+        <div class="non-goal-item"><strong>Internationalization:</strong> Multi-language, multi-currency — UK only for MVP.</div>
+        <div class="non-goal-item"><strong>Table Management:</strong> Visual table map, drag-and-drop — table groups only for MVP.</div>
+      </div>
+    </section>
+
+    <section>
+      <h2>MVP Scope</h2>
+      <div class="scope-grid">
+        <div class="scope-box scope-in">
+          <h4>In Scope</h4>
+          <ul class="scope-list">
+            <li>Diner-facing booking widget (Web Component, Shadow DOM)</li>
+            <li>Restaurant-facing dashboard (Angular)</li>
+            <li>Guided onboarding wizard</li>
+            <li>Table groups for availability</li>
+            <li>15-minute time slots</li>
+            <li>Auto-confirm bookings</li>
+            <li>White-label customization (colors, custom field)</li>
+            <li>Slug-based widget deployment</li>
+            <li>Firebase backend (Firestore, Auth, Security Rules)</li>
+            <li>Responsive design (mobile widget, desktop dashboard)</li>
+            <li>WCAG 2.1 AA accessibility</li>
+          </ul>
+        </div>
+        <div class="scope-box scope-out">
+          <h4>Out of Scope for MVP</h4>
+          <ul class="scope-list">
+            <li>Google Reserve integration — defer to v2</li>
+            <li>POS sync — defer to v2</li>
+            <li>Deposit/prepayment — defer to v2</li>
+            <li>Email/SMS confirmations — defer to v2</li>
+            <li>Booking cancellation by diner — defer to iteration 2</li>
+            <li>Analytics dashboard — defer to v2</li>
+            <li>Multi-location support — one restaurant per account</li>
+            <li>Visual table map — table groups only</li>
+            <li>Native mobile apps — web-first</li>
+            <li>Multi-language support — UK only</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Success Metrics</h2>
+      <div class="metrics-grid">
+        <div class="metric-item"><strong>SM-1:</strong> Widget load time <span class="metric-target">&lt; 2 seconds</span> — validates FR-1 through FR-11.</div>
+        <div class="metric-item"><strong>SM-2:</strong> Booking completion rate <span class="metric-target">&gt; 80%</span> — validates FR-1 through FR-5.</div>
+        <div class="metric-item"><strong>SM-3:</strong> Onboarding completion time <span class="metric-target">&lt; 10 minutes</span> — validates FR-31 through FR-40.</div>
+        <div class="metric-item"><strong>SM-4:</strong> 5 restaurants embed widget in first month — validates FR-41 through FR-43.</div>
+        <div class="metric-item"><strong>SM-5:</strong> 50 bookings per restaurant per month — validates FR-1 through FR-5.</div>
+        <div class="metric-item" style="border-color: var(--red);"><strong>SM-C1:</strong> Booking volume — do NOT optimize. Counterbalances SM-2 (quality over quantity).</div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Open Questions</h2>
+      <div class="questions-grid">
+        <div class="question-row">
+          <div class="question-num">Q1</div>
+          <div class="question-text">Booking cancellation policy</div>
+          <div class="question-answer">Diner contacts restaurant directly</div>
+        </div>
+        <div class="question-row">
+          <div class="question-num">Q2</div>
+          <div class="question-text">Max party size</div>
+          <div class="question-answer">Limited to max table capacity</div>
+        </div>
+        <div class="question-row">
+          <div class="question-num">Q3</div>
+          <div class="question-text">Booking lead time</div>
+          <div class="question-answer">Up to 30 days ahead</div>
+        </div>
+        <div class="question-row">
+          <div class="question-num">Q4</div>
+          <div class="question-text">Time slot granularity</div>
+          <div class="question-answer">15-minute slots</div>
+        </div>
+        <div class="question-row">
+          <div class="question-num">Q5</div>
+          <div class="question-text">Max advance booking window</div>
+          <div class="question-answer">30 days</div>
+        </div>
+        <div class="question-row">
+          <div class="question-num">Q6</div>
+          <div class="question-text">Booking confirmation</div>
+          <div class="question-answer">Auto-confirm</div>
+        </div>
+        <div class="question-row">
+          <div class="question-num">Q7</div>
+          <div class="question-text">Slug format</div>
+          <div class="question-answer">Lowercase + hyphens only</div>
+        </div>
+        <div class="question-row">
+          <div class="question-num">Q8</div>
+          <div class="question-text">Restaurant logo</div>
+          <div class="question-answer">Not in MVP</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Assumptions</h2>
+      <ul class="assumptions-list">
+        <li><strong>Product name:</strong> TBD — brainstorming session planned later.</li>
+        <li><strong>Timeline:</strong> Side project, ~30 hours to MVP, no fixed deadline.</li>
+        <li><strong>Pricing:</strong> Monthly subscription fee (amount TBD), no per-cover commission.</li>
+        <li><strong>Tech stack:</strong> Angular 22+, Firebase, Web Components, Vite, TypeScript 7.x.</li>
+        <li><strong>Architecture:</strong> Serverless, direct Firebase from browser, no API layer.</li>
+        <li><strong>Target market:</strong> UK, small restaurants (~50 covers), single location or small chain (1-4 locations).</li>
+        <li><strong>User:</strong> Expert skill level, solo project, low budget for hosting.</li>
+        <li><strong>Hours:</strong> Weekly recurring schedule, no holiday overrides for MVP.</li>
+        <li><strong>Bookings:</strong> Diner creates booking without authentication. Diner cannot read or edit bookings for MVP. OTP-based editing deferred to v2.</li>
+      </ul>
+    </section>
+
+    <footer>
+      <p>PRD — Restaurant Booking Platform · Created 2026-07-12 · Status: final</p>
+    </footer>
+  </div>
+</body>
+</html>

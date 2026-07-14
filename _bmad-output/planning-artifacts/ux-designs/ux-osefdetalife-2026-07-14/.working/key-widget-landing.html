@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Widget Landing — Bookable</title>
+  <style>
+    /* Spine: DESIGN.md (Brand & Style, Colors, Components)
+       Mocks: Widget container, step header, landing CTA */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    :root {
+      --surface-base: #F5F0EB;
+      --surface-raised: #FFFFFF;
+      --ink-primary: #1A1A1A;
+      --ink-secondary: #6B6B6B;
+      --accent: #8FA67A;
+      --border: #E5E0DB;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0f172a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    .frame {
+      background: var(--surface-base);
+      width: 375px;
+      min-height: 667px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+    }
+    .content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 32px 24px;
+    }
+    .restaurant-name {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--ink-primary);
+      letter-spacing: -0.01em;
+      margin-bottom: 4px;
+    }
+    .address {
+      font-size: 0.875rem;
+      color: var(--ink-secondary);
+      margin-bottom: 24px;
+    }
+    .spacer { flex: 1; }
+    .cta {
+      width: 100%;
+      padding: 16px;
+      background: var(--ink-primary);
+      color: var(--surface-base);
+      border: none;
+      border-radius: 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 16px;
+    }
+    .footer {
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--ink-secondary);
+      padding: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <div class="content">
+      <div class="restaurant-name">The Blue Bistro</div>
+      <div class="address">123 High Street, London</div>
+      <div class="spacer"></div>
+      <button class="cta">Book a Table</button>
+      <div class="footer">Powered by Bookable</div>
+    </div>
+  </div>
+</body>
+</html>

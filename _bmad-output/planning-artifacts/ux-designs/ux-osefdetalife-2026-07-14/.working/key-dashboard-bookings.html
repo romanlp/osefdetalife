@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Bookings — Bookable</title>
+  <style>
+    /* Spine: DESIGN.md (Colors, Components — sidebar, booking row)
+       Mocks: Dashboard sidebar, bookings list, date picker */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    :root {
+      --surface-base: #F5F0EB;
+      --surface-raised: #FFFFFF;
+      --ink-primary: #1A1A1A;
+      --ink-secondary: #6B6B6B;
+      --ink-disabled: #B5B0AA;
+      --accent: #8FA67A;
+      --border: #E5E0DB;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--surface-base);
+      color: var(--ink-primary);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    .frame {
+      background: var(--surface-base);
+      width: 1024px;
+      height: 680px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+      display: flex;
+    }
+    .sidebar {
+      width: 240px;
+      background: var(--surface-raised);
+      border-right: 1px solid var(--border);
+      padding: 24px 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar-brand {
+      padding: 0 20px 24px;
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--ink-primary);
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 8px;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 20px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--ink-secondary);
+      cursor: pointer;
+      border-left: 3px solid transparent;
+    }
+    .nav-item.active {
+      color: var(--ink-primary);
+      border-left-color: var(--accent);
+      background: rgba(143, 166, 122, 0.08);
+    }
+    .nav-item:hover:not(.active) {
+      color: var(--ink-primary);
+    }
+    .nav-icon {
+      width: 20px;
+      text-align: center;
+      font-size: 1rem;
+    }
+    .nav-spacer { flex: 1; }
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 32px;
+    }
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .page-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .date-picker {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .date-input {
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.875rem;
+      color: var(--ink-primary);
+      background: var(--surface-raised);
+    }
+    .today-btn {
+      padding: 8px 16px;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--ink-secondary);
+      cursor: pointer;
+    }
+    .today-btn:hover {
+      color: var(--ink-primary);
+      border-color: var(--ink-secondary);
+    }
+    .booking-list {
+      flex: 1;
+    }
+    .booking-row {
+      display: flex;
+      align-items: center;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .booking-time {
+      width: 80px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--ink-primary);
+    }
+    .booking-party {
+      width: 80px;
+      font-size: 0.875rem;
+      color: var(--ink-secondary);
+    }
+    .booking-name {
+      flex: 1;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--ink-primary);
+    }
+    .booking-custom {
+      font-size: 0.875rem;
+      color: var(--ink-secondary);
+    }
+    .booking-header {
+      display: flex;
+      padding: 0 0 12px;
+      border-bottom: 2px solid var(--border);
+      margin-bottom: 0;
+    }
+    .booking-header span {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--ink-disabled);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--ink-secondary);
+    }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <div class="sidebar">
+      <div class="sidebar-brand">Bookable</div>
+      <div class="nav-item active">
+        <span class="nav-icon">📋</span>
+        Bookings
+      </div>
+      <div class="nav-item">
+        <span class="nav-icon">ℹ️</span>
+        Restaurant Info
+      </div>
+      <div class="nav-item">
+        <span class="nav-icon">🕐</span>
+        Opening Hours
+      </div>
+      <div class="nav-item">
+        <span class="nav-icon">🪑</span>
+        Table Groups
+      </div>
+      <div class="nav-item">
+        <span class="nav-icon">🎨</span>
+        White Label
+      </div>
+      <div class="nav-item">
+        <span class="nav-icon">🚀</span>
+        Deploy
+      </div>
+      <div class="nav-spacer"></div>
+      <div class="nav-item">
+        <span class="nav-icon">👤</span>
+        Account
+      </div>
+    </div>
+    <div class="main">
+      <div class="page-header">
+        <div class="page-title">Today's Bookings</div>
+        <div class="date-picker">
+          <input type="date" class="date-input" value="2026-07-14">
+          <button class="today-btn">Today</button>
+        </div>
+      </div>
+      <div class="booking-list">
+        <div class="booking-header">
+          <span style="width:80px">Time</span>
+          <span style="width:80px">Party</span>
+          <span style="flex:1">Name</span>
+          <span>Notes</span>
+        </div>
+        <div class="booking-row">
+          <div class="booking-time">18:00</div>
+          <div class="booking-party">2 guests</div>
+          <div class="booking-name">Sarah Chen</div>
+          <div class="booking-custom">Window seat</div>
+        </div>
+        <div class="booking-row">
+          <div class="booking-time">18:30</div>
+          <div class="booking-party">4 guests</div>
+          <div class="booking-name">James Wilson</div>
+          <div class="booking-custom"></div>
+        </div>
+        <div class="booking-row">
+          <div class="booking-time">19:00</div>
+          <div class="booking-party">6 guests</div>
+          <div class="booking-name">Emma Rodriguez</div>
+          <div class="booking-custom">Birthday dinner</div>
+        </div>
+        <div class="booking-row">
+          <div class="booking-time">19:15</div>
+          <div class="booking-party">2 guests</div>
+          <div class="booking-name">David Kim</div>
+          <div class="booking-custom"></div>
+        </div>
+        <div class="booking-row">
+          <div class="booking-time">19:30</div>
+          <div class="booking-party">4 guests</div>
+          <div class="booking-name">Olivia Brown</div>
+          <div class="booking-custom">Vegetarian</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

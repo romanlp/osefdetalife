@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Architecture Spine — osefdetalife-booking</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface-hover: #334155;
+      --border: #334155;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-dim: #0ea5e9;
+      --green: #4ade80;
+      --orange: #fb923c;
+      --red: #f87171;
+      --purple: #a78bfa;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, var(--accent), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .meta {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    .meta-item strong {
+      color: var(--text);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .badge-draft { background: var(--orange); color: var(--bg); }
+    .badge-final { background: var(--green); color: var(--bg); }
+
+    section {
+      margin-bottom: 3rem;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    h2::before {
+      content: '';
+      width: 4px;
+      height: 1.5rem;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+
+    h3 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin: 1.5rem 0 0.75rem;
+      color: var(--text);
+    }
+
+    p {
+      margin-bottom: 1rem;
+      color: var(--text-muted);
+    }
+
+    .paradigm-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .paradigm-box strong {
+      color: var(--accent);
+    }
+
+    .layers {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .layer {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+    }
+
+    .layer-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+
+    .layer-value {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .ad-grid {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .ad-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      transition: border-color 0.2s;
+    }
+
+    .ad-card:hover {
+      border-color: var(--accent);
+    }
+
+    .ad-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .ad-id {
+      background: var(--accent);
+      color: var(--bg);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      min-width: 3rem;
+      text-align: center;
+    }
+
+    .ad-title {
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .ad-details {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.25rem 1rem;
+      font-size: 0.875rem;
+    }
+
+    .ad-label {
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .ad-value {
+      color: var(--text);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--surface);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    th {
+      background: var(--surface-hover);
+      text-align: left;
+      padding: 0.75rem 1rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text);
+      border-bottom: 1px solid var(--border);
+    }
+
+    td {
+      padding: 0.75rem 1rem;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    code {
+      background: var(--surface-hover);
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.85em;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      color: var(--accent);
+    }
+
+    pre {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      overflow-x: auto;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 0.875rem;
+      line-height: 1.7;
+      color: var(--text-muted);
+    }
+
+    pre code {
+      background: none;
+      padding: 0;
+      color: inherit;
+    }
+
+    .mermaid {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      margin: 1rem 0;
+    }
+
+    .deferred-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .deferred-list li {
+      padding: 0.75rem 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    .deferred-list li strong {
+      color: var(--text);
+    }
+
+    .cap-map {
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    .cap-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1rem;
+      padding: 0.75rem 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.875rem;
+    }
+
+    .cap-row.header {
+      background: var(--surface-hover);
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .cap-row:not(.header) {
+      color: var(--text-muted);
+    }
+
+    footer {
+      text-align: center;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Architecture Spine</h1>
+      <p style="font-size: 1.25rem; color: var(--text); margin-bottom: 0.5rem;">osefdetalife-booking</p>
+      <div class="meta">
+        <div class="meta-item"><strong>Type:</strong> architecture-spine</div>
+        <div class="meta-item"><strong>Purpose:</strong> build-substrate</div>
+        <div class="meta-item"><strong>Altitude:</strong> feature</div>
+        <div class="meta-item"><strong>Status:</strong> <span class="badge badge-final">final</span></div>
+        <div class="meta-item"><strong>Created:</strong> 2026-07-12</div>
+      </div>
+    </header>
+
+    <section>
+      <h2>Design Paradigm</h2>
+      <div class="paradigm-box">
+        <p><strong>Serverless-event-driven</strong> on Firebase. No servers to manage, no infrastructure to provision. The widget and dashboard are static assets; all logic runs in the browser or in Firestore Security Rules. The system scales automatically with Firebase.</p>
+      </div>
+      <div class="layers">
+        <div class="layer">
+          <div class="layer-label">Presentation</div>
+          <div class="layer-value">Web Component (widget) + Angular SPA (dashboard)</div>
+        </div>
+        <div class="layer">
+          <div class="layer-label">Data</div>
+          <div class="layer-value">Firestore (NoSQL document database)</div>
+        </div>
+        <div class="layer">
+          <div class="layer-label">Auth</div>
+          <div class="layer-value">Firebase Auth (email/password + Google OAuth)</div>
+        </div>
+        <div class="layer">
+          <div class="layer-label">Deployment</div>
+          <div class="layer-value">Firebase Hosting (dashboard) + CDN (widget script)</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Invariants & Rules</h2>
+      <div class="ad-grid">
+        <div class="ad-card">
+          <div class="ad-header">
+            <span class="ad-id">AD-1</span>
+            <span class="ad-title">Widget Deployment via Script Tag</span>
+          </div>
+          <div class="ad-details">
+            <span class="ad-label">Binds:</span><span class="ad-value">widget, deployment</span>
+            <span class="ad-label">Prevents:</span><span class="ad-value">npm package or iframe approaches</span>
+            <span class="ad-label">Rule:</span><span class="ad-value">Widget renders as a custom element (<code>&lt;booking-widget&gt;</code>) on any website. Restaurant adds <code>&lt;script src="..."&gt;</code> and <code>&lt;booking-widget restaurant="slug"&gt;&lt;/booking-widget&gt;</code> to their page.</span>
+          </div>
+        </div>
+
+        <div class="ad-card">
+          <div class="ad-header">
+            <span class="ad-id">AD-2</span>
+            <span class="ad-title">Direct Firebase from Browser</span>
+          </div>
+          <div class="ad-details">
+            <span class="ad-label">Binds:</span><span class="ad-value">all data access (widget + dashboard)</span>
+            <span class="ad-label">Prevents:</span><span class="ad-value">API layer overhead, server-side complexity</span>
+            <span class="ad-label">Rule:</span><span class="ad-value">Widget and dashboard use Firebase client SDK directly. Firestore Security Rules enforce access control. No Cloud Functions for MVP.</span>
+            <span class="ad-label">Security:</span><span class="ad-value">Unauthenticated writes scoped to <code>create</code> only on <code>bookings</code>. Rules validate that <code>restaurantId</code> references an existing restaurant. Widget and dashboard rule sets authored together.</span>
+          </div>
+        </div>
+
+        <div class="ad-card">
+          <div class="ad-header">
+            <span class="ad-id">AD-3</span>
+            <span class="ad-title">Firebase Auth with Email/Password + Google Sign-In</span>
+          </div>
+          <div class="ad-details">
+            <span class="ad-label">Binds:</span><span class="ad-value">restaurant owner authentication</span>
+            <span class="ad-label">Prevents:</span><span class="ad-value">passwordless or other auth providers</span>
+            <span class="ad-label">Rule:</span><span class="ad-value">Dashboard auth uses Firebase Auth. Supports email/password and Google OAuth. Restaurant owner profile stored in Firestore.</span>
+          </div>
+        </div>
+
+        <div class="ad-card">
+          <div class="ad-header">
+            <span class="ad-id">AD-4</span>
+            <span class="ad-title">Web Components with Shadow DOM for Widget</span>
+          </div>
+          <div class="ad-details">
+            <span class="ad-label">Binds:</span><span class="ad-value">widget rendering</span>
+            <span class="ad-label">Prevents:</span><span class="ad-value">style conflicts with host page</span>
+            <span class="ad-label">Rule:</span><span class="ad-value">Widget renders as custom element with Shadow DOM isolation. Host page CSS cannot affect widget styling. Widget CSS cannot affect host page.</span>
+          </div>
+        </div>
+
+        <div class="ad-card">
+          <div class="ad-header">
+            <span class="ad-id">AD-5</span>
+            <span class="ad-title">Compute on Read for Availability</span>
+          </div>
+          <div class="ad-details">
+            <span class="ad-label">Binds:</span><span class="ad-value">booking availability logic</span>
+            <span class="ad-label">Prevents:</span><span class="ad-value">pre-computed slot storage</span>
+            <span class="ad-label">Rule:</span><span class="ad-value">Availability calculated by querying all bookings for a date, subtracting from table groups. 15-minute time slots generated dynamically.</span>
+            <span class="ad-label">Duration:</span><span class="ad-value">Each booking occupies its table for a restaurant-configurable duration (default 2 hours). <code>duration</code> field stored on BOOKING.</span>
+            <span class="ad-label">Timezone:</span><span class="ad-value">All dates/times in restaurant's IANA timezone (e.g., <code>Europe/London</code>). Widget converts diner's local time to restaurant's timezone.</span>
+          </div>
+        </div>
+
+        <div class="ad-card">
+          <div class="ad-header">
+            <span class="ad-id">AD-6</span>
+            <span class="ad-title">No Table Splitting</span>
+          </div>
+          <div class="ad-details">
+            <span class="ad-label">Binds:</span><span class="ad-value">availability calculation</span>
+            <span class="ad-label">Prevents:</span><span class="ad-value">multi-table party accommodation</span>
+            <span class="ad-label">Rule:</span><span class="ad-value">Party of N requires a single table of capacity ≥ N. No merging tables.</span>
+          </div>
+        </div>
+
+        <div class="ad-card">
+          <div class="ad-header">
+            <span class="ad-id">AD-7</span>
+            <span class="ad-title">Auto-Confirm Bookings</span>
+          </div>
+          <div class="ad-details">
+            <span class="ad-label">Binds:</span><span class="ad-value">booking status model</span>
+            <span class="ad-label">Prevents:</span><span class="ad-value">pending/confirmation flow</span>
+            <span class="ad-label">Rule:</span><span class="ad-value">Bookings confirmed on submission. Status set to "confirmed" immediately. Confirmation step deferred to next iteration.</span>
+          </div>
+        </div>
+
+        <div class="ad-card">
+          <div class="ad-header">
+            <span class="ad-id">AD-8</span>
+            <span class="ad-title">Diner Info: Name + Email + Custom Field</span>
+          </div>
+          <div class="ad-details">
+            <span class="ad-label">Binds:</span><span class="ad-value">booking form</span>
+            <span class="ad-label">Prevents:</span><span class="ad-value">anonymous bookings</span>
+            <span class="ad-label">Rule:</span><span class="ad-value">Diner name and email required. Custom field optional with restaurant-defined label.</span>
+          </div>
+        </div>
+
+        <div class="ad-card">
+          <div class="ad-header">
+            <span class="ad-id">AD-9</span>
+            <span class="ad-title">Restaurant Slug for Identification</span>
+          </div>
+          <div class="ad-details">
+            <span class="ad-label">Binds:</span><span class="ad-value">widget deployment</span>
+            <span class="ad-label">Prevents:</span><span class="ad-value">UUID-based identification</span>
+            <span class="ad-label">Rule:</span><span class="ad-value">Each restaurant has a unique slug. Used in widget embed: <code>&lt;booking-widget restaurant="the-blue-bistro"&gt;</code>.</span>
+            <span class="ad-label">Lookup:</span><span class="ad-value">Slug resolution uses collection query on <code>slug</code> field, not document ID. Firestore rules enforce slug uniqueness via <code>slugs/{slug}</code> lookup document.</span>
+          </div>
+        </div>
+
+        <div class="ad-card">
+          <div class="ad-header">
+            <span class="ad-id">AD-10</span>
+            <span class="ad-title">Widget Flow: Party Size → Times → Date → Details → Confirmation</span>
+          </div>
+          <div class="ad-details">
+            <span class="ad-label">Binds:</span><span class="ad-value">widget UX</span>
+            <span class="ad-label">Prevents:</span><span class="ad-value">date-first flow</span>
+            <span class="ad-label">Rule:</span><span class="ad-value">Diner selects party size first, then sees available times for that party size. Calendar shows all operating dates.</span>
+          </div>
+        </div>
+
+        <div class="ad-card">
+          <div class="ad-header">
+            <span class="ad-id">AD-11</span>
+            <span class="ad-title">Dashboard: Today's Bookings + Date Picker</span>
+          </div>
+          <div class="ad-details">
+            <span class="ad-label">Binds:</span><span class="ad-value">dashboard UX</span>
+            <span class="ad-label">Prevents:</span><span class="ad-value">all-bookings view</span>
+            <span class="ad-label">Rule:</span><span class="ad-value">Default to today's bookings. Date picker to navigate to other dates.</span>
+          </div>
+        </div>
+
+        <div class="ad-card">
+          <div class="ad-header">
+            <span class="ad-id">AD-12</span>
+            <span class="ad-title">Booking Actions in Model, Not in UI</span>
+          </div>
+          <div class="ad-details">
+            <span class="ad-label">Binds:</span><span class="ad-value">booking status model</span>
+            <span class="ad-label">Prevents:</span><span class="ad-value">premature UI complexity</span>
+            <span class="ad-label">Rule:</span><span class="ad-value">Status field supports "confirmed" and "cancelled". UI is read-only for MVP. Actions (confirm, cancel) added in next iteration.</span>
+          </div>
+        </div>
+
+        <div class="ad-card">
+          <div class="ad-header">
+            <span class="ad-id">AD-13</span>
+            <span class="ad-title">One Restaurant per Account</span>
+          </div>
+          <div class="ad-details">
+            <span class="ad-label">Binds:</span><span class="ad-value">account model</span>
+            <span class="ad-label">Prevents:</span><span class="ad-value">multi-location complexity</span>
+            <span class="ad-label">Rule:</span><span class="ad-value">Single restaurant per auth account. Multi-location deferred to next version.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Consistency Conventions</h2>
+      <table>
+        <thead>
+          <tr><th>Concern</th><th>Convention</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Entity IDs</td><td>Firestore auto-generated IDs (no custom slugs for documents)</td></tr>
+          <tr><td>Restaurant slug</td><td>Lowercase, hyphenated, unique (e.g., <code>the-blue-bistro</code>)</td></tr>
+          <tr><td>Date format</td><td>ISO 8601 (<code>YYYY-MM-DD</code>) for storage, locale-formatted for display</td></tr>
+          <tr><td>Time format</td><td>24-hour (<code>HH:mm</code>) for storage, 12-hour for display</td></tr>
+          <tr><td>Timestamps</td><td>Firestore server timestamps</td></tr>
+          <tr><td>Status values</td><td>Lowercase strings: <code>confirmed</code>, <code>cancelled</code></td></tr>
+          <tr><td>Error handling</td><td>User-facing toasts for transient errors; console logging for debug</td></tr>
+          <tr><td>Table groups shape</td><td><code>Array&lt;{capacity: number, count: number}&gt;</code> — capacity = seats at one table, count = number of tables</td></tr>
+          <tr><td>Hours shape</td><td><code>Record&lt;number, {open: string, close: string}&gt;</code> — keys are ISO day numbers (1=Monday, 7=Sunday)</td></tr>
+          <tr><td>Timezone</td><td>IANA timezone string on RESTAURANT document (e.g., <code>Europe/London</code>)</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>Stack</h2>
+      <table>
+        <thead>
+          <tr><th>Name</th><th>Version</th><th>Purpose</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Angular</td><td>22+</td><td>Dashboard SPA</td></tr>
+          <tr><td>Firebase Hosting</td><td>—</td><td>Dashboard deployment</td></tr>
+          <tr><td>Firestore</td><td>—</td><td>Primary database</td></tr>
+          <tr><td>Firebase Auth</td><td>—</td><td>Authentication</td></tr>
+          <tr><td>Web Components</td><td>v1</td><td>Widget rendering (Custom Elements + Shadow DOM)</td></tr>
+          <tr><td>TypeScript</td><td>7.x</td><td>Language for both widget and dashboard</td></tr>
+          <tr><td>Vite</td><td>—</td><td>Widget build tool (lightweight, fast)</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>Structural Seed</h2>
+      <pre><code>src/
+  widget/                    # Embeddable booking widget (Web Component)
+    booking-widget.ts        # Custom element definition
+    components/              # Widget UI components
+    styles/                  # Shadow DOM styles
+    firebase.ts              # Firebase client config for widget
+  dashboard/                 # Restaurant management dashboard (Angular)
+    app/
+      components/            # Angular components
+      services/              # Angular services
+      pages/                 # Route-level components
+    environments/            # Firebase config per env
+  shared/                    # Shared types and utilities
+    types/                   # TypeScript interfaces
+    firebase-config.ts       # Shared Firebase initialization</code></pre>
+    </section>
+
+    <section>
+      <h2>Data Model (Firestore)</h2>
+      <div class="mermaid">
+erDiagram
+    RESTAURANT {
+        string id PK
+        string name
+        string slug UK
+        string timezone
+        object hours
+        array tableGroups
+        object whiteLabel
+        object customField
+        timestamp createdAt
+    }
+    BOOKING {
+        string id PK
+        string restaurantId FK
+        string date
+        string time
+        number duration
+        number partySize
+        string dinerName
+        string dinerEmail
+        string customFieldValue
+        string status
+        timestamp createdAt
+    }
+    USER {
+        string id PK
+        string email
+        string displayName
+        string restaurantId FK
+        timestamp createdAt
+    }
+    RESTAURANT ||--o{ BOOKING : "has"
+    USER ||--|| RESTAURANT : "manages"
+      </div>
+    </section>
+
+    <section>
+      <h2>System Diagram</h2>
+      <div class="mermaid">
+graph TB
+    subgraph "Diner's Browser"
+        W[Booking Widget\nWeb Component]
+    end
+
+    subgraph "Restaurant Owner's Browser"
+        D[Dashboard\nAngular SPA]
+    end
+
+    subgraph "Firebase"
+        FA[Firebase Auth]
+        FS[Firestore]
+        FH[Firebase Hosting]
+    end
+
+    subgraph "Restaurant's Website"
+        HW[Host Page\nWordPress etc]
+    end
+
+    HW -->|embeds| W
+    W -->|reads/writes| FS
+    W -->|auth| FA
+    D -->|reads/writes| FS
+    D -->|auth| FA
+    D -->|deployed on| FH
+      </div>
+    </section>
+
+    <section>
+      <h2>Capability → Architecture Map</h2>
+      <div class="cap-map">
+        <div class="cap-row header">
+          <div>Capability</div>
+          <div>Lives in</div>
+          <div>Governed by</div>
+        </div>
+        <div class="cap-row">
+          <div>Diner booking flow</div>
+          <div><code>widget/</code></div>
+          <div>AD-1, AD-4, AD-10</div>
+        </div>
+        <div class="cap-row">
+          <div>Availability calculation</div>
+          <div><code>widget/</code> + Firestore</div>
+          <div>AD-5, AD-6</div>
+        </div>
+        <div class="cap-row">
+          <div>Restaurant settings</div>
+          <div><code>dashboard/</code></div>
+          <div>AD-3, AD-13</div>
+        </div>
+        <div class="cap-row">
+          <div>Booking list</div>
+          <div><code>dashboard/</code></div>
+          <div>AD-11, AD-12</div>
+        </div>
+        <div class="cap-row">
+          <div>Auth (restaurant owner)</div>
+          <div>Firebase Auth + <code>dashboard/</code></div>
+          <div>AD-3</div>
+        </div>
+        <div class="cap-row">
+          <div>Data storage</div>
+          <div>Firestore</div>
+          <div>AD-2, AD-8, AD-9</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Deferred</h2>
+      <ul class="deferred-list">
+        <li><strong>Confirmation step</strong> — Deferred to next iteration. Model supports it (status field), UI doesn't expose it yet.</li>
+        <li><strong>Multi-location</strong> — One restaurant per account for MVP. Data model supports it (restaurantId on booking), UI doesn't.</li>
+        <li><strong>Email/SMS confirmations</strong> — Deferred. Diner email collected, not used yet.</li>
+        <li><strong>POS integration</strong> — Deferred to post-MVP.</li>
+        <li><strong>Google Reserve</strong> — Deferred to post-MVP.</li>
+        <li><strong>AI features</strong> — Deferred to post-MVP.</li>
+        <li><strong>Deployment & environments</strong> — Deferred. For MVP, single Firebase project.</li>
+      </ul>
+    </section>
+
+    <footer>
+      <p>Architecture Spine — osefdetalife-booking · Created 2026-07-12 · Status: final</p>
+    </footer>
+  </div>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'dark',
+      themeVariables: {
+        primaryColor: '#38bdf8',
+        primaryTextColor: '#e2e8f0',
+        primaryBorderColor: '#334155',
+        lineColor: '#94a3b8',
+        secondaryColor: '#1e293b',
+        tertiaryColor: '#0f172a',
+        fontFamily: 'Inter, -apple-system, sans-serif'
+      }
+    });
+  </script>
+</body>
+</html>
