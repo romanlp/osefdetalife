@@ -65,7 +65,7 @@ function firebaseAppFactory(fn: (injector: Injector) => FirebaseApp) {
 
 export function provideFirebaseApp(
   fn: (injector: Injector) => FirebaseApp,
-  ...deps: any[]
+  ...deps: unknown[]
 ): EnvironmentProviders {
   return makeEnvironmentProviders([
     {

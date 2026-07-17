@@ -12,7 +12,7 @@ describe('ThemingService', () => {
           useValue: {
             matchMedia: () => ({
               matches: false,
-              addEventListener: () => {},
+              addEventListener: () => { return undefined },
             }),
           },
         },
