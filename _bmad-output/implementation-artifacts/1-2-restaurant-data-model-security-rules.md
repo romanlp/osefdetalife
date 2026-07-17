@@ -48,9 +48,9 @@ So that restaurant data is stored correctly and access is controlled.
   - [x] Subtask 1.7: Enforce cross-restaurant isolation — owner can only write to `request.auth.uid == resource.data.ownerId`
   - [x] Subtask 1.8: Enforce unauthenticated booking writes reference an existing restaurant via `get(/databases/$(database)/documents/restaurants/$(request.resource.data.restaurantId))`
 
-- [ ] Task 2: Add Slug Resolution Types (AC: 3)
-  - [ ] Subtask 2.1: Create `src/shared/types/slug.ts` with `SlugMapping` interface (`{ slug: string; restaurantId: string }`)
-  - [ ] Subtask 2.2: Export from `src/shared/types/index.ts`
+- [x] Task 2: Add Slug Resolution Types (AC: 3)
+  - [x] Subtask 2.1: Create `src/shared/types/slug.ts` with `SlugMapping` interface (`{ slug: string; restaurantId: string }`)
+  - [x] Subtask 2.2: Export from `src/shared/types/index.ts`
 
 - [ ] Task 3: Create Slug Uniqueness Helper (AC: 3)
   - [ ] Subtask 3.1: Create `src/shared/slug-utils.ts` with `createRestaurantWithSlug()` function using Firestore `runTransaction`
@@ -352,7 +352,12 @@ export async function createRestaurantWithSlug(
 
 ### Completion Notes List
 - Task 1: Created `firestore.rules` with validation helpers (`validateRestaurantData`, `validateBookingData`, `isExistingRestaurant`, `isOwner`). Restaurants: public read, owner create/update/delete. Tables: public read, owner write with positive integer validation. Bookings: unauthenticated create with shape validation, owner read, no update/delete. Slugs: public read, authenticated create only.
+- Task 2: Created `src/shared/types/slug.ts` with `SlugMapping` interface. Exported from barrel.
 
 ### File List
 - `firestore.rules` (NEW)
+- `src/shared/types/slug.ts` (NEW)
+- `src/shared/types/slug.spec.ts` (NEW)
+- `src/shared/types/restaurant.spec.ts` (NEW)
+- `src/shared/types/booking.spec.ts` (NEW)
 
