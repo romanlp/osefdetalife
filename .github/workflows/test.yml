@@ -19,7 +19,7 @@ jobs:
     timeout-minutes: 5
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Determine Node version
         id: node-version
@@ -31,7 +31,7 @@ jobs:
           fi
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ steps.node-version.outputs.value }}
           cache: "npm"
@@ -49,7 +49,7 @@ jobs:
     needs: lint
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Determine Node version
         id: node-version
@@ -61,7 +61,7 @@ jobs:
           fi
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ steps.node-version.outputs.value }}
           cache: "npm"
@@ -84,7 +84,7 @@ jobs:
         shard: [1, 2]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Determine Node version
         id: node-version
@@ -96,7 +96,7 @@ jobs:
           fi
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ steps.node-version.outputs.value }}
           cache: "npm"
@@ -147,7 +147,7 @@ jobs:
     if: github.event_name == 'pull_request' || github.event_name == 'schedule'
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Determine Node version
         id: node-version
@@ -159,7 +159,7 @@ jobs:
           fi
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ steps.node-version.outputs.value }}
           cache: "npm"
@@ -218,7 +218,7 @@ jobs:
 
     steps:
       - name: Download all artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: artifacts
 
