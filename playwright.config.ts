@@ -6,13 +6,18 @@ export default defineConfig({
   forbidOnly: !!process.env['CI'],
   retries: process.env['CI'] ? 2 : 0,
   workers: process.env['CI'] ? 1 : undefined,
+  timeout: 60_000,
+  expect: { timeout: 5_000 },
   reporter: [
     ['html', { outputFolder: 'playwright-report', open: 'never' }],
+    ['junit', { outputFile: 'e2e/results/junit.xml' }],
     ['list'],
   ],
   use: {
     baseURL: process.env['PLAYWRIGHT_TEST_BASE_URL'] ?? 'http://localhost:4210',
-    trace: 'on-first-retry',
+    actionTimeout: 15_000,
+    navigationTimeout: 30_000,
+    trace: 'retain-on-failure-and-retries',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
   },
@@ -26,7 +31,7 @@ export default defineConfig({
     command: 'npm run start',
     url: 'http://localhost:4210',
     reuseExistingServer: !process.env['CI'],
-    timeout: 120000,
+    timeout: 120_000,
   },
   outputDir: 'e2e/results',
 });
