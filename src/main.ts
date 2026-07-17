@@ -5,12 +5,12 @@ import { AppComponent } from './app/app.component';
 import { appConfig } from './app/app.config';
 import { environment } from './environments/environment';
 
-const app = initializeApp(environment.firebase);
+initializeApp(environment.firebase);
 
 if (environment.production) {
   enableProdMode();
 } else {
-  //@ts-ignore
+  //@ts-expect-error error
   window['FIREBASE_APPCHECK_DEBUG_TOKEN'] = environment.appCheckToken;
 }
 
