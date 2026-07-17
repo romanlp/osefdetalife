@@ -52,11 +52,11 @@ So that restaurant data is stored correctly and access is controlled.
   - [x] Subtask 2.1: Create `src/shared/types/slug.ts` with `SlugMapping` interface (`{ slug: string; restaurantId: string }`)
   - [x] Subtask 2.2: Export from `src/shared/types/index.ts`
 
-- [ ] Task 3: Create Slug Uniqueness Helper (AC: 3)
-  - [ ] Subtask 3.1: Create `src/shared/slug-utils.ts` with `createRestaurantWithSlug()` function using Firestore `runTransaction`
-  - [ ] Subtask 3.2: Function creates restaurant document + slug mapping document atomically
-  - [ ] Subtask 3.3: Function rejects if slug already exists in `slugs/{slug}` collection
-  - [ ] Subtask 3.4: Export from `src/shared/index.ts`
+- [x] Task 3: Create Slug Uniqueness Helper (AC: 3)
+  - [x] Subtask 3.1: Create `src/shared/slug-utils.ts` with `createRestaurantWithSlug()` function using Firestore `runTransaction`
+  - [x] Subtask 3.2: Function creates restaurant document + slug mapping document atomically
+  - [x] Subtask 3.3: Function rejects if slug already exists in `slugs/{slug}` collection
+  - [x] Subtask 3.4: Export from `src/shared/index.ts`
 
 - [ ] Task 4: Update firebase.json with Firestore Rules Path (AC: 4, 5)
   - [ ] Subtask 4.1: Add `"firestore": { "rules": "firestore.rules", "indexes": "firestore.indexes.json" }` to `firebase.json`
@@ -353,6 +353,7 @@ export async function createRestaurantWithSlug(
 ### Completion Notes List
 - Task 1: Created `firestore.rules` with validation helpers (`validateRestaurantData`, `validateBookingData`, `isExistingRestaurant`, `isOwner`). Restaurants: public read, owner create/update/delete. Tables: public read, owner write with positive integer validation. Bookings: unauthenticated create with shape validation, owner read, no update/delete. Slugs: public read, authenticated create only.
 - Task 2: Created `src/shared/types/slug.ts` with `SlugMapping` interface. Exported from barrel.
+- Task 3: Created `src/shared/slug-utils.ts` with `createRestaurantWithSlug()` — atomic restaurant + slug creation via Firestore transaction. Rejects duplicate slugs.
 
 ### File List
 - `firestore.rules` (NEW)
@@ -360,4 +361,6 @@ export async function createRestaurantWithSlug(
 - `src/shared/types/slug.spec.ts` (NEW)
 - `src/shared/types/restaurant.spec.ts` (NEW)
 - `src/shared/types/booking.spec.ts` (NEW)
+- `src/shared/slug-utils.ts` (NEW)
+- `src/shared/index.ts` (MODIFIED)
 
