@@ -1,0 +1,23 @@
+# DO NOT EDIT -- overwritten on every update.
+#
+# Workflow customization for bmad-dev-story.
+# Adds commit conventions and push-on-complete.
+
+[workflow]
+
+activation_steps_prepend = []
+activation_steps_append = []
+
+persistent_facts = [
+  "file:{project-root}/docs/git-conventions.md",
+]
+
+on_complete = """
+After updating the story status to 'done' and syncing sprint-status.yaml:
+1. Stage all changed files: `git add -A`
+2. Create a commit following the conventions in docs/git-conventions.md.
+   Use the story key as scope and a descriptive imperative message.
+   Example: `git commit -m "feat(1-2): add restaurant data model and security rules"`
+3. Push the current branch to origin: `git push -u origin HEAD`
+4. Print the branch name and commit hash for the user
+"""

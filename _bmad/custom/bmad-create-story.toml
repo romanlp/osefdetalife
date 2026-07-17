@@ -1,0 +1,19 @@
+# DO NOT EDIT -- overwritten on every update.
+#
+# Workflow customization for bmad-create-story.
+# Adds git branch creation after story file is saved.
+
+[workflow]
+
+activation_steps_prepend = []
+activation_steps_append = []
+
+persistent_facts = []
+
+on_complete = """
+After saving the story file and updating sprint-status.yaml:
+1. Derive a branch name from the story key and slug: `story/{story-key}-{slug}`
+   (e.g. story key `1-2` with slug `restaurant-data-model-security-rules` → `story/1-2-restaurant-data-model-security-rules`)
+2. Create and checkout the branch from the current branch: `git checkout -b {branch-name}`
+3. Confirm the branch was created and print the branch name for the user
+"""

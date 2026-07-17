@@ -1,0 +1,29 @@
+# DO NOT EDIT -- overwritten on every update.
+#
+# Workflow customization for bmad-code-review.
+# Adds PR creation after a clean review.
+
+[workflow]
+
+activation_steps_prepend = []
+activation_steps_append = []
+
+persistent_facts = [
+  "file:{project-root}/docs/git-conventions.md",
+]
+
+on_complete = """
+After the review is complete and story status is updated:
+1. Check if all patch findings were applied (not left as action items)
+2. If all patches applied:
+   a. Stage and commit any remaining changes: `git add -A && git commit -m "review({story-key}): apply review fixes"`
+   b. Push the branch: `git push -u origin HEAD`
+   c. Create a PR using `gh pr create` with:
+      - Title: the story title from the spec file
+      - Body: review summary (findings resolved, deferred, dismissed)
+      - Base: master
+   d. Print the PR URL for the user
+3. If patches were left as action items:
+   - Skip PR creation
+   - Remind the user to address action items and re-run code review before creating a PR
+"""
