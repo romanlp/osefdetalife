@@ -79,10 +79,10 @@ So that restaurant data is stored correctly and access is controlled.
   - [x] Subtask 6.9: Test slug creation — unauthenticated create denied, authenticated create allowed
   - [x] Subtask 6.10: Test table subcollection — public read allowed, owner-only write
 
-- [ ] Task 7: Write Type Unit Tests (AC: 1, 2, 3)
-  - [ ] Subtask 7.1: Verify `SlugMapping` interface shape
-  - [ ] Subtask 7.2: Verify `OpeningHours` type accepts ISO day keys 1-7
-  - [ ] Subtask 7.3: Verify `Booking.status` only allows `'confirmed' | 'cancelled'`
+- [x] Task 7: Write Type Unit Tests (AC: 1, 2, 3)
+  - [x] Subtask 7.1: Verify `SlugMapping` interface shape
+  - [x] Subtask 7.2: Verify `OpeningHours` type accepts ISO day keys 1-7
+  - [x] Subtask 7.3: Verify `Booking.status` only allows `'confirmed' | 'cancelled'`
 
 ## Dev Notes
 
@@ -356,6 +356,7 @@ export async function createRestaurantWithSlug(
 - Task 3: Created `src/shared/slug-utils.ts` with `createRestaurantWithSlug()` — atomic restaurant + slug creation via Firestore transaction. Rejects duplicate slugs.
 - Task 5: Refined types — `OpeningHours` constrained to ISO day keys 1-7 via `DayNumber` type. Removed `'pending'` from `Booking.status`. `TableGroup` verified.
 - Task 6: Created `firestore.rules.spec.ts` with 16 security rules tests against Firebase emulator. All pass. Covers restaurants (read/write/owner checks), slugs (read/create/immutable), tables (read/write/validation), bookings (create/read/deny update). Installed Java 21 for emulator support.
+- Task 7: Type unit tests verified — SlugMapping shape (3 tests), OpeningHours ISO day keys 1-7 (2 tests), Booking status confirmed|cancelled only (2 tests). All 49 unit tests passing.
 
 ### File List
 - `firestore.rules` (NEW)
