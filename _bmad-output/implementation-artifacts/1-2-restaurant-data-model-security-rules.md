@@ -357,6 +357,7 @@ export async function createRestaurantWithSlug(
 - Task 5: Refined types — `OpeningHours` constrained to ISO day keys 1-7 via `DayNumber` type. Removed `'pending'` from `Booking.status`. `TableGroup` verified.
 - Task 6: Created `firestore.rules.spec.ts` with 16 security rules tests against Firebase emulator. All pass. Covers restaurants (read/write/owner checks), slugs (read/create/immutable), tables (read/write/validation), bookings (create/read/deny update). Installed Java 21 for emulator support.
 - Task 7: Type unit tests verified — SlugMapping shape (3 tests), OpeningHours ISO day keys 1-7 (2 tests), Booking status confirmed|cancelled only (2 tests). All 49 unit tests passing.
+- Code review: 5 patches applied — slug TOCTOU fix (getDoc inside transaction), booking restaurantId path validation, immutable ownerId on restaurant update, owner-only booking cancellation, hardcoded Java path. 19 rules tests, 49 unit tests all green.
 
 ### File List
 - `firestore.rules` (NEW)

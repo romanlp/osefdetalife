@@ -228,12 +228,37 @@ describe('Firestore Security Rules', () => {
       ).resolves.toBeDefined();
     });
 
-    it('should deny update and delete', async () => {
+    it('should allow owner to cancel a confirmed booking', async () => {
+      // Seed a fresh confirmed booking
+      await seedAdminData('restaurants/rest-1/bookings/bk-cancel', VALID_BOOKING);
       await expect(
-        updateDoc(doc(user1Db, 'restaurants/rest-1/bookings/bk-1'), {
+        updateDoc(doc(user1Db, 'restaurants/rest-1/bookings/bk-cancel'), {
+          status: 'cancelled',
+        })
+      ).resolves.toBeUndefined();
+    });
+
+    it('should deny owner cancelling an already-cancelled booking', async () => {
+      await seedAdminData('restaurants/rest-1/bookings/bk-already-cancelled', {
+        ...VALID_BOOKING,
+        status: 'cancelled',
+      });
+      await expect(
+        updateDoc(doc(user1Db, 'restaurants/rest-1/bookings/bk-already-cancelled'), {
           status: 'cancelled',
         })
       ).rejects.toThrow();
+    });
+
+    it('should deny non-owner updating booking', async () => {
+      await expect(
+        updateDoc(doc(user2Db, 'restaurants/rest-1/bookings/bk-1'), {
+          status: 'cancelled',
+        })
+      ).rejects.toThrow();
+    });
+
+    it('should deny delete', async () => {
       await expect(
         deleteDoc(doc(user1Db, 'restaurants/rest-1/bookings/bk-1'))
       ).rejects.toThrow();

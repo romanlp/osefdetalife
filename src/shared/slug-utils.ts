@@ -1,8 +1,6 @@
 import {
   runTransaction,
   doc,
-  getDoc,
-  setDoc,
   serverTimestamp,
 } from 'firebase/firestore';
 import { getFirebaseDb } from './firebase-config';
@@ -17,12 +15,12 @@ export async function createRestaurantWithSlug(
   const slugRef = doc(db, 'slugs', slug);
   const restaurantRef = doc(db, 'restaurants', restaurantId);
 
-  const slugDoc = await getDoc(slugRef);
-  if (slugDoc.exists()) {
-    throw new Error(`Slug "${slug}" is already taken`);
-  }
-
   await runTransaction(db, async (transaction) => {
+    const slugDoc = await transaction.get(slugRef);
+    if (slugDoc.exists()) {
+      throw new Error(`Slug "${slug}" is already taken`);
+    }
+
     transaction.set(restaurantRef, {
       ...data,
       slug,

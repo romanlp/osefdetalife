@@ -51,7 +51,7 @@ development_status:
   # Epic 1: Restaurant Setup & Onboarding
   epic-1: in-progress
   1-1-project-scaffolding-firebase-setup: done
-  1-2-restaurant-data-model-security-rules: in-progress
+  1-2-restaurant-data-model-security-rules: done
   1-3-user-authentication: backlog
   1-4-onboarding-basics-step: backlog
   1-5-onboarding-availability-step: backlog

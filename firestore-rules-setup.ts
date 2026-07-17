@@ -8,7 +8,7 @@ let emulatorProcess: ChildProcess | null = null;
 export async function setup() {
   console.log('Starting Firebase emulators for Firestore rules tests...');
 
-  const javaHome = '/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home';
+  const javaHome = process.env.JAVA_HOME || '/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home';
 
   emulatorProcess = spawn(
     'firebase',
