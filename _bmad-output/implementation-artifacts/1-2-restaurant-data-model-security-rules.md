@@ -58,9 +58,9 @@ So that restaurant data is stored correctly and access is controlled.
   - [x] Subtask 3.3: Function rejects if slug already exists in `slugs/{slug}` collection
   - [x] Subtask 3.4: Export from `src/shared/index.ts`
 
-- [ ] Task 4: Update firebase.json with Firestore Rules Path (AC: 4, 5)
-  - [ ] Subtask 4.1: Add `"firestore": { "rules": "firestore.rules", "indexes": "firestore.indexes.json" }` to `firebase.json`
-  - [ ] Subtask 4.2: Create empty `firestore.indexes.json` at project root
+- [x] Task 4: Update firebase.json with Firestore Rules Path (AC: 4, 5)
+  - [x] Subtask 4.1: Add `"firestore": { "rules": "firestore.rules", "indexes": "firestore.indexes.json" }` to `firebase.json`
+  - [x] Subtask 4.2: Create empty `firestore.indexes.json` at project root
 
 - [ ] Task 5: Refine Existing Types for Data Model Alignment (AC: 1, 2)
   - [ ] Subtask 5.1: In `src/shared/types/restaurant.ts` — `OpeningHours` keys must be constrained to 1-7 (ISO day numbers)
@@ -363,4 +363,6 @@ export async function createRestaurantWithSlug(
 - `src/shared/types/booking.spec.ts` (NEW)
 - `src/shared/slug-utils.ts` (NEW)
 - `src/shared/index.ts` (MODIFIED)
+- `firebase.json` (MODIFIED)
+- `firestore.indexes.json` (NEW)
 
