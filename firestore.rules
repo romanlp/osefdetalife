@@ -1,0 +1,80 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // --- Validation helpers ---
+
+    function validateRestaurantData(data) {
+      return data.name is string
+        && data.name.size() > 0
+        && data.slug is string
+        && data.slug.size() > 0
+        && data.ownerId is string
+        && data.ownerId == request.auth.uid
+        && data.timezone is string;
+    }
+
+    function validateBookingData(data) {
+      return data.date is string
+        && data.date.size() > 0
+        && data.time is string
+        && data.time.size() > 0
+        && data.partySize is number
+        && data.partySize > 0
+        && data.name is string
+        && data.name.size() > 0
+        && data.email is string
+        && data.email.size() > 0
+        && data.status == 'confirmed'
+        && data.restaurantId is string;
+    }
+
+    function isExistingRestaurant(restaurantId) {
+      return exists(/databases/$(database)/documents/restaurants/$(restaurantId));
+    }
+
+    function isOwner(restaurantId) {
+      return request.auth != null
+        && get(/databases/$(database)/documents/restaurants/$(restaurantId)).data.ownerId == request.auth.uid;
+    }
+
+    // --- Restaurants ---
+
+    match /restaurants/{restaurantId} {
+      allow read: if true;
+      allow create: if request.auth != null
+                    && request.auth.uid == request.resource.data.ownerId
+                    && validateRestaurantData(request.resource.data);
+      allow update, delete: if request.auth != null
+                            && resource.data.ownerId == request.auth.uid;
+
+      // Table groups — public read, owner write
+      match /tables/{tableId} {
+        allow read: if true;
+        allow create, update: if isOwner(restaurantId)
+                              && request.resource.data.capacity is number
+                              && request.resource.data.capacity > 0
+                              && request.resource.data.count is number
+                              && request.resource.data.count > 0;
+        allow delete: if isOwner(restaurantId);
+      }
+
+      // Bookings — unauthenticated create with validation, owner read
+      match /bookings/{bookingId} {
+        allow read: if isOwner(restaurantId);
+        allow create: if validateBookingData(request.resource.data)
+                      && isExistingRestaurant(request.resource.data.restaurantId);
+        allow update, delete: if false;
+      }
+    }
+
+    // --- Slug resolution ---
+
+    match /slugs/{slug} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update, delete: if false;
+    }
+  }
+}
