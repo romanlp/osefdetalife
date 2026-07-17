@@ -11,10 +11,9 @@ export default defineConfig({
     },
     outDir: 'dist/widget',
     rollupOptions: {
-      external: ['lit', 'firebase/app', 'firebase/firestore', 'firebase/auth'],
+      external: ['firebase/app', 'firebase/firestore', 'firebase/auth'],
       output: {
         globals: {
-          'lit': 'Lit',
           'firebase/app': 'FirebaseApp',
           'firebase/firestore': 'FirebaseFirestore',
           'firebase/auth': 'FirebaseAuth',

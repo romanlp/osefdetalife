@@ -13,6 +13,6 @@ test.describe('Dashboard Flow', () => {
 
   test('[P0] should show dashboard heading text', async ({ page }) => {
     await page.goto('/dashboard');
-    await expect(page.getByText('Dashboard')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
   });
 });
