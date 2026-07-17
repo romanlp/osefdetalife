@@ -67,17 +67,17 @@ So that restaurant data is stored correctly and access is controlled.
   - [x] Subtask 5.2: In `src/shared/types/booking.ts` — remove `'pending'` from `Booking.status` union (only `'confirmed' | 'cancelled'` per AD-7/AD-12)
   - [x] Subtask 5.3: Verify `TableGroup` interface has `capacity: number` and `count: number` — positive integers enforced in security rules only
 
-- [ ] Task 6: Write Security Rules Unit Tests (AC: 4, 5)
-  - [ ] Subtask 6.1: Create `firestore.rules.test.ts` using `@firebase/rules-unit-testing` or emulator-based approach
-  - [ ] Subtask 6.2: Test unauthenticated read on restaurant — expect ALLOW
-  - [ ] Subtask 6.3: Test unauthenticated write on restaurant — expect DENY
-  - [ ] Subtask 6.4: Test authenticated owner write on own restaurant — expect ALLOW
-  - [ ] Subtask 6.5: Test authenticated owner write on other restaurant — expect DENY
-  - [ ] Subtask 6.6: Test unauthenticated booking create with valid shape — expect ALLOW
-  - [ ] Subtask 6.7: Test unauthenticated booking create with missing required fields — expect DENY
-  - [ ] Subtask 6.8: Test unauthenticated booking create with invalid status (not "confirmed") — expect DENY
-  - [ ] Subtask 6.9: Test slug creation — unauthenticated create denied, owner-only
-  - [ ] Subtask 6.10: Test table subcollection — public read allowed, owner-only write
+- [x] Task 6: Write Security Rules Unit Tests (AC: 4, 5)
+  - [x] Subtask 6.1: Create `firestore.rules.spec.ts` using Firebase emulator direct connection
+  - [x] Subtask 6.2: Test unauthenticated read on restaurant — expect ALLOW
+  - [x] Subtask 6.3: Test unauthenticated write on restaurant — expect DENY
+  - [x] Subtask 6.4: Test authenticated owner write on own restaurant — expect ALLOW
+  - [x] Subtask 6.5: Test authenticated owner write on other restaurant — expect DENY
+  - [x] Subtask 6.6: Test unauthenticated booking create with valid shape — expect ALLOW
+  - [x] Subtask 6.7: Test unauthenticated booking create with missing required fields — expect DENY
+  - [x] Subtask 6.8: Test unauthenticated booking create with invalid status (not "confirmed") — expect DENY
+  - [x] Subtask 6.9: Test slug creation — unauthenticated create denied, authenticated create allowed
+  - [x] Subtask 6.10: Test table subcollection — public read allowed, owner-only write
 
 - [ ] Task 7: Write Type Unit Tests (AC: 1, 2, 3)
   - [ ] Subtask 7.1: Verify `SlugMapping` interface shape
@@ -355,15 +355,23 @@ export async function createRestaurantWithSlug(
 - Task 2: Created `src/shared/types/slug.ts` with `SlugMapping` interface. Exported from barrel.
 - Task 3: Created `src/shared/slug-utils.ts` with `createRestaurantWithSlug()` — atomic restaurant + slug creation via Firestore transaction. Rejects duplicate slugs.
 - Task 5: Refined types — `OpeningHours` constrained to ISO day keys 1-7 via `DayNumber` type. Removed `'pending'` from `Booking.status`. `TableGroup` verified.
+- Task 6: Created `firestore.rules.spec.ts` with 16 security rules tests against Firebase emulator. All pass. Covers restaurants (read/write/owner checks), slugs (read/create/immutable), tables (read/write/validation), bookings (create/read/deny update). Installed Java 21 for emulator support.
 
 ### File List
 - `firestore.rules` (NEW)
+- `firestore.indexes.json` (NEW)
+- `firestore.rules.spec.ts` (NEW)
+- `firestore-rules-setup.ts` (NEW)
+- `vitest.firestore.config.ts` (NEW)
 - `src/shared/types/slug.ts` (NEW)
 - `src/shared/types/slug.spec.ts` (NEW)
 - `src/shared/types/restaurant.spec.ts` (NEW)
 - `src/shared/types/booking.spec.ts` (NEW)
 - `src/shared/slug-utils.ts` (NEW)
+- `src/shared/types/restaurant.ts` (MODIFIED)
+- `src/shared/types/booking.ts` (MODIFIED)
+- `src/shared/types/index.ts` (MODIFIED)
 - `src/shared/index.ts` (MODIFIED)
 - `firebase.json` (MODIFIED)
-- `firestore.indexes.json` (NEW)
+- `package.json` (MODIFIED)
 
