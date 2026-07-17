@@ -62,10 +62,10 @@ So that restaurant data is stored correctly and access is controlled.
   - [x] Subtask 4.1: Add `"firestore": { "rules": "firestore.rules", "indexes": "firestore.indexes.json" }` to `firebase.json`
   - [x] Subtask 4.2: Create empty `firestore.indexes.json` at project root
 
-- [ ] Task 5: Refine Existing Types for Data Model Alignment (AC: 1, 2)
-  - [ ] Subtask 5.1: In `src/shared/types/restaurant.ts` — `OpeningHours` keys must be constrained to 1-7 (ISO day numbers)
-  - [ ] Subtask 5.2: In `src/shared/types/booking.ts` — remove `'pending'` from `Booking.status` union (only `'confirmed' | 'cancelled'` per AD-7/AD-12)
-  - [ ] Subtask 5.3: Verify `TableGroup` interface has `capacity: number` and `count: number` — positive integers enforced in security rules only
+- [x] Task 5: Refine Existing Types for Data Model Alignment (AC: 1, 2)
+  - [x] Subtask 5.1: In `src/shared/types/restaurant.ts` — `OpeningHours` keys must be constrained to 1-7 (ISO day numbers)
+  - [x] Subtask 5.2: In `src/shared/types/booking.ts` — remove `'pending'` from `Booking.status` union (only `'confirmed' | 'cancelled'` per AD-7/AD-12)
+  - [x] Subtask 5.3: Verify `TableGroup` interface has `capacity: number` and `count: number` — positive integers enforced in security rules only
 
 - [ ] Task 6: Write Security Rules Unit Tests (AC: 4, 5)
   - [ ] Subtask 6.1: Create `firestore.rules.test.ts` using `@firebase/rules-unit-testing` or emulator-based approach
@@ -354,6 +354,7 @@ export async function createRestaurantWithSlug(
 - Task 1: Created `firestore.rules` with validation helpers (`validateRestaurantData`, `validateBookingData`, `isExistingRestaurant`, `isOwner`). Restaurants: public read, owner create/update/delete. Tables: public read, owner write with positive integer validation. Bookings: unauthenticated create with shape validation, owner read, no update/delete. Slugs: public read, authenticated create only.
 - Task 2: Created `src/shared/types/slug.ts` with `SlugMapping` interface. Exported from barrel.
 - Task 3: Created `src/shared/slug-utils.ts` with `createRestaurantWithSlug()` — atomic restaurant + slug creation via Firestore transaction. Rejects duplicate slugs.
+- Task 5: Refined types — `OpeningHours` constrained to ISO day keys 1-7 via `DayNumber` type. Removed `'pending'` from `Booking.status`. `TableGroup` verified.
 
 ### File List
 - `firestore.rules` (NEW)

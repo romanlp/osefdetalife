@@ -17,10 +17,15 @@ export interface WhiteLabel {
   secondaryColor: string;
 }
 
-export type OpeningHours = Record<number, DayHours>;
+/** ISO day numbers: 1=Monday, 7=Sunday */
+export type DayNumber = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+
+export type OpeningHours = Partial<Record<DayNumber, DayHours>>;
 
 export interface DayHours {
+  /** 24-hour format, e.g. "09:00" */
   open: string;
+  /** 24-hour format, e.g. "17:00" */
   close: string;
 }
 

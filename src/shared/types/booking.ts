@@ -8,6 +8,6 @@ export interface Booking {
   name: string;
   email: string;
   customFieldValue?: string;
-  status: 'pending' | 'confirmed' | 'cancelled';
+  status: 'confirmed' | 'cancelled';
   createdAt: Date;
 }
