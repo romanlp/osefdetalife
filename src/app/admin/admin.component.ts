@@ -12,5 +12,4 @@ import { AdminHeaderComponent } from './admin-header/admin-header.component';
   imports: [AdminHeaderComponent, RouterOutlet],
 })
 export class AdminComponent {
-  constructor() {}
 }

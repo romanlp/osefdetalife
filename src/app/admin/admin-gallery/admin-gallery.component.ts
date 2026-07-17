@@ -73,7 +73,7 @@ export class AdminGalleryComponent {
   }
 
   uploadImage(id: string, event: Event) {
-    // @ts-ignore
+    // @ts-expect-error error
     const image = (event.target as HTMLInputElement).files[0];
 
     const storageRef = ref(this.firebase.storage, `${id}/${image.name}`);

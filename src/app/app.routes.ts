@@ -25,8 +25,13 @@ export const routes: Routes = [
     canActivate: [isAuthenticatedGuard],
   },
   {
+    path: 'dashboard',
+    loadChildren: () =>
+      import('../dashboard/dashboard.routes').then((m) => m.dashboardRoutes),
+  },
+  {
     path: '',
-    redirectTo: 'galleries',
+    redirectTo: 'dashboard',
     pathMatch: 'full',
   },
 ];

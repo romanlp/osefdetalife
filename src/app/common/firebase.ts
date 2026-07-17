@@ -5,7 +5,6 @@ import {
   InjectionToken,
   Injector,
   makeEnvironmentProviders,
-  PLATFORM_ID,
   VERSION,
 } from '@angular/core';
 import { registerVersion, type FirebaseApp } from 'firebase/app';
@@ -57,7 +56,6 @@ export const STORAGE = new InjectionToken<FirebaseStorage>('STORAGE');
 
 function firebaseAppFactory(fn: (injector: Injector) => FirebaseApp) {
   return (injector: Injector) => {
-    const platformId = inject(PLATFORM_ID);
     registerVersion('angularfire', VERSION.full, 'core');
     registerVersion('angularfire', VERSION.full, 'app');
 
