@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { LoginPageComponent } from './login-page.component';
+import { SignupPageComponent } from './signup-page.component';
 import { AuthService } from '../../services/auth.service';
 
 vi.mock('firebase/auth', () => ({
@@ -20,22 +20,20 @@ vi.mock('firebase/auth', () => ({
   signOut: vi.fn(),
 }));
 
-describe('LoginPageComponent', () => {
+describe('SignupPageComponent', () => {
   let mockAuthService: {
-    signInWithEmail: ReturnType<typeof vi.fn>;
+    signUpWithEmail: ReturnType<typeof vi.fn>;
     signInWithGoogle: ReturnType<typeof vi.fn>;
-    isFirstSignIn: ReturnType<typeof vi.fn>;
   };
 
   beforeEach(async () => {
     mockAuthService = {
-      signInWithEmail: vi.fn().mockResolvedValue({ uid: '123' }),
+      signUpWithEmail: vi.fn().mockResolvedValue({ uid: '123' }),
       signInWithGoogle: vi.fn().mockResolvedValue({ uid: '123' }),
-      isFirstSignIn: vi.fn().mockResolvedValue(false),
     };
 
     await TestBed.configureTestingModule({
-      imports: [LoginPageComponent],
+      imports: [SignupPageComponent],
       providers: [
         provideRouter([]),
         { provide: AuthService, useValue: mockAuthService },
@@ -44,36 +42,37 @@ describe('LoginPageComponent', () => {
   });
 
   it('should export the component class', () => {
-    expect(typeof LoginPageComponent).toBe('function');
+    expect(typeof SignupPageComponent).toBe('function');
   });
 
-  it('should have loginWithEmail method', () => {
-    const fixture = TestBed.createComponent(LoginPageComponent);
+  it('should have signUpWithEmail method', () => {
+    const fixture = TestBed.createComponent(SignupPageComponent);
     const component = fixture.componentInstance;
-    expect(typeof component.loginWithEmail).toBe('function');
+    expect(typeof component.signUpWithEmail).toBe('function');
   });
 
-  it('should have loginWithGoogle method', () => {
-    const fixture = TestBed.createComponent(LoginPageComponent);
+  it('should have signUpWithGoogle method', () => {
+    const fixture = TestBed.createComponent(SignupPageComponent);
     const component = fixture.componentInstance;
-    expect(typeof component.loginWithGoogle).toBe('function');
+    expect(typeof component.signUpWithGoogle).toBe('function');
   });
 
-  it('should initialize with empty email and password', () => {
-    const fixture = TestBed.createComponent(LoginPageComponent);
+  it('should initialize with empty form fields', () => {
+    const fixture = TestBed.createComponent(SignupPageComponent);
     const component = fixture.componentInstance;
     expect(component.email()).toBe('');
     expect(component.password()).toBe('');
+    expect(component.confirmPassword()).toBe('');
   });
 
   it('should initialize with no error', () => {
-    const fixture = TestBed.createComponent(LoginPageComponent);
+    const fixture = TestBed.createComponent(SignupPageComponent);
     const component = fixture.componentInstance;
     expect(component.error()).toBeNull();
   });
 
   it('should initialize with loading false', () => {
-    const fixture = TestBed.createComponent(LoginPageComponent);
+    const fixture = TestBed.createComponent(SignupPageComponent);
     const component = fixture.componentInstance;
     expect(component.loading()).toBeFalsy();
   });

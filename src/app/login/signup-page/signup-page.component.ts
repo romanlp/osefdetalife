@@ -7,22 +7,34 @@ import { AuthService } from '../../services/auth.service';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  templateUrl: './login-page.component.html',
-  styleUrls: ['./login-page.component.scss'],
+  templateUrl: './signup-page.component.html',
+  styleUrls: ['./signup-page.component.scss'],
   imports: [MatButton, MatCardModule, MatInput, MatFormField, MatLabel, FormsModule, RouterLink],
 })
-export class LoginPageComponent {
+export class SignupPageComponent {
   private router = inject(Router);
   private authService = inject(AuthService);
 
   email = signal('');
   password = signal('');
+  confirmPassword = signal('');
   loading = signal(false);
   error = signal<string | null>(null);
+  verificationEmailSent = signal(false);
 
-  async loginWithEmail() {
-    if (!this.email() || !this.password()) {
-      this.error.set('Please enter email and password');
+  async signUpWithEmail() {
+    if (!this.email()) {
+      this.error.set('Please enter your email');
+      return;
+    }
+
+    if (this.password() !== this.confirmPassword()) {
+      this.error.set('Passwords do not match');
+      return;
+    }
+
+    if (this.password().length < 6) {
+      this.error.set('Password must be at least 6 characters');
       return;
     }
 
@@ -30,10 +42,10 @@ export class LoginPageComponent {
     this.error.set(null);
 
     try {
-      await this.authService.signInWithEmail(this.email(), this.password());
-      this.router.navigate(['/dashboard']);
+      await this.authService.signUpWithEmail(this.email(), this.password());
+      this.verificationEmailSent.set(true);
     } catch (e: unknown) {
-      console.error('Login failed:', e);
+      console.error('Sign up failed:', e);
       const code = e && typeof e === 'object' && 'code' in e ? (e as { code: string }).code : undefined;
       this.error.set(this.authService.getErrorMessage(code));
     } finally {
@@ -41,7 +53,7 @@ export class LoginPageComponent {
     }
   }
 
-  async loginWithGoogle() {
+  async signUpWithGoogle() {
     this.loading.set(true);
     this.error.set(null);
 
@@ -50,7 +62,7 @@ export class LoginPageComponent {
       const isFirst = await this.authService.isFirstSignIn();
       this.router.navigate(isFirst ? ['/onboarding'] : ['/dashboard']);
     } catch (e: unknown) {
-      console.error('Google sign-in failed:', e);
+      console.error('Google sign-up failed:', e);
       const code = e && typeof e === 'object' && 'code' in e ? (e as { code: string }).code : undefined;
       this.error.set(this.authService.getErrorMessage(code));
     } finally {

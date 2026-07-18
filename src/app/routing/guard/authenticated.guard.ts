@@ -14,15 +14,23 @@ function getCurrentUser(auth: Auth) {
 export const isAuthenticatedGuard: CanActivateFn = async () => {
   const router = inject(Router);
 
-  const auth = getAuth();
-  const user = await getCurrentUser(auth);
-  return !!user || router.parseUrl('/login');
+  try {
+    const auth = getAuth();
+    const user = await getCurrentUser(auth);
+    return !!user || router.parseUrl('/login');
+  } catch {
+    return router.parseUrl('/login');
+  }
 };
 
 export const isNotAuthenticatedGuard: CanActivateFn = async () => {
   const router = inject(Router);
 
-  const auth = getAuth();
-  const user = await getCurrentUser(auth);
-  return !user || router.parseUrl('/admin');
+  try {
+    const auth = getAuth();
+    const user = await getCurrentUser(auth);
+    return !user || router.parseUrl('/dashboard');
+  } catch {
+    return router.parseUrl('/login');
+  }
 };

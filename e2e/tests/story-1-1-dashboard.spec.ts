@@ -3,12 +3,13 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 test.describe('Story 1.1: Project Scaffolding - Angular Dashboard (ATDD)', () => {
-  test('[P0] AC1: Angular dashboard app boots on localhost with placeholder home route', async ({ page }) => {
-    await page.goto('/dashboard');
+  test('[P0] AC1: Angular dashboard app boots on localhost', async ({ page }) => {
+    await page.goto('/');
 
     await expect(page.locator('osef-root')).toBeVisible();
 
-    await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
+    // Unauthenticated users are redirected to login
+    await expect(page).toHaveURL(/.*login/);
   });
 
   test('[P0] AC9: Dashboard connects to emulators in development mode', async () => {

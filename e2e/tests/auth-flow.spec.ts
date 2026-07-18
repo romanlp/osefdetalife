@@ -13,6 +13,6 @@ test.describe('Auth Flow', () => {
 
   test('[P0] should load login page with sign-in button', async ({ page }) => {
     await page.goto('/login');
-    await expect(page.getByRole('button', { name: /login/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Sign in', exact: true })).toBeVisible();
   });
 });
