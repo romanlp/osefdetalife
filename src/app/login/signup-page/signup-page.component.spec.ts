@@ -21,7 +21,10 @@ vi.mock('firebase/auth', () => ({
 }));
 
 describe('SignupPageComponent', () => {
-  let mockAuthService: any;
+  let mockAuthService: {
+    signUpWithEmail: ReturnType<typeof vi.fn>;
+    signInWithGoogle: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(async () => {
     mockAuthService = {

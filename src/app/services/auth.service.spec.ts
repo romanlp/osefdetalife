@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { AuthService } from './auth.service';
+import type { User, UserCredential } from 'firebase/auth';
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -51,8 +52,9 @@ describe('AuthService', () => {
 
   describe('signUpWithEmail', () => {
     it('should create user and send verification email', async () => {
-      const mockUser = { uid: '123', email: 'test@example.com' };
-      vi.mocked(createUserWithEmailAndPassword).mockResolvedValue({ user: mockUser } as any);
+      const mockUser = { uid: '123', email: 'test@example.com' } as User;
+      const mockCredential = { user: mockUser } as UserCredential;
+      vi.mocked(createUserWithEmailAndPassword).mockResolvedValue(mockCredential);
       vi.mocked(sendEmailVerification).mockResolvedValue(undefined);
 
       const result = await service.signUpWithEmail('test@example.com', 'password123');
@@ -65,8 +67,9 @@ describe('AuthService', () => {
 
   describe('signInWithEmail', () => {
     it('should sign in with email and password', async () => {
-      const mockUser = { uid: '123', email: 'test@example.com' };
-      vi.mocked(signInWithEmailAndPassword).mockResolvedValue({ user: mockUser } as any);
+      const mockUser = { uid: '123', email: 'test@example.com' } as User;
+      const mockCredential = { user: mockUser } as UserCredential;
+      vi.mocked(signInWithEmailAndPassword).mockResolvedValue(mockCredential);
 
       const result = await service.signInWithEmail('test@example.com', 'password123');
 
@@ -77,8 +80,9 @@ describe('AuthService', () => {
 
   describe('signInWithGoogle', () => {
     it('should sign in with Google popup', async () => {
-      const mockUser = { uid: '456', email: 'google@example.com' };
-      vi.mocked(signInWithPopup).mockResolvedValue({ user: mockUser } as any);
+      const mockUser = { uid: '456', email: 'google@example.com' } as User;
+      const mockCredential = { user: mockUser } as UserCredential;
+      vi.mocked(signInWithPopup).mockResolvedValue(mockCredential);
 
       const result = await service.signInWithGoogle();
 

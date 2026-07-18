@@ -21,7 +21,9 @@ vi.mock('firebase/auth', () => ({
 }));
 
 describe('ResetPasswordPageComponent', () => {
-  let mockAuthService: any;
+  let mockAuthService: {
+    sendPasswordReset: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(async () => {
     mockAuthService = {
