@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatInput, MatFormField, MatLabel } from '@angular/material/input';
@@ -9,7 +9,6 @@ import { FormsModule } from '@angular/forms';
 @Component({
   templateUrl: './signup-page.component.html',
   styleUrls: ['./signup-page.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatButton, MatCardModule, MatInput, MatFormField, MatLabel, FormsModule, RouterLink],
 })
 export class SignupPageComponent {
@@ -21,8 +20,14 @@ export class SignupPageComponent {
   confirmPassword = signal('');
   loading = signal(false);
   error = signal<string | null>(null);
+  verificationEmailSent = signal(false);
 
   async signUpWithEmail() {
+    if (!this.email()) {
+      this.error.set('Please enter your email');
+      return;
+    }
+
     if (this.password() !== this.confirmPassword()) {
       this.error.set('Passwords do not match');
       return;
@@ -38,9 +43,11 @@ export class SignupPageComponent {
 
     try {
       await this.authService.signUpWithEmail(this.email(), this.password());
-      this.router.navigate(['/onboarding']);
-    } catch (e: any) {
-      this.error.set(this.getErrorMessage(e.code));
+      this.verificationEmailSent.set(true);
+    } catch (e: unknown) {
+      console.error('Sign up failed:', e);
+      const code = e && typeof e === 'object' && 'code' in e ? (e as { code: string }).code : undefined;
+      this.error.set(this.authService.getErrorMessage(code));
     } finally {
       this.loading.set(false);
     }
@@ -52,26 +59,14 @@ export class SignupPageComponent {
 
     try {
       await this.authService.signInWithGoogle();
-      this.router.navigate(['/onboarding']);
-    } catch (e: any) {
-      this.error.set(this.getErrorMessage(e.code));
+      const isFirst = await this.authService.isFirstSignIn();
+      this.router.navigate(isFirst ? ['/onboarding'] : ['/dashboard']);
+    } catch (e: unknown) {
+      console.error('Google sign-up failed:', e);
+      const code = e && typeof e === 'object' && 'code' in e ? (e as { code: string }).code : undefined;
+      this.error.set(this.authService.getErrorMessage(code));
     } finally {
       this.loading.set(false);
-    }
-  }
-
-  private getErrorMessage(code: string): string {
-    switch (code) {
-      case 'auth/email-already-in-use':
-        return 'An account with this email already exists';
-      case 'auth/invalid-email':
-        return 'Invalid email address';
-      case 'auth/weak-password':
-        return 'Password is too weak';
-      case 'auth/popup-closed-by-user':
-        return 'Sign-in popup was closed';
-      default:
-        return 'An error occurred. Please try again';
     }
   }
 }

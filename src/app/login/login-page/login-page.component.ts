@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatInput, MatFormField, MatLabel } from '@angular/material/input';
@@ -9,7 +9,6 @@ import { FormsModule } from '@angular/forms';
 @Component({
   templateUrl: './login-page.component.html',
   styleUrls: ['./login-page.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatButton, MatCardModule, MatInput, MatFormField, MatLabel, FormsModule, RouterLink],
 })
 export class LoginPageComponent {
@@ -22,14 +21,21 @@ export class LoginPageComponent {
   error = signal<string | null>(null);
 
   async loginWithEmail() {
+    if (!this.email() || !this.password()) {
+      this.error.set('Please enter email and password');
+      return;
+    }
+
     this.loading.set(true);
     this.error.set(null);
 
     try {
       await this.authService.signInWithEmail(this.email(), this.password());
       this.router.navigate(['/dashboard']);
-    } catch (e: any) {
-      this.error.set(this.getErrorMessage(e.code));
+    } catch (e: unknown) {
+      console.error('Login failed:', e);
+      const code = e && typeof e === 'object' && 'code' in e ? (e as { code: string }).code : undefined;
+      this.error.set(this.authService.getErrorMessage(code));
     } finally {
       this.loading.set(false);
     }
@@ -43,27 +49,12 @@ export class LoginPageComponent {
       await this.authService.signInWithGoogle();
       const isFirst = await this.authService.isFirstSignIn();
       this.router.navigate(isFirst ? ['/onboarding'] : ['/dashboard']);
-    } catch (e: any) {
-      this.error.set(this.getErrorMessage(e.code));
+    } catch (e: unknown) {
+      console.error('Google sign-in failed:', e);
+      const code = e && typeof e === 'object' && 'code' in e ? (e as { code: string }).code : undefined;
+      this.error.set(this.authService.getErrorMessage(code));
     } finally {
       this.loading.set(false);
-    }
-  }
-
-  private getErrorMessage(code: string): string {
-    switch (code) {
-      case 'auth/user-not-found':
-        return 'No account found with this email';
-      case 'auth/wrong-password':
-        return 'Incorrect password';
-      case 'auth/invalid-email':
-        return 'Invalid email address';
-      case 'auth/too-many-requests':
-        return 'Too many attempts. Please try again later';
-      case 'auth/popup-closed-by-user':
-        return 'Sign-in popup was closed';
-      default:
-        return 'An error occurred. Please try again';
     }
   }
 }

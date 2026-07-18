@@ -17,7 +17,7 @@
       </mat-form-field>
 
       @if (error()) {
-        <div class="text-red-500 text-sm">{{ error() }}</div>
+        <div role="alert" class="text-red-500 text-sm">{{ error() }}</div>
       }
 
       <button matButton="filled" type="submit" [disabled]="loading()" class="w-full">

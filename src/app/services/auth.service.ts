@@ -61,12 +61,36 @@ export class AuthService {
     const user = this.auth.currentUser;
     if (!user) return false;
 
-    // Check if user metadata indicates first sign-in
-    // This will be refined when we have restaurant document checking
     const creationTime = user.metadata.creationTime;
     const lastSignInTime = user.metadata.lastSignInTime;
 
-    // If creation time equals last sign-in time, it's a first sign-in
+    if (!creationTime || !lastSignInTime) return false;
+
     return creationTime === lastSignInTime;
+  }
+
+  getErrorMessage(code: string | undefined): string {
+    if (!code) return 'An error occurred. Please try again';
+
+    switch (code) {
+      case 'auth/user-not-found':
+        return 'No account found with this email';
+      case 'auth/wrong-password':
+        return 'Incorrect password';
+      case 'auth/invalid-email':
+        return 'Invalid email address';
+      case 'auth/too-many-requests':
+        return 'Too many attempts. Please try again later';
+      case 'auth/popup-closed-by-user':
+        return 'Sign-in popup was closed';
+      case 'auth/popup-blocked-by-user':
+        return 'Popup was blocked by your browser. Please allow popups and try again';
+      case 'auth/email-already-in-use':
+        return 'An account with this email already exists';
+      case 'auth/weak-password':
+        return 'Password is too weak';
+      default:
+        return 'An error occurred. Please try again';
+    }
   }
 }

@@ -5,43 +5,50 @@
       <mat-card-subtitle>Create your restaurant account</mat-card-subtitle>
     </mat-card-header>
 
-    <form (ngSubmit)="signUpWithEmail()" class="flex flex-col gap-4">
-      <mat-form-field appearance="outline" class="w-full">
-        <mat-label>Email</mat-label>
-        <input matInput type="email" [ngModel]="email()" (ngModelChange)="email.set($event)" name="email" required />
-      </mat-form-field>
+    @if (verificationEmailSent()) {
+      <div class="text-center">
+        <p class="mb-4 text-gray-600">We've sent a verification email to your address. Please check your inbox and verify your email before logging in.</p>
+        <a routerLink="/login" matButton="outlined">Go to login</a>
+      </div>
+    } @else {
+      <form (ngSubmit)="signUpWithEmail()" class="flex flex-col gap-4">
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" [ngModel]="email()" (ngModelChange)="email.set($event)" name="email" required />
+        </mat-form-field>
 
-      <mat-form-field appearance="outline" class="w-full">
-        <mat-label>Password</mat-label>
-        <input matInput type="password" [ngModel]="password()" (ngModelChange)="password.set($event)" name="password" required />
-      </mat-form-field>
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Password</mat-label>
+          <input matInput type="password" [ngModel]="password()" (ngModelChange)="password.set($event)" name="password" required />
+        </mat-form-field>
 
-      <mat-form-field appearance="outline" class="w-full">
-        <mat-label>Confirm Password</mat-label>
-        <input matInput type="password" [ngModel]="confirmPassword()" (ngModelChange)="confirmPassword.set($event)" name="confirmPassword" required />
-      </mat-form-field>
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Confirm Password</mat-label>
+          <input matInput type="password" [ngModel]="confirmPassword()" (ngModelChange)="confirmPassword.set($event)" name="confirmPassword" required />
+        </mat-form-field>
 
-      @if (error()) {
-        <div class="text-red-500 text-sm">{{ error() }}</div>
-      }
-
-      <button matButton="filled" type="submit" [disabled]="loading()" class="w-full">
-        @if (loading()) {
-          Creating account...
-        } @else {
-          Sign up
+        @if (error()) {
+          <div role="alert" class="text-red-500 text-sm">{{ error() }}</div>
         }
-      </button>
-    </form>
 
-    <div class="mt-4 flex flex-col gap-2">
-      <button matButton="outlined" (click)="signUpWithGoogle()" [disabled]="loading()" class="w-full">
-        Sign up with Google
-      </button>
+        <button matButton="filled" type="submit" [disabled]="loading()" class="w-full">
+          @if (loading()) {
+            Creating account...
+          } @else {
+            Sign up
+          }
+        </button>
+      </form>
 
-      <a routerLink="/login" class="text-sm text-center text-gray-500 hover:text-gray-700">
-        Already have an account? Log in
-      </a>
-    </div>
+      <div class="mt-4 flex flex-col gap-2">
+        <button matButton="outlined" (click)="signUpWithGoogle()" [disabled]="loading()" class="w-full">
+          Sign up with Google
+        </button>
+
+        <a routerLink="/login" class="text-sm text-center text-gray-500 hover:text-gray-700">
+          Already have an account? Log in
+        </a>
+      </div>
+    }
   </mat-card>
 </div>

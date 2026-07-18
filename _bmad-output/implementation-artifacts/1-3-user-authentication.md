@@ -183,6 +183,18 @@ so that I can access the dashboard.
 - [Source: firestore.rules — Owner-based access control already enforced]
 - [Source: _bmad-output/implementation-artifacts/1-2-restaurant-data-model-security-rules.md — Previous story learnings]
 
+### ATDD Artifacts
+
+- **ATDD Checklist:** `_bmad-output/test-artifacts/atdd-checklist-1-3-user-authentication.md`
+- **Generated Test Scaffolds:**
+  - `_bmad-output/test-artifacts/atdd-e2e-auth.spec.ts` (E2E tests, 12 tests skipped)
+  - `_bmad-output/test-artifacts/atdd-unit-auth.spec.ts` (Unit tests, 8 tests skipped)
+  - `_bmad-output/test-artifacts/atdd-component-login.spec.ts` (Component tests, 6 tests skipped)
+  - `_bmad-output/test-artifacts/atdd-component-signup.spec.ts` (Component tests, 6 tests skipped)
+  - `_bmad-output/test-artifacts/atdd-component-reset-password.spec.ts` (Component tests, 6 tests skipped)
+- **Total skipped tests:** 38
+- **Activation guidance:** Remove `skip` for the current task, then confirm RED before implementing
+
 ## Dev Agent Record
 
 ### Agent Model Used
@@ -222,3 +234,28 @@ so that I can access the dashboard.
 - `src/app/onboarding/onboarding-page/onboarding-page.component.ts` — Placeholder onboarding page
 - `src/app/onboarding/onboarding-page/onboarding-page.component.html` — Onboarding page template
 - `src/app/onboarding/onboarding-page/onboarding-page.component.scss` — Onboarding page styles
+
+### Review Findings
+
+#### Patches
+
+- [ ] [Review][Patch] `firestore-debug.log` committed to repo — Add to `.gitignore`, `git rm --cached`
+- [ ] [Review][Patch] `isFirstSignIn()` unreliable — string equality fragile, undefined metadata returns `true`, missing in signup flow [`auth.service.ts:60-70`]
+- [ ] [Review][Patch] Error handling swallows context — `e.code` may be `undefined` on non-Firebase errors, no logging [`login-page.component.ts:32`, `signup-page.component.ts:43`, `reset-password-page.component.ts:31`]
+- [ ] [Review][Patch] Test suite is superficial — tests check method existence, not behavior [`*.spec.ts`]
+- [ ] [Review][Patch] Duplicate `getErrorMessage` logic across 3 components [`login-page.component.ts:53-67`, `signup-page.component.ts:63-75`, `reset-password-page.component.ts:37-45`]
+- [ ] [Review][Patch] `ChangeDetectionStrategy.OnPush` explicitly set — violates AGENTS.md (default in Angular 22+) [All 3 new components]
+- [ ] [Review][Patch] No input validation before Firebase calls — empty email/password sent directly [`login-page.component.ts:24-35`, `signup-page.component.ts:25-46`, `reset-password-page.component.ts:23-34`]
+- [ ] [Review][Patch] Auth guard `getCurrentUser` reject path not handled — unhandled promise rejection [`authenticated.guard.ts:14-20`]
+- [ ] [Review][Patch] Reset password reveals account existence via `auth/user-not-found` [`reset-password-page.component.ts:39`]
+- [ ] [Review][Patch] `signUpWithGoogle` always routes to `/onboarding` — ignores `isFirstSignIn()` check [`signup-page.component.ts:49-60`]
+- [ ] [Review][Patch] Google `popup-blocked-by-user` not explicitly handled [`login-page.component.ts`, `signup-page.component.ts`]
+- [ ] [Review][Patch] Email verification sent but user not informed [`signup-page.component.ts:41`]
+- [ ] [Review][Patch] Error messages missing `role="alert"` for screen readers [All error `<div>` elements]
+
+#### Deferred
+
+- [x] [Review][Defer] Race condition `onAuthStateChanged` vs `isFirstSignIn` — Firebase guarantees `currentUser` after sign-in, fragile but not broken
+- [x] [Review][Defer] No email verification enforcement — feature gap, expected in future story
+- [x] [Review][Defer] No `returnUrl` handling — nice-to-have, not in story scope
+- [x] [Review][Defer] No wildcard/404 route — not in story scope
