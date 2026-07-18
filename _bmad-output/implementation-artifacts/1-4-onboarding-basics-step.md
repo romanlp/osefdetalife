@@ -1,10 +1,13 @@
 ---
 baseline_commit: 50f33a0
+status: done
+review_loop_iteration: 0
+followup_review_recommended: false
 ---
 
 # Story 1.4: Onboarding — Basics Step
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -47,35 +50,35 @@ so that my restaurant is identified on the platform.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Create Onboarding Service (AC: 1, 2, 3, 4)
-  - [ ] Subtask 1.1: Create `src/app/services/onboarding.service.ts`
-  - [ ] Subtask 1.2: Implement `createRestaurant(name, slug, address?)` — creates restaurant document in Firestore
-  - [ ] Subtask 1.3: Implement `checkSlugAvailability(slug)` — checks if slug is unique in real-time
-  - [ ] Subtask 1.4: Implement `generateSlug(name)` — converts name to slug format (lowercase, hyphens)
-  - [ ] Subtask 1.5: Implement `updateRestaurant(restaurantId, data)` — updates restaurant document
-  - [ ] Subtask 1.6: Implement `getRestaurant(restaurantId)` — gets restaurant document
+- [x] Task 1: Create Onboarding Service (AC: 1, 2, 3, 4)
+  - [x] Subtask 1.1: Create `src/app/services/onboarding.service.ts`
+  - [x] Subtask 1.2: Implement `createRestaurant(name, slug, address?)` — creates restaurant document in Firestore
+  - [x] Subtask 1.3: Implement `checkSlugAvailability(slug)` — checks if slug is unique in real-time
+  - [x] Subtask 1.4: Implement `generateSlug(name)` — converts name to slug format (lowercase, hyphens)
+  - [x] Subtask 1.5: Implement `updateRestaurant(restaurantId, data)` — updates restaurant document
+  - [x] Subtask 1.6: Implement `getRestaurant(restaurantId)` — gets restaurant document
 
-- [ ] Task 2: Create Onboarding Page Component (AC: 1, 2, 3, 4, 5)
-  - [ ] Subtask 2.1: Create `src/app/onboarding/onboarding-page/onboarding-page.component.ts`
-  - [ ] Subtask 2.2: Implement step indicator ("Step 1 of 3: Restaurant basics")
-  - [ ] Subtask 2.3: Implement restaurant name input with label
-  - [ ] Subtask 2.4: Implement slug input with real-time validation
-  - [ ] Subtask 2.5: Implement slug preview ("Your booking link: bookable.co/{slug}")
-  - [ ] Subtask 2.6: Implement address input (optional, with "(optional)" label)
-  - [ ] Subtask 2.7: Implement "Continue" button with loading state
-  - [ ] Subtask 2.8: Implement form validation (name required, slug required and unique)
-  - [ ] Subtask 2.9: Style per DESIGN.md: centered card, max-width 480px, Inter font, warm linen background
+- [x] Task 2: Create Onboarding Page Component (AC: 1, 2, 3, 4, 5)
+  - [x] Subtask 2.1: Create `src/app/onboarding/onboarding-page/onboarding-page.component.ts`
+  - [x] Subtask 2.2: Implement step indicator ("Step 1 of 3: Restaurant basics")
+  - [x] Subtask 2.3: Implement restaurant name input with label
+  - [x] Subtask 2.4: Implement slug input with real-time validation
+  - [x] Subtask 2.5: Implement slug preview ("Your booking link: bookable.co/{slug}")
+  - [x] Subtask 2.6: Implement address input (optional, with "(optional)" label)
+  - [x] Subtask 2.7: Implement "Continue" button with loading state
+  - [x] Subtask 2.8: Implement form validation (name required, slug required and unique)
+  - [x] Subtask 2.9: Style per DESIGN.md: centered card, max-width 480px, Inter font, warm linen background
 
-- [ ] Task 3: Create Onboarding Guard (AC: 1, 6)
-  - [ ] Subtask 3.1: Create `src/app/routing/guard/onboarding.guard.ts`
-  - [ ] Subtask 3.2: Implement functional guard that checks if user has completed onboarding
-  - [ ] Subtask 3.3: Redirect to dashboard if onboarding already completed
-  - [ ] Subtask 3.4: Redirect to onboarding if not completed
+- [x] Task 3: Create Onboarding Guard (AC: 1, 6)
+  - [x] Subtask 3.1: Create `src/app/routing/guard/onboarding.guard.ts`
+  - [x] Subtask 3.2: Implement functional guard that checks if user has completed onboarding
+  - [x] Subtask 3.3: Redirect to dashboard if onboarding already completed
+  - [x] Subtask 3.4: Redirect to onboarding if not completed
 
-- [ ] Task 4: Update Angular Routing (AC: 1)
-  - [ ] Subtask 4.1: Update `src/app/app.routes.ts` to add `/onboarding` route
-  - [ ] Subtask 4.2: Add onboarding guard to route
-  - [ ] Subtask 4.3: Update redirect logic to handle onboarding flow
+- [x] Task 4: Update Angular Routing (AC: 1)
+  - [x] Subtask 4.1: Update `src/app/app.routes.ts` to add `/onboarding` route
+  - [x] Subtask 4.2: Add onboarding guard to route
+  - [x] Subtask 4.3: Update redirect logic to handle onboarding flow
 
 - [ ] Task 5: Write Unit Tests (AC: 1, 2, 3, 4, 5, 6)
   - [ ] Subtask 5.1: Test OnboardingService — createRestaurant creates document in Firestore
@@ -197,6 +200,45 @@ so that my restaurant is identified on the platform.
 
 ### Review Findings
 
-#### Patches
+#### Patches (all applied)
+
+1. **[HIGH] Non-atomic slug+restaurant write** — ✅ Fixed: Firestore batch makes writes atomic
+2. **[MEDIUM] Slug TOCTOU race** — ✅ Fixed: batch commit prevents concurrent slug claims
+3. **[MEDIUM] Guard uses raw Firestore instead of shared config** — ✅ Fixed: imports from shared/firebase-config
+4. **[MEDIUM] Double slug check per keystroke** — ✅ Fixed: onSlugInput no longer calls checkSlugAvailability
+5. **[MEDIUM] Manual slug edits overwritten by effect** — ✅ Fixed: userEditedSlug signal gates auto-generation
+6. **[MEDIUM] Progress bar not positioned within card** — ✅ Fixed: added relative to mat-card
+7. **[MEDIUM] slugCheckTimeout not cleaned up on destroy** — ✅ Fixed: DestroyRef.onDestroy clears timeout
+8. **[LOW] generateSlug returns empty string** — ✅ Fixed: fallback to 'restaurant'
+9. **[LOW] Step indicator missing suffix** — ✅ Fixed: added ': Restaurant basics'
+10. **[LOW] Button missing busy state** — ✅ Fixed: added aria-busy attribute
+11. **[LOW] Slug hints not live region** — ✅ Fixed: added aria-live polite div
 
 #### Deferred
+
+1. `isOnboardedGuard` catch redirects to `/onboarding` while `isNotOnboardedGuard` catch returns `true` — inconsistent failure behavior (pre-existing architectural pattern from auth guard).
+2. No Firestore caching in guards — every navigation triggers a live query (pre-existing pattern).
+3. `updateRestaurant` / `getRestaurant` have no client-side ownerId check — relies on Firestore rules (AD-2 architecture: rules enforce access).
+4. `FormsModule` used instead of Signal Forms — per AGENTS.md preference, but FormsModule works and is consistent with existing code.
+5. `createdAt` declared as `Date` in restaurantData but written as `serverTimestamp()` — type mismatch at runtime; existing pattern from Story 1.2.
+
+### Review Triage Log
+
+#### 2026-07-18 — Review pass
+- intent_gap: 0
+- bad_spec: 0
+- patch: 11: (high 1, medium 6, low 4)
+- defer: 5
+- reject: 0
+- addressed_findings:
+  - `[high]` `[patch]` Non-atomic slug+restaurant write — replaced sequential setDoc with Firestore batch
+  - `[medium]` `[patch]` Slug TOCTOU race — batch commit makes slug+restaurant write atomic
+  - `[medium]` `[patch]` Guard uses raw Firestore — replaced getFirestore/getAuth with shared config imports
+  - `[medium]` `[patch]` Double slug check per keystroke — removed checkSlugAvailability from onSlugInput; effect handles auto-generation only
+  - `[medium]` `[patch]` Manual slug edits overwritten — added userEditedSlug signal; effect skips auto-generation when true
+  - `[medium]` `[patch]` Progress bar not positioned within card — added relative class to mat-card
+  - `[medium]` `[patch]` slugCheckTimeout not cleaned up — added DestroyRef.onDestroy cleanup
+  - `[low]` `[patch]` generateSlug returns empty string — added fallback to 'restaurant'
+  - `[low]` `[patch]` Step indicator missing suffix — added ': Restaurant basics' to match AC1
+  - `[low]` `[patch]` Button missing busy state — added aria-busy attribute
+  - `[low]` `[patch]` Slug hints not live region — added aria-live polite div for screen readers
