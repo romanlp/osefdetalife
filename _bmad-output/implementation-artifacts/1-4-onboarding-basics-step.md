@@ -40,6 +40,11 @@ so that my restaurant is identified on the platform.
 **Then** the address field is visible with an "(optional)" label
 **And** the owner can skip the address by clicking "Continue" without entering one
 
+**Given** a restaurant owner has not yet completed onboarding
+**When** they try to navigate to the dashboard
+**Then** they are redirected to the onboarding wizard
+**And** they see the basics step card
+
 ## Tasks / Subtasks
 
 - [ ] Task 1: Create Onboarding Service (AC: 1, 2, 3, 4)
@@ -61,7 +66,7 @@ so that my restaurant is identified on the platform.
   - [ ] Subtask 2.8: Implement form validation (name required, slug required and unique)
   - [ ] Subtask 2.9: Style per DESIGN.md: centered card, max-width 480px, Inter font, warm linen background
 
-- [ ] Task 3: Create Onboarding Guard (AC: 1)
+- [ ] Task 3: Create Onboarding Guard (AC: 1, 6)
   - [ ] Subtask 3.1: Create `src/app/routing/guard/onboarding.guard.ts`
   - [ ] Subtask 3.2: Implement functional guard that checks if user has completed onboarding
   - [ ] Subtask 3.3: Redirect to dashboard if onboarding already completed
@@ -72,7 +77,7 @@ so that my restaurant is identified on the platform.
   - [ ] Subtask 4.2: Add onboarding guard to route
   - [ ] Subtask 4.3: Update redirect logic to handle onboarding flow
 
-- [ ] Task 5: Write Unit Tests (AC: 1, 2, 3, 4, 5)
+- [ ] Task 5: Write Unit Tests (AC: 1, 2, 3, 4, 5, 6)
   - [ ] Subtask 5.1: Test OnboardingService — createRestaurant creates document in Firestore
   - [ ] Subtask 5.2: Test OnboardingService — checkSlugAvailability returns true/false
   - [ ] Subtask 5.3: Test OnboardingService — generateSlug converts name to slug format
@@ -80,6 +85,8 @@ so that my restaurant is identified on the platform.
   - [ ] Subtask 5.5: Test OnboardingPageComponent — slug auto-generates from name
   - [ ] Subtask 5.6: Test OnboardingPageComponent — address field is optional
   - [ ] Subtask 5.7: Test OnboardingGuard — redirects based on onboarding status
+  - [ ] Subtask 5.8: Test OnboardingGuard — redirects to onboarding when not completed
+  - [ ] Subtask 5.9: Test OnboardingGuard — redirects to dashboard when completed
 
 - [ ] Task 6: Integration Testing (AC: 1, 2, 3, 4, 5)
   - [ ] Subtask 6.1: Test complete onboarding flow from sign-up to Step 1
@@ -135,6 +142,7 @@ so that my restaurant is identified on the platform.
 - Use `ng-mocks` for Angular component isolation
 - Never call real Firestore in tests — always mock
 - Test error handling: Firestore failures, slug uniqueness violations
+- Test guard behavior: redirect to onboarding when not completed, redirect to dashboard when completed
 
 ### Previous Story Learnings
 
@@ -154,6 +162,12 @@ so that my restaurant is identified on the platform.
 - `isFirstSignIn()` checks if user has no restaurant document yet
 - Onboarding redirect happens after successful sign-up
 - Code review lesson: Always validate data at boundaries (forms, security rules)
+
+**Story 1.4 (Onboarding Basics Step):**
+- New guard needed: `onboarding.guard.ts` to enforce onboarding completion
+- Guard should check if user has a restaurant document
+- If no restaurant document exists, redirect to `/onboarding`
+- If restaurant document exists, allow access to dashboard
 
 ### References
 
