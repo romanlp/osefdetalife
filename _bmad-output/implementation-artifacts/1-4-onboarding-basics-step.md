@@ -178,6 +178,13 @@ so that my restaurant is identified on the platform.
 - [Source: src/shared/firebase-config.ts — getFirebaseDb() export]
 - [Source: firestore.rules — Owner-based access control already enforced]
 
+### ATDD Artifacts
+
+- Checklist: `_bmad-output/test-artifacts/atdd-checklist-1-4-onboarding-basics-step.md`
+- API tests: `tests/api/onboarding-service.spec.ts`
+- E2E tests: `tests/e2e/onboarding-wizard.spec.ts`
+- Test fixtures: `tests/fixtures/test-data.ts`
+
 ## Dev Agent Record
 
 ### Agent Model Used
