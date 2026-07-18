@@ -52,7 +52,7 @@ development_status:
   epic-1: in-progress
   1-1-project-scaffolding-firebase-setup: done
   1-2-restaurant-data-model-security-rules: done
-  1-3-user-authentication: ready-for-dev
+  1-3-user-authentication: review
   1-4-onboarding-basics-step: backlog
   1-5-onboarding-availability-step: backlog
   1-6-onboarding-branding-step: backlog

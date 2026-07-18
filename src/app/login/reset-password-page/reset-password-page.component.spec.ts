@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { LoginPageComponent } from './login-page.component';
+import { ResetPasswordPageComponent } from './reset-password-page.component';
 import { AuthService } from '../../services/auth.service';
 
 vi.mock('firebase/auth', () => ({
@@ -20,18 +20,16 @@ vi.mock('firebase/auth', () => ({
   signOut: vi.fn(),
 }));
 
-describe('LoginPageComponent', () => {
+describe('ResetPasswordPageComponent', () => {
   let mockAuthService: any;
 
   beforeEach(async () => {
     mockAuthService = {
-      signInWithEmail: vi.fn().mockResolvedValue({ uid: '123' }),
-      signInWithGoogle: vi.fn().mockResolvedValue({ uid: '123' }),
-      isFirstSignIn: vi.fn().mockResolvedValue(false),
+      sendPasswordReset: vi.fn().mockResolvedValue(undefined),
     };
 
     await TestBed.configureTestingModule({
-      imports: [LoginPageComponent],
+      imports: [ResetPasswordPageComponent],
       providers: [
         provideRouter([]),
         { provide: AuthService, useValue: mockAuthService },
@@ -40,37 +38,36 @@ describe('LoginPageComponent', () => {
   });
 
   it('should export the component class', () => {
-    expect(typeof LoginPageComponent).toBe('function');
+    expect(typeof ResetPasswordPageComponent).toBe('function');
   });
 
-  it('should have loginWithEmail method', () => {
-    const fixture = TestBed.createComponent(LoginPageComponent);
+  it('should have sendResetEmail method', () => {
+    const fixture = TestBed.createComponent(ResetPasswordPageComponent);
     const component = fixture.componentInstance;
-    expect(typeof component.loginWithEmail).toBe('function');
+    expect(typeof component.sendResetEmail).toBe('function');
   });
 
-  it('should have loginWithGoogle method', () => {
-    const fixture = TestBed.createComponent(LoginPageComponent);
-    const component = fixture.componentInstance;
-    expect(typeof component.loginWithGoogle).toBe('function');
-  });
-
-  it('should initialize with empty email and password', () => {
-    const fixture = TestBed.createComponent(LoginPageComponent);
+  it('should initialize with empty email', () => {
+    const fixture = TestBed.createComponent(ResetPasswordPageComponent);
     const component = fixture.componentInstance;
     expect(component.email()).toBe('');
-    expect(component.password()).toBe('');
   });
 
   it('should initialize with no error', () => {
-    const fixture = TestBed.createComponent(LoginPageComponent);
+    const fixture = TestBed.createComponent(ResetPasswordPageComponent);
     const component = fixture.componentInstance;
     expect(component.error()).toBeNull();
   });
 
   it('should initialize with loading false', () => {
-    const fixture = TestBed.createComponent(LoginPageComponent);
+    const fixture = TestBed.createComponent(ResetPasswordPageComponent);
     const component = fixture.componentInstance;
     expect(component.loading()).toBeFalsy();
+  });
+
+  it('should initialize with sent false', () => {
+    const fixture = TestBed.createComponent(ResetPasswordPageComponent);
+    const component = fixture.componentInstance;
+    expect(component.sent()).toBeFalsy();
   });
 });

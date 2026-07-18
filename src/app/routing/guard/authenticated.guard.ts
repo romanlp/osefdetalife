@@ -24,5 +24,5 @@ export const isNotAuthenticatedGuard: CanActivateFn = async () => {
 
   const auth = getAuth();
   const user = await getCurrentUser(auth);
-  return !user || router.parseUrl('/admin');
+  return !user || router.parseUrl('/dashboard');
 };

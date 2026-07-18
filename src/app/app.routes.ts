@@ -19,6 +19,21 @@ export const routes: Routes = [
     canActivate: [isNotAuthenticatedGuard],
   },
   {
+    path: 'signup',
+    loadComponent: () =>
+      import('./login/signup-page/signup-page.component').then(
+        (m) => m.SignupPageComponent,
+      ),
+    canActivate: [isNotAuthenticatedGuard],
+  },
+  {
+    path: 'reset-password',
+    loadComponent: () =>
+      import('./login/reset-password-page/reset-password-page.component').then(
+        (m) => m.ResetPasswordPageComponent,
+      ),
+  },
+  {
     path: 'admin',
     loadChildren: () =>
       import('./admin/admin.module').then((m) => m.AdminModule),
@@ -28,6 +43,15 @@ export const routes: Routes = [
     path: 'dashboard',
     loadChildren: () =>
       import('../dashboard/dashboard.routes').then((m) => m.dashboardRoutes),
+    canActivate: [isAuthenticatedGuard],
+  },
+  {
+    path: 'onboarding',
+    loadComponent: () =>
+      import('./onboarding/onboarding-page/onboarding-page.component').then(
+        (m) => m.OnboardingPageComponent,
+      ),
+    canActivate: [isAuthenticatedGuard],
   },
   {
     path: '',

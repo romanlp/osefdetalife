@@ -5,7 +5,7 @@
 
 [workflow]
 
-activation_steps_prepend = []
+activation_steps_prepend = ["file:{project-root}/_bmad/custom/steps/prep-git-master.md"]
 activation_steps_append = []
 
 persistent_facts = []
