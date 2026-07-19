@@ -214,8 +214,8 @@ jobs:
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             if [ $i -gt 1 ]; then
               echo "Resetting emulator data..."
-              curl -s -X DELETE "http://localhost:8080/emulator/v1/projects/demo-osefdetalife/databases/(default)/documents" || true
-              curl -s -X DELETE "http://localhost:9099/emulator/v1/projects/demo-osefdetalife/accounts" || true
+              curl -s -f -X DELETE "http://localhost:8080/emulator/v1/projects/demo-osefdetalife/databases/%28default%29/documents" || true
+              curl -s -f -X DELETE -H "Authorization: Bearer owner" "http://localhost:9099/emulator/v1/projects/demo-osefdetalife/accounts" || true
             fi
             npx playwright test || exit 1
           done
