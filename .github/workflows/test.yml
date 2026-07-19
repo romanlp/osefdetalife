@@ -212,6 +212,11 @@ jobs:
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             echo "Burn-in iteration $i/5"
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            if [ $i -gt 1 ]; then
+              echo "Resetting emulator data..."
+              curl -s -X DELETE "http://localhost:8080/emulator/v1/projects/demo-osefdetalife/databases/(default)/documents" || true
+              curl -s -X DELETE "http://localhost:9099/emulator/v1/projects/demo-osefdetalife/accounts" || true
+            fi
             npx playwright test || exit 1
           done
           echo "Burn-in complete - no flaky tests detected"
