@@ -1,0 +1,66 @@
+import { test, expect } from '../fixtures';
+
+test.describe('Onboarding Wizard', () => {
+  test('[P0] should display onboarding card with correct heading', async ({ onboardingPage }) => {
+    await expect(onboardingPage.getByText('Step 1 of 3: Restaurant basics')).toBeVisible();
+    await expect(onboardingPage.getByRole('heading', { name: 'Tell us about your restaurant' })).toBeVisible();
+  });
+
+  test('[P0] should auto-generate slug from restaurant name', async ({ onboardingPage }) => {
+    const nameInput = onboardingPage.getByRole('textbox', { name: /restaurant name/i });
+    await nameInput.fill('The Blue Bistro');
+
+    const slugPreview = onboardingPage.getByText(/your booking link/i);
+    await expect(slugPreview).toBeVisible();
+    await expect(slugPreview).toContainText('the-blue-bistro');
+  });
+
+  test('[P0] should validate slug uniqueness in real-time', async ({ onboardingPage }) => {
+    const nameInput = onboardingPage.getByRole('textbox', { name: /restaurant name/i });
+    await nameInput.fill('Existing Restaurant');
+
+    const slugInput = onboardingPage.getByRole('textbox', { name: /slug/i });
+    await slugInput.fill('existing-restaurant');
+
+    const availabilityIndicator = onboardingPage.getByText(/slug is taken|slug is available|checking/i);
+    await expect(availabilityIndicator).toBeVisible();
+  });
+
+  test('[P0] should advance to step 2 after valid submission', async ({ onboardingPage }) => {
+    const nameInput = onboardingPage.getByRole('textbox', { name: /restaurant name/i });
+    await nameInput.fill('New Restaurant');
+
+    const slugInput = onboardingPage.getByRole('textbox', { name: /slug/i });
+    await slugInput.fill('new-restaurant');
+
+    const continueButton = onboardingPage.getByRole('button', { name: /continue/i });
+    await continueButton.click();
+
+    await expect(onboardingPage.getByText('Step 2 of 3')).toBeVisible();
+  });
+
+  test('[P1] should show address field as optional', async ({ onboardingPage }) => {
+    const addressInput = onboardingPage.getByRole('textbox', { name: /address/i });
+    await expect(addressInput).toBeVisible();
+  });
+
+  test('[P1] should allow skipping address field', async ({ onboardingPage }) => {
+    const nameInput = onboardingPage.getByRole('textbox', { name: /restaurant name/i });
+    await nameInput.fill('Restaurant Without Address');
+
+    const slugInput = onboardingPage.getByRole('textbox', { name: /slug/i });
+    await slugInput.fill('restaurant-without-address');
+
+    const continueButton = onboardingPage.getByRole('button', { name: /continue/i });
+    await continueButton.click();
+
+    await expect(onboardingPage.getByText('Step 2 of 3')).toBeVisible();
+  });
+
+  test('[P0] should redirect to onboarding when not completed', async ({ authenticatedPage }) => {
+    await authenticatedPage.goto('/dashboard');
+
+    await expect(authenticatedPage).toHaveURL(/onboarding/);
+    await expect(authenticatedPage.getByText('Step 1 of 3: Restaurant basics')).toBeVisible();
+  });
+});

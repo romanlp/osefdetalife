@@ -112,6 +112,33 @@ describe('OnboardingService', () => {
     });
   });
 
+  describe('updateRestaurant', () => {
+    it('should update restaurant document with provided data', async () => {
+      const { updateDoc } = await import('firebase/firestore');
+
+      await service.updateRestaurant('rest-123', { name: 'Updated Bistro' });
+
+      expect(updateDoc).toHaveBeenCalledWith(
+        expect.objectContaining({ _path: 'restaurants/rest-123' }),
+        { name: 'Updated Bistro' },
+      );
+    });
+
+    it('should update multiple fields at once', async () => {
+      const { updateDoc } = await import('firebase/firestore');
+
+      await service.updateRestaurant('rest-123', {
+        name: 'New Name',
+        address: '456 Oak Ave, London',
+      });
+
+      expect(updateDoc).toHaveBeenCalledWith(
+        expect.objectContaining({ _path: 'restaurants/rest-123' }),
+        { name: 'New Name', address: '456 Oak Ave, London' },
+      );
+    });
+  });
+
   describe('getRestaurant', () => {
     it('should return restaurant data when it exists', async () => {
       const { getDoc } = await import('firebase/firestore');
@@ -140,6 +167,41 @@ describe('OnboardingService', () => {
 
       const result = await service.getRestaurant('nonexistent');
       expect(result).toBeNull();
+    });
+  });
+
+  describe('createRestaurant', () => {
+    it('should create restaurant without address', async () => {
+      const { doc } = await import('firebase/firestore');
+      let callCount = 0;
+      vi.mocked(doc).mockImplementation((_db: unknown, ...segments: string[]) => {
+        callCount++;
+        return { _path: segments.join('/'), id: callCount === 1 ? 'new-id' : undefined } as never;
+      });
+
+      const result = await service.createRestaurant('Blue Bistro', 'blue-bistro');
+
+      expect(mockBatch.set).toHaveBeenCalledTimes(2);
+      expect(result).toBe('new-id');
+    });
+
+    it('should verify slug uniqueness via batch write', async () => {
+      const { doc } = await import('firebase/firestore');
+      let callCount = 0;
+      vi.mocked(doc).mockImplementation((_db: unknown, ...segments: string[]) => {
+        callCount++;
+        return { _path: segments.join('/'), id: callCount === 1 ? 'new-id' : undefined } as never;
+      });
+
+      await service.createRestaurant('Blue Bistro', 'blue-bistro');
+
+      const batchSetCalls = mockBatch.set.mock.calls;
+      const slugCall = batchSetCalls.find((call: unknown[]) => {
+        const ref = call[0] as { _path: string };
+        return ref._path?.startsWith('slugs/');
+      });
+      expect(slugCall).toBeDefined();
+      expect(slugCall![1]).toMatchObject({ restaurantId: 'new-id' });
     });
   });
 });
