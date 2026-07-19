@@ -27,6 +27,7 @@ export class OnboardingPageComponent {
   userEditedSlug = signal(false);
 
   private slugCheckTimeout: ReturnType<typeof setTimeout> | null = null;
+  private slugCheckGeneration = 0;
 
   slugPreview = computed(() => {
     const s = this.slug();
@@ -63,9 +64,16 @@ export class OnboardingPageComponent {
 
   onSlugInput(value: string) {
     this.userEditedSlug.set(true);
-    this.slug.set(value);
+    if (!value.trim()) {
+      this.slug.set('');
+      this.slugAvailable.set(null);
+      this.slugChecking.set(false);
+      return;
+    }
+    const normalized = this.onboardingService.generateSlug(value);
+    this.slug.set(normalized);
     this.slugAvailable.set(null);
-    this.checkSlugAvailability(value);
+    this.checkSlugAvailability(normalized);
   }
 
   onNameInput(value: string) {
@@ -87,14 +95,22 @@ export class OnboardingPageComponent {
     }
 
     this.slugChecking.set(true);
+    const generation = ++this.slugCheckGeneration;
+
     this.slugCheckTimeout = setTimeout(async () => {
       try {
         const available = await this.onboardingService.checkSlugAvailability(slug);
-        this.slugAvailable.set(available);
+        if (this.slugCheckGeneration === generation) {
+          this.slugAvailable.set(available);
+        }
       } catch {
-        this.slugAvailable.set(null);
+        if (this.slugCheckGeneration === generation) {
+          this.slugAvailable.set(null);
+        }
       } finally {
-        this.slugChecking.set(false);
+        if (this.slugCheckGeneration === generation) {
+          this.slugChecking.set(false);
+        }
       }
     }, 300);
   }

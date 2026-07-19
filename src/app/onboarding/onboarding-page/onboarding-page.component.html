@@ -36,7 +36,7 @@
           <mat-hint align="start">Your booking link: <strong>{{ slugPreview() }}</strong></mat-hint>
         }
         @if (slugAvailable() === true) {
-          <mat-hint align="end" class="text-green-600">{{ slugHint() }}</mat-hint>
+          <mat-hint align="end" class="text-green-700">{{ slugHint() }}</mat-hint>
         } @else if (slugAvailable() === false) {
           <mat-error>{{ slugHint() }}</mat-error>
         } @else if (slugHint()) {
@@ -48,7 +48,7 @@
       }
 
       <mat-form-field appearance="outline" class="w-full">
-        <mat-label>Address <span class="text-gray-400 text-sm">(optional)</span></mat-label>
+        <mat-label>Address <span class="text-gray-600 text-sm">(optional)</span></mat-label>
         <input
           matInput
           [ngModel]="address()"
@@ -59,7 +59,7 @@
       </mat-form-field>
 
       @if (error()) {
-        <div role="alert" class="text-red-500 text-sm">{{ error() }}</div>
+        <div role="alert" class="text-red-700 text-sm">{{ error() }}</div>
       }
 
       <button

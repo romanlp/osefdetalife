@@ -61,6 +61,7 @@ export class OnboardingService {
           primaryColor: '#000000',
           secondaryColor: '#FFFFFF',
         },
+        onboardingCompleted: false,
         createdAt: new Date(),
       };
 
@@ -93,7 +94,7 @@ export class OnboardingService {
 
   async updateRestaurant(
     restaurantId: string,
-    data: Partial<Restaurant>,
+    data: Partial<Omit<Restaurant, 'id' | 'slug' | 'ownerId'>>,
   ): Promise<void> {
     const restaurantRef = doc(this.db, 'restaurants', restaurantId);
     await updateDoc(restaurantRef, data);

@@ -9,6 +9,7 @@ export interface Restaurant {
   tableGroups: TableGroup[];
   whiteLabel: WhiteLabel;
   customField?: CustomField;
+  onboardingCompleted: boolean;
   createdAt: Date;
 }
 

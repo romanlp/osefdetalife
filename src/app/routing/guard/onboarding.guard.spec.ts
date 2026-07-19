@@ -26,15 +26,28 @@ describe('onboarding guards', () => {
   });
 
   describe('isOnboardedGuard', () => {
-    it('should allow access when user has a restaurant', async () => {
-      mockGetDocs.mockResolvedValue({ empty: false });
+    it('should allow access when user has a completed restaurant', async () => {
+      mockGetDocs.mockResolvedValue({
+        empty: false,
+        docs: [{ data: () => ({ onboardingCompleted: true }) }],
+      });
 
       const result = await runGuard(isOnboardedGuard);
       expect(result).toBe(true);
     });
 
     it('should redirect to /onboarding when user has no restaurant', async () => {
-      mockGetDocs.mockResolvedValue({ empty: true });
+      mockGetDocs.mockResolvedValue({ empty: true, docs: [] });
+
+      const result = await runGuard(isOnboardedGuard);
+      expect(result.toString()).toBe('/onboarding');
+    });
+
+    it('should redirect to /onboarding when restaurant exists but onboarding not completed', async () => {
+      mockGetDocs.mockResolvedValue({
+        empty: false,
+        docs: [{ data: () => ({ onboardingCompleted: false }) }],
+      });
 
       const result = await runGuard(isOnboardedGuard);
       expect(result.toString()).toBe('/onboarding');
@@ -57,14 +70,27 @@ describe('onboarding guards', () => {
 
   describe('isNotOnboardedGuard', () => {
     it('should allow access when user has no restaurant', async () => {
-      mockGetDocs.mockResolvedValue({ empty: true });
+      mockGetDocs.mockResolvedValue({ empty: true, docs: [] });
 
       const result = await runGuard(isNotOnboardedGuard);
       expect(result).toBe(true);
     });
 
-    it('should redirect to /dashboard when user already has a restaurant', async () => {
-      mockGetDocs.mockResolvedValue({ empty: false });
+    it('should allow access when restaurant exists but onboarding not completed', async () => {
+      mockGetDocs.mockResolvedValue({
+        empty: false,
+        docs: [{ data: () => ({ onboardingCompleted: false }) }],
+      });
+
+      const result = await runGuard(isNotOnboardedGuard);
+      expect(result).toBe(true);
+    });
+
+    it('should redirect to /dashboard when onboarding is completed', async () => {
+      mockGetDocs.mockResolvedValue({
+        empty: false,
+        docs: [{ data: () => ({ onboardingCompleted: true }) }],
+      });
 
       const result = await runGuard(isNotOnboardedGuard);
       expect(result.toString()).toBe('/dashboard');
