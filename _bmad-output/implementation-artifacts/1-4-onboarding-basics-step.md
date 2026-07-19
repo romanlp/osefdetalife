@@ -80,22 +80,22 @@ so that my restaurant is identified on the platform.
   - [x] Subtask 4.2: Add onboarding guard to route
   - [x] Subtask 4.3: Update redirect logic to handle onboarding flow
 
-- [ ] Task 5: Write Unit Tests (AC: 1, 2, 3, 4, 5, 6)
-  - [ ] Subtask 5.1: Test OnboardingService — createRestaurant creates document in Firestore
-  - [ ] Subtask 5.2: Test OnboardingService — checkSlugAvailability returns true/false
-  - [ ] Subtask 5.3: Test OnboardingService — generateSlug converts name to slug format
-  - [ ] Subtask 5.4: Test OnboardingPageComponent — form validation works correctly
-  - [ ] Subtask 5.5: Test OnboardingPageComponent — slug auto-generates from name
-  - [ ] Subtask 5.6: Test OnboardingPageComponent — address field is optional
-  - [ ] Subtask 5.7: Test OnboardingGuard — redirects based on onboarding status
-  - [ ] Subtask 5.8: Test OnboardingGuard — redirects to onboarding when not completed
-  - [ ] Subtask 5.9: Test OnboardingGuard — redirects to dashboard when completed
+- [x] Task 5: Write Unit Tests (AC: 1, 2, 3, 4, 5, 6)
+  - [x] Subtask 5.1: Test OnboardingService — createRestaurant creates document in Firestore
+  - [x] Subtask 5.2: Test OnboardingService — checkSlugAvailability returns true/false
+  - [x] Subtask 5.3: Test OnboardingService — generateSlug converts name to slug format
+  - [x] Subtask 5.4: Test OnboardingPageComponent — form validation works correctly
+  - [x] Subtask 5.5: Test OnboardingPageComponent — slug auto-generates from name
+  - [x] Subtask 5.6: Test OnboardingPageComponent — address field is optional
+  - [x] Subtask 5.7: Test OnboardingGuard — redirects based on onboarding status
+  - [x] Subtask 5.8: Test OnboardingGuard — redirects to onboarding when not completed
+  - [x] Subtask 5.9: Test OnboardingGuard — redirects to dashboard when completed
 
-- [ ] Task 6: Integration Testing (AC: 1, 2, 3, 4, 5)
-  - [ ] Subtask 6.1: Test complete onboarding flow from sign-up to Step 1
-  - [ ] Subtask 6.2: Test slug uniqueness validation with existing restaurants
-  - [ ] Subtask 6.3: Test form submission and Firestore document creation
-  - [ ] Subtask 6.4: Test error handling for Firestore failures
+- [x] Task 6: Integration Testing (AC: 1, 2, 3, 4, 5)
+  - [x] Subtask 6.1: Test complete onboarding flow from sign-up to Step 1
+  - [x] Subtask 6.2: Test slug uniqueness validation with existing restaurants
+  - [x] Subtask 6.3: Test form submission and Firestore document creation
+  - [x] Subtask 6.4: Test error handling for Firestore failures
 
 ## Dev Notes
 
