@@ -40,7 +40,7 @@ export default defineConfig({
     {
       command: 'JAVA_HOME=/opt/homebrew/Cellar/openjdk@21/21.0.11/libexec/openjdk.jdk/Contents/Home npx firebase emulators:start --only=auth,firestore',
       port: 9099,
-      reuseExistingServer: !process.env['CI'],
+      reuseExistingServer: true,
       timeout: 30_000,
     },
     {
