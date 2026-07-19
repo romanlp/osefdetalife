@@ -113,6 +113,7 @@ describe('onboarding guards', () => {
 });
 
 async function runGuard(guard: typeof isOnboardedGuard) {
+  TestBed.resetTestingModule();
   TestBed.configureTestingModule({
     providers: [provideRouter([
       { path: 'onboarding', component: {} as never },
