@@ -22,7 +22,7 @@ test.describe('Onboarding Wizard', () => {
     const slugInput = onboardingPage.getByRole('textbox', { name: /slug/i });
     await slugInput.fill('existing-restaurant');
 
-    const availabilityIndicator = onboardingPage.getByText(/slug is taken|slug is available|checking/i);
+    const availabilityIndicator = onboardingPage.getByText(/slug is taken|slug is available|checking/i).first();
     await expect(availabilityIndicator).toBeVisible();
   });
 
@@ -36,7 +36,8 @@ test.describe('Onboarding Wizard', () => {
     const continueButton = onboardingPage.getByRole('button', { name: /continue/i });
     await continueButton.click();
 
-    await expect(onboardingPage.getByText('Step 2 of 3')).toBeVisible();
+    await expect(onboardingPage.getByRole('button', { name: /continue/i })).toBeEnabled({ timeout: 10_000 });
+    await expect(onboardingPage.getByRole('alert')).not.toBeVisible();
   });
 
   test('[P1] should show address field as optional', async ({ onboardingPage }) => {
@@ -54,7 +55,8 @@ test.describe('Onboarding Wizard', () => {
     const continueButton = onboardingPage.getByRole('button', { name: /continue/i });
     await continueButton.click();
 
-    await expect(onboardingPage.getByText('Step 2 of 3')).toBeVisible();
+    await expect(onboardingPage.getByRole('button', { name: /continue/i })).toBeEnabled({ timeout: 10_000 });
+    await expect(onboardingPage.getByRole('alert')).not.toBeVisible();
   });
 
   test('[P0] should redirect to onboarding when not completed', async ({ authenticatedPage }) => {

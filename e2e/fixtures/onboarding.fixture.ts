@@ -23,9 +23,9 @@ export const test = base.extend<OnboardingFixtures>({
 
   onboardingPage: async ({ page, onboardedUser }, use) => {
     await page.goto('/login');
-    await page.fill('[data-testid="email-input"]', onboardedUser.email);
-    await page.fill('[data-testid="password-input"]', onboardedUser.password);
-    await page.click('[data-testid="login-button"]');
+    await page.fill('input[name="email"]', onboardedUser.email);
+    await page.fill('input[name="password"]', onboardedUser.password);
+    await page.click('button[type="submit"]');
     await page.waitForURL(/.*(onboarding|dashboard)/);
 
     const url = page.url();
