@@ -5,6 +5,11 @@ import { isOnboardedGuard, isNotOnboardedGuard } from './onboarding.guard';
 
 const mockAuth = { currentUser: { uid: 'user-123' } as { uid: string } | null };
 
+vi.mock('firebase/app', () => ({
+  initializeApp: vi.fn(() => ({})),
+  getApps: vi.fn(() => [{}]),
+}));
+
 vi.mock('firebase/auth', () => ({
   getAuth: vi.fn(() => mockAuth),
 }));

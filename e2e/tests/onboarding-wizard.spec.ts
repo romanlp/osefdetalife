@@ -33,7 +33,7 @@ test.describe('Onboarding Wizard', () => {
     const slugInput = onboardingPage.getByRole('textbox', { name: /slug/i });
     await slugInput.fill('new-restaurant');
 
-    await expect(onboardingPage.getByText('Slug is available')).toBeVisible({ timeout: 10_000 });
+    await expect(onboardingPage.getByText('Slug is available').first()).toBeVisible({ timeout: 10_000 });
 
     const continueButton = onboardingPage.getByRole('button', { name: /continue/i });
     await continueButton.click();
@@ -54,7 +54,7 @@ test.describe('Onboarding Wizard', () => {
     const slugInput = onboardingPage.getByRole('textbox', { name: /slug/i });
     await slugInput.fill('restaurant-without-address');
 
-    await expect(onboardingPage.getByText('Slug is available')).toBeVisible({ timeout: 10_000 });
+    await expect(onboardingPage.getByText('Slug is available').first()).toBeVisible({ timeout: 10_000 });
 
     const continueButton = onboardingPage.getByRole('button', { name: /continue/i });
     await continueButton.click();
