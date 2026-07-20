@@ -132,8 +132,8 @@ The test suite is well-structured with good coverage across unit, integration, a
 No high-severity issues found.
 
 ### MEDIUM Priority (5 issues)
-1. E2E cleanup should use fixture teardown
-2. Widget tests should use proper Lit lifecycle methods
+1. ~~E2E cleanup should use fixture teardown~~ ✅
+2. ~~Widget tests should use proper Lit lifecycle methods~~ ✅
 3. Firebase app reuse in Firestore rules tests
 4. E2E user creation should use fixtures
 5. URL matching in E2E tests should be more specific

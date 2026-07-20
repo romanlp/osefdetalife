@@ -21,7 +21,7 @@ describe('BookingWidget', () => {
     widget.restaurant = 'test-restaurant';
     document.body.appendChild(widget);
 
-    await new Promise((r) => setTimeout(r, 0));
+    await widget.updateComplete;
 
     const shadow = widget.shadowRoot;
     expect(shadow).toBeTruthy();
@@ -34,7 +34,7 @@ describe('BookingWidget', () => {
     widget.restaurant = 'test-restaurant';
     document.body.appendChild(widget);
 
-    await new Promise((r) => setTimeout(r, 100));
+    await widget.updateComplete;
 
     const shadow = widget.shadowRoot;
     expect(shadow).toBeTruthy();
@@ -47,7 +47,7 @@ describe('BookingWidget', () => {
     widget.restaurant = 'test-restaurant';
     document.body.appendChild(widget);
 
-    await new Promise((r) => setTimeout(r, 100));
+    await widget.updateComplete;
 
     const shadow = widget.shadowRoot;
     const button = shadow?.querySelector('.book-button');
