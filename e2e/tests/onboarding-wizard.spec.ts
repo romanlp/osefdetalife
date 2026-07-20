@@ -1,7 +1,6 @@
 import { test, expect } from '../fixtures';
-import { createUserWithEmailAndPassword, signOut } from 'firebase/auth';
-import { collection, doc, setDoc, deleteDoc } from 'firebase/firestore';
-import { getAuthInstance, getFirestoreInstance } from '../utils/firebase';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { collection, doc, setDoc } from 'firebase/firestore';
 import { createUserData } from '../fixtures/factories';
 
 test.describe('Onboarding Wizard', () => {
@@ -74,9 +73,7 @@ test.describe('Onboarding Wizard', () => {
     await expect(authenticatedPage.getByText('Step 1 of 3: Restaurant basics')).toBeVisible();
   });
 
-  test('[P0] should allow dashboard access after onboarding completed', async ({ page }) => {
-    const auth = getAuthInstance();
-    const db = getFirestoreInstance();
+  test('[P0] should allow dashboard access after onboarding completed', async ({ page, auth, db }) => {
     const userData = createUserData();
 
     await createUserWithEmailAndPassword(auth, userData.email, userData.password);
@@ -102,8 +99,5 @@ test.describe('Onboarding Wizard', () => {
     await page.waitForURL(/.*(dashboard|onboarding)/);
 
     await expect(page).toHaveURL(/dashboard/);
-
-    await deleteDoc(restaurantRef);
-    await signOut(auth);
   });
 });
