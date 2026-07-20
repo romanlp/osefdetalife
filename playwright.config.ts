@@ -38,7 +38,7 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command: 'npx firebase emulators:start --only=auth,firestore',
+      command: 'npx firebase emulators:start --only=auth,firestore --project demo-osefdetalife',
       port: 9099,
       reuseExistingServer: true,
       timeout: 30_000,
