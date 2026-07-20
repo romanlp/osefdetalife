@@ -26,7 +26,7 @@ export const test = base.extend<AuthFixtures>({
     await page.fill('input[name="email"]', user.email);
     await page.fill('input[name="password"]', user.password);
     await page.click('button[type="submit"]');
-    await page.waitForURL(/.*(dashboard|onboarding)/);
+    await page.waitForURL(/\/(dashboard|onboarding)/);
     
     await use(page);
   },

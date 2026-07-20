@@ -7,6 +7,8 @@ import {
   setDoc,
   updateDoc,
   deleteDoc,
+  getDocs,
+  collection,
 } from 'firebase/firestore';
 import { afterAll, beforeAll, describe, it, expect } from 'vitest';
 import { readFileSync } from 'fs';
@@ -82,19 +84,12 @@ async function seedAdminData(path: string, data: Record<string, unknown>) {
 }
 
 async function clearAll() {
-  // Clear the entire database
-  try {
-    const collections = ['restaurants', 'slugs'];
-    for (const col of collections) {
-      const snap = await import('firebase/firestore').then(m =>
-        m.getDocs(m.collection(adminDb, col))
-      );
-      for (const d of snap.docs) {
-        await deleteDoc(d.ref);
-      }
+  const collections = ['restaurants', 'slugs'];
+  for (const col of collections) {
+    const snap = await getDocs(collection(adminDb, col));
+    for (const d of snap.docs) {
+      await deleteDoc(d.ref);
     }
-  } catch {
-    // Ignore cleanup errors
   }
 }
 

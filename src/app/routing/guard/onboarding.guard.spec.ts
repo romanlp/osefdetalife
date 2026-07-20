@@ -11,7 +11,14 @@ vi.mock('firebase/app', () => ({
 }));
 
 vi.mock('firebase/auth', () => ({
-  getAuth: vi.fn(() => mockAuth),
+  // Return a proxy so getFirebaseAuth()'s module-level cache always
+  // reflects the current mockAuth.currentUser even if the reference is stale.
+  getAuth: vi.fn(() => new Proxy(mockAuth, {
+    get(target, prop, receiver) {
+      if (prop === 'currentUser') return mockAuth.currentUser;
+      return Reflect.get(target, prop, receiver);
+    },
+  })),
 }));
 
 const mockGetDocs = vi.fn();
@@ -27,6 +34,7 @@ vi.mock('firebase/firestore', () => ({
 describe('onboarding guards', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockGetDocs.mockReset();
     mockAuth.currentUser = { uid: 'user-123' };
   });
 
