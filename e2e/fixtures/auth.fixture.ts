@@ -23,10 +23,10 @@ export const test = base.extend<AuthFixtures>({
 
   authenticatedPage: async ({ page, user }, use) => {
     await page.goto('/login');
-    await page.fill('[data-testid="email-input"]', user.email);
-    await page.fill('[data-testid="password-input"]', user.password);
-    await page.click('[data-testid="login-button"]');
-    await page.waitForURL('/dashboard');
+    await page.fill('input[name="email"]', user.email);
+    await page.fill('input[name="password"]', user.password);
+    await page.click('button[type="submit"]');
+    await page.waitForURL(/.*(dashboard|onboarding)/);
     
     await use(page);
   },

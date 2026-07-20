@@ -46,9 +46,11 @@ service cloud.firestore {
       allow create: if request.auth != null
                     && request.auth.uid == request.resource.data.ownerId
                     && validateRestaurantData(request.resource.data);
-      allow update, delete: if request.auth != null
-                            && resource.data.ownerId == request.auth.uid
-                            && request.resource.data.ownerId == resource.data.ownerId;
+      allow update: if request.auth != null
+                    && resource.data.ownerId == request.auth.uid
+                    && request.resource.data.ownerId == resource.data.ownerId;
+      allow delete: if request.auth != null
+                    && resource.data.ownerId == request.auth.uid;
 
       // Table groups — public read, owner write
       match /tables/{tableId} {

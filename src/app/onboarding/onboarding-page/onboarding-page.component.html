@@ -1,9 +1,80 @@
 <div class="h-screen flex items-center justify-center bg-[#FAF7F2]">
-  <mat-card appearance="outlined" class="w-96 m-auto p-6">
-    <mat-card-header class="mb-6">
-      <mat-card-title class="text-2xl font-semibold">Welcome!</mat-card-title>
-      <mat-card-subtitle>Complete your restaurant setup</mat-card-subtitle>
-    </mat-card-header>
-    <p class="text-gray-600">Onboarding wizard coming soon...</p>
+  <mat-card appearance="outlined" class="relative w-full max-w-[480px] mx-4 p-6">
+    @if (loading()) {
+      <mat-progress-bar mode="indeterminate" class="absolute top-0 left-0 right-0" aria-label="Loading" />
+    }
+
+    <div class="mb-6">
+      <p class="text-sm text-gray-500 mb-1">Step 1 of 3: Restaurant basics</p>
+      <h1 class="text-2xl font-semibold">Tell us about your restaurant</h1>
+    </div>
+
+    <form (ngSubmit)="continueToStep2()" class="flex flex-col gap-4">
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Restaurant name</mat-label>
+        <input
+          matInput
+          [ngModel]="name()"
+          (ngModelChange)="onNameInput($event)"
+          name="name"
+          required
+          placeholder="e.g. The Blue Bistro"
+        />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Booking link slug</mat-label>
+        <input
+          matInput
+          [ngModel]="slug()"
+          (ngModelChange)="onSlugInput($event)"
+          name="slug"
+          required
+          placeholder="the-blue-bistro"
+        />
+        @if (slugPreview()) {
+          <mat-hint align="start">Your booking link: <strong>{{ slugPreview() }}</strong></mat-hint>
+        }
+        @if (slugAvailable() === true) {
+          <mat-hint align="end" class="text-green-700">{{ slugHint() }}</mat-hint>
+        } @else if (slugAvailable() === false) {
+          <mat-error>{{ slugHint() }}</mat-error>
+        } @else if (slugHint()) {
+          <mat-hint align="end">{{ slugHint() }}</mat-hint>
+        }
+      </mat-form-field>
+      @if (slugHint()) {
+        <div class="sr-only" aria-live="polite">{{ slugHint() }}</div>
+      }
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Address <span class="text-gray-600 text-sm">(optional)</span></mat-label>
+        <input
+          matInput
+          [ngModel]="address()"
+          (ngModelChange)="address.set($event)"
+          name="address"
+          placeholder="123 Main St, London"
+        />
+      </mat-form-field>
+
+      @if (error()) {
+        <div role="alert" class="text-red-700 text-sm">{{ error() }}</div>
+      }
+
+      <button
+        matButton="filled"
+        type="submit"
+        [disabled]="!canContinue()"
+        [attr.aria-busy]="loading() || null"
+        class="w-full"
+      >
+        @if (loading()) {
+          Saving...
+        } @else {
+          Continue
+        }
+      </button>
+    </form>
   </mat-card>
 </div>

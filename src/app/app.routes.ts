@@ -3,6 +3,7 @@ import {
   isAuthenticatedGuard,
   isNotAuthenticatedGuard,
 } from './routing/guard/authenticated.guard';
+import { isOnboardedGuard, isNotOnboardedGuard } from './routing/guard/onboarding.guard';
 
 export const routes: Routes = [
   {
@@ -43,7 +44,7 @@ export const routes: Routes = [
     path: 'dashboard',
     loadChildren: () =>
       import('../dashboard/dashboard.routes').then((m) => m.dashboardRoutes),
-    canActivate: [isAuthenticatedGuard],
+    canActivate: [isAuthenticatedGuard, isOnboardedGuard],
   },
   {
     path: 'onboarding',
@@ -51,7 +52,7 @@ export const routes: Routes = [
       import('./onboarding/onboarding-page/onboarding-page.component').then(
         (m) => m.OnboardingPageComponent,
       ),
-    canActivate: [isAuthenticatedGuard],
+    canActivate: [isAuthenticatedGuard, isNotOnboardedGuard],
   },
   {
     path: '',
