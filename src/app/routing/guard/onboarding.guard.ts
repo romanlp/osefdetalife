@@ -1,16 +1,16 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { collection, query, where, getDocs } from 'firebase/firestore';
-import { getFirebaseDb, getFirebaseAuth } from '../../../shared/firebase-config';
+import { collection, query, where, getDocs, getFirestore } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
 
 export const isOnboardedGuard: CanActivateFn = async () => {
   const router = inject(Router);
 
   try {
-    const user = getFirebaseAuth().currentUser;
+    const user = getAuth().currentUser;
     if (!user) return router.parseUrl('/login');
 
-    const db = getFirebaseDb();
+    const db = getFirestore();
     const q = query(collection(db, 'restaurants'), where('ownerId', '==', user.uid));
     const snapshot = await getDocs(q);
 
@@ -28,10 +28,10 @@ export const isNotOnboardedGuard: CanActivateFn = async () => {
   const router = inject(Router);
 
   try {
-    const user = getFirebaseAuth().currentUser;
+    const user = getAuth().currentUser;
     if (!user) return router.parseUrl('/login');
 
-    const db = getFirebaseDb();
+    const db = getFirestore();
     const q = query(collection(db, 'restaurants'), where('ownerId', '==', user.uid));
     const snapshot = await getDocs(q);
 
