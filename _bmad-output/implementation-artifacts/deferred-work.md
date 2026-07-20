@@ -23,3 +23,13 @@ Items surfaced during code reviews that are pre-existing issues or out of scope 
 - source_spec: `_bmad-output/implementation-artifacts/1-4-onboarding-basics-step.md`
   summary: createdAt declared as Date in restaurantData but written as serverTimestamp() — type mismatch at runtime
   evidence: Existing pattern from Story 1.2; Restaurant type declares createdAt: Date but Firestore stores Timestamp
+
+## Deferred from: code review of 1-4-onboarding-basics-step (2026-07-20)
+
+- source_spec: `_bmad-output/implementation-artifacts/1-4-onboarding-basics-step.md`
+  summary: Guard picks first unordered doc — no ordering guarantee on getDocs query
+  evidence: AD-13 assumes one restaurant per account; if multiple exist due to a bug, guard silently picks first
+
+- source_spec: `_bmad-output/implementation-artifacts/1-4-onboarding-basics-step.md`
+  summary: @Injectable used instead of @Service for new singleton service
+  evidence: @Service decorator may not be available in Angular v22; @Injectable works and is consistent

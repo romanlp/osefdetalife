@@ -222,7 +222,35 @@ so that my restaurant is identified on the platform.
 4. `FormsModule` used instead of Signal Forms — per AGENTS.md preference, but FormsModule works and is consistent with existing code.
 5. `createdAt` declared as `Date` in restaurantData but written as `serverTimestamp()` — type mismatch at runtime; existing pattern from Story 1.2.
 
+#### Code Review 2 (2026-07-20)
+
+**Patches (to apply):**
+
+- [ ] [Review][Patch] JAVA_HOME hardcoded in playwright.config.ts [playwright.config.ts:41] — non-portable path; use env var or conditional
+- [ ] [Review][Patch] `/onboarding/step-2` undefined route [onboarding-page.component.ts:131] — navigate to `/onboarding` instead (step-2 doesn't exist yet)
+- [ ] [Review][Patch] Sprint status inconsistency — sprint-status.yaml says in-progress, spec says done [sprint-status.yaml]
+- [ ] [Review][Patch] Missing P0 E2E test: dashboard access after onboarding completed [onboarding-wizard.spec.ts]
+- [ ] [Review][Patch] `onboardedUser` fixture name misleading — creates new user, not onboarded [onboarding.fixture.ts:8]
+
+**Deferred:**
+
+- [x] [Review][Defer] `isNotOnboardedGuard` fails open on Firestore error [onboarding.guard.ts:43-44] — deferred, pre-existing pattern
+- [x] [Review][Defer] `createdAt` type mismatch — Date vs Firestore Timestamp [onboarding.service.ts:65] — deferred, existing pattern from Story 1.2
+- [x] [Review][Defer] `FormsModule` used instead of Signal Forms [onboarding-page.component.ts:2] — deferred, consistent with existing code
+- [x] [Review][Defer] Guard picks first unordered doc (no ordering guarantee) [onboarding.guard.ts:19] — deferred, AD-13 assumes one restaurant per account
+- [x] [Review][Defer] `@Injectable` instead of `@Service` [onboarding.service.ts:13] — deferred, @Service may not be available
+- [x] [Review][Defer] No Firestore caching in guards [onboarding.guard.ts:14-15] — deferred, pre-existing pattern
+
 ### Review Triage Log
+
+#### 2026-07-20 — Review pass (code review round 2)
+- intent_gap: 0
+- bad_spec: 0
+- decision_needed: 0
+- patch: 5 (high 4, medium 1)
+- defer: 6 (medium 4, low 2)
+- dismiss: 15
+- failed_layers: 0
 
 #### 2026-07-18 — Review pass
 - intent_gap: 0

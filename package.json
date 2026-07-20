@@ -18,8 +18,8 @@
     "test:ci": "ng test --no-watch && ng e2e",
     "emulators": "firebase emulators:start",
     "emulators:export": "firebase emulators:export ./emulator-data",
-    "test:rules": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home vitest run --config vitest.firestore.config.ts",
-    "test:rules:watch": "JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home vitest --config vitest.firestore.config.ts",
+    "test:rules": "vitest run --config vitest.firestore.config.ts",
+    "test:rules:watch": "vitest --config vitest.firestore.config.ts",
     "build:widget": "vite build"
   },
   "private": true,
