@@ -103,7 +103,7 @@ test.describe('Onboarding Wizard', () => {
 
     await expect(page).toHaveURL(/dashboard/);
 
-    await signOut(auth);
     await deleteDoc(restaurantRef);
+    await signOut(auth);
   });
 });
