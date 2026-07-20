@@ -5,12 +5,12 @@ import { createUserData } from './factories';
 import type { User } from './types';
 
 export interface OnboardingFixtures {
-  onboardedUser: User;
+  newUser: User;
   onboardingPage: import('@playwright/test').Page;
 }
 
 export const test = base.extend<OnboardingFixtures>({
-  onboardedUser: async ({}, use) => {
+  newUser: async ({}, use) => {
     const userData = createUserData();
     const auth = getAuthInstance();
 
@@ -21,10 +21,10 @@ export const test = base.extend<OnboardingFixtures>({
     await signOut(auth);
   },
 
-  onboardingPage: async ({ page, onboardedUser }, use) => {
+  onboardingPage: async ({ page, newUser }, use) => {
     await page.goto('/login');
-    await page.fill('input[name="email"]', onboardedUser.email);
-    await page.fill('input[name="password"]', onboardedUser.password);
+    await page.fill('input[name="email"]', newUser.email);
+    await page.fill('input[name="password"]', newUser.password);
     await page.click('button[type="submit"]');
     await page.waitForURL(/.*(onboarding|dashboard)/);
 
