@@ -7,11 +7,6 @@ import { isOnboardedGuard, isNotOnboardedGuard } from './routing/guard/onboardin
 
 export const routes: Routes = [
   {
-    path: 'galleries',
-    loadChildren: () =>
-      import('./gallery/gallery.module').then((m) => m.GalleryModule),
-  },
-  {
     path: 'login',
     loadComponent: () =>
       import('./login/login-page/login-page.component').then(
@@ -33,12 +28,6 @@ export const routes: Routes = [
       import('./login/reset-password-page/reset-password-page.component').then(
         (m) => m.ResetPasswordPageComponent,
       ),
-  },
-  {
-    path: 'admin',
-    loadChildren: () =>
-      import('./admin/admin.module').then((m) => m.AdminModule),
-    canActivate: [isAuthenticatedGuard],
   },
   {
     path: 'dashboard',
