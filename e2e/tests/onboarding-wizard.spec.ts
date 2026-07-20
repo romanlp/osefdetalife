@@ -1,4 +1,8 @@
 import { test, expect } from '../fixtures';
+import { createUserWithEmailAndPassword, signOut } from 'firebase/auth';
+import { collection, doc, setDoc, deleteDoc } from 'firebase/firestore';
+import { getAuthInstance, getFirestoreInstance } from '../utils/firebase';
+import { createUserData } from '../fixtures/factories';
 
 test.describe('Onboarding Wizard', () => {
   test('[P0] should display onboarding card with correct heading', async ({ onboardingPage }) => {
@@ -68,5 +72,38 @@ test.describe('Onboarding Wizard', () => {
 
     await expect(authenticatedPage).toHaveURL(/onboarding/);
     await expect(authenticatedPage.getByText('Step 1 of 3: Restaurant basics')).toBeVisible();
+  });
+
+  test('[P0] should allow dashboard access after onboarding completed', async ({ page }) => {
+    const auth = getAuthInstance();
+    const db = getFirestoreInstance();
+    const userData = createUserData();
+
+    await createUserWithEmailAndPassword(auth, userData.email, userData.password);
+    const user = auth.currentUser;
+
+    const restaurantRef = doc(collection(db, 'restaurants'));
+    await setDoc(restaurantRef, {
+      name: 'Completed Restaurant',
+      slug: `completed-${user!.uid}`,
+      ownerId: user!.uid,
+      timezone: 'Europe/London',
+      hours: {},
+      tableGroups: [],
+      whiteLabel: { primaryColor: '#000000', secondaryColor: '#FFFFFF' },
+      onboardingCompleted: true,
+      createdAt: new Date(),
+    });
+
+    await page.goto('/login');
+    await page.fill('input[name="email"]', userData.email);
+    await page.fill('input[name="password"]', userData.password);
+    await page.click('button[type="submit"]');
+    await page.waitForURL(/.*(dashboard|onboarding)/);
+
+    await expect(page).toHaveURL(/dashboard/);
+
+    await signOut(auth);
+    await deleteDoc(restaurantRef);
   });
 });
