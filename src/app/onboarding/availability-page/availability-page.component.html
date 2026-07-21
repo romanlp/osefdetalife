@@ -1,0 +1,142 @@
+<div class="h-screen flex items-center justify-center bg-[#FAF7F2]">
+  <mat-card appearance="outlined" class="relative w-full max-w-[480px] mx-4 p-6">
+    @if (loading()) {
+      <mat-progress-bar mode="indeterminate" class="absolute top-0 left-0 right-0" aria-label="Loading" />
+    }
+
+    <div class="mb-6">
+      <p class="text-sm text-gray-500 mb-1">Step 2 of 3: Availability</p>
+      <h1 class="text-2xl font-semibold">When are you open?</h1>
+    </div>
+
+    <form (ngSubmit)="continueToStep3()" class="flex flex-col gap-4">
+      <div class="flex flex-col gap-3">
+        @for (day of days; track day.dayNumber) {
+          <div class="flex items-center gap-3">
+            <mat-checkbox
+              [checked]="day.isOpen()"
+              (change)="toggleDay(day)"
+              [attr.data-testid]="'toggle-' + day.dayNumber"
+              [aria-label]="'Toggle ' + day.label"
+            >
+              {{ day.label }}
+            </mat-checkbox>
+            @if (day.isOpen()) {
+              <div class="flex items-center gap-2">
+                <mat-form-field appearance="outline" class="w-24">
+                  <mat-label>Open</mat-label>
+                  <input
+                    matInput
+                    type="time"
+                    [ngModel]="day.openTime()"
+                    (ngModelChange)="onOpenTimeChange(day, $event)"
+                    [name]="'open-' + day.dayNumber"
+                    [attr.data-testid]="'open-time-' + day.dayNumber"
+                    [aria-label]="day.label + ' open time'"
+                  />
+                </mat-form-field>
+                <span class="text-gray-500">–</span>
+                <mat-form-field appearance="outline" class="w-24">
+                  <mat-label>Close</mat-label>
+                  <input
+                    matInput
+                    type="time"
+                    [ngModel]="day.closeTime()"
+                    (ngModelChange)="onCloseTimeChange(day, $event)"
+                    [name]="'close-' + day.dayNumber"
+                    [attr.data-testid]="'close-time-' + day.dayNumber"
+                    [aria-label]="day.label + ' close time'"
+                  />
+                </mat-form-field>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      @if (hoursError()) {
+        <div role="alert" class="text-red-700 text-sm">{{ hoursError() }}</div>
+      }
+
+      <div class="border-t pt-4 mt-2">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-lg font-medium">Table Groups</h2>
+          <button
+            type="button"
+            matButton="outlined"
+            (click)="addTableGroup()"
+            data-testid="add-table-group"
+          >
+            Add Table Group
+          </button>
+        </div>
+
+        @if (tableGroups().length === 0) {
+          <p class="text-gray-500 text-sm">No table groups added yet.</p>
+        }
+
+        @for (group of tableGroups(); track $index; let i = $index) {
+          <div class="flex items-center gap-3 mb-2">
+            <mat-form-field appearance="outline" class="w-24">
+              <mat-label>Capacity</mat-label>
+              <input
+                matInput
+                type="number"
+                [ngModel]="group.capacity"
+                (ngModelChange)="updateTableGroupCapacity(i, $event)"
+                [name]="'capacity-' + i"
+                min="1"
+                [attr.data-testid]="'capacity-' + i"
+                aria-label="Table capacity"
+              />
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="w-24">
+              <mat-label>Count</mat-label>
+              <input
+                matInput
+                type="number"
+                [ngModel]="group.count"
+                (ngModelChange)="updateTableGroupCount(i, $event)"
+                [name]="'count-' + i"
+                min="1"
+                [attr.data-testid]="'count-' + i"
+                aria-label="Number of tables"
+              />
+            </mat-form-field>
+            <button
+              type="button"
+              matIconButton
+              (click)="removeTableGroup(i)"
+              [attr.aria-label]="'Remove table group ' + (i + 1)"
+            >
+              ✕
+            </button>
+          </div>
+        }
+      </div>
+
+      @if (tableGroupsError()) {
+        <div role="alert" class="text-red-700 text-sm">{{ tableGroupsError() }}</div>
+      }
+
+      @if (error()) {
+        <div role="alert" class="text-red-700 text-sm">{{ error() }}</div>
+      }
+
+      <button
+        matButton="filled"
+        type="submit"
+        [disabled]="!canContinue()"
+        [attr.aria-busy]="loading() || null"
+        data-testid="continue-button"
+        class="w-full"
+      >
+        @if (loading()) {
+          Saving...
+        } @else {
+          Continue
+        }
+      </button>
+    </form>
+  </mat-card>
+</div>

@@ -135,7 +135,7 @@ describe('OnboardingPageComponent', () => {
       await component.continueToStep2();
 
       expect(createSpy).toHaveBeenCalledWith('Blue Bistro', 'blue-bistro', undefined);
-      expect(navigateSpy).toHaveBeenCalledWith(['/onboarding']);
+      expect(navigateSpy).toHaveBeenCalledWith(['/onboarding/availability']);
     });
 
     it('should include address when provided', async () => {

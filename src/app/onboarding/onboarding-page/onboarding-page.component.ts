@@ -128,7 +128,7 @@ export class OnboardingPageComponent {
         this.slug().trim(),
         address || undefined,
       );
-      this.router.navigate(['/onboarding']);
+      this.router.navigate(['/onboarding/availability']);
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : 'Something went wrong. Please try again.';
       this.error.set(message);
