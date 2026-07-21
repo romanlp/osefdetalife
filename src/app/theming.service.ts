@@ -1,9 +1,7 @@
 import { MediaMatcher } from '@angular/cdk/layout';
-import { Injectable, effect, inject, signal } from '@angular/core';
+import { Service, effect, inject, signal } from '@angular/core';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class ThemingService {
   private mediaMatcher = inject(MediaMatcher);
 

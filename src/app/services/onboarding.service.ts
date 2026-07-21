@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Service, signal } from '@angular/core';
 import {
   collection,
   doc,
@@ -10,9 +10,7 @@ import {
 import { getFirebaseDb, getFirebaseAuth } from '../../shared/firebase-config';
 import type { Restaurant } from '../../shared/types/restaurant';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class OnboardingService {
   private db = getFirebaseDb();
   private auth = getFirebaseAuth();

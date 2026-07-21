@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Service, signal } from '@angular/core';
 import {
   getAuth,
   signInWithEmailAndPassword,
@@ -12,9 +12,7 @@ import {
   type User,
 } from 'firebase/auth';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class AuthService {
   private auth = getAuth();
   user = signal<User | null>(null);

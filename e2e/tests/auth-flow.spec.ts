@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Auth Flow', () => {
   test('[P0] should redirect unauthenticated user to login', async ({ page }) => {
-    await page.goto('/admin');
+    await page.goto('/dashboard');
     await expect(page).toHaveURL(/.*login/);
   });
 
