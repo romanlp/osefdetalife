@@ -65,6 +65,7 @@
             type="button"
             matButton="outlined"
             (click)="addTableGroup()"
+            [disabled]="loading()"
             data-testid="add-table-group"
           >
             Add Table Group
@@ -107,6 +108,7 @@
               type="button"
               matIconButton
               (click)="removeTableGroup(i)"
+              [disabled]="loading()"
               [attr.aria-label]="'Remove table group ' + (i + 1)"
             >
               ✕

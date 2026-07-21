@@ -155,3 +155,16 @@ so that the widget can show available times and table sizes.
 ### Completion Notes List
 
 ### File List
+
+### Review Findings
+
+- [ ] [Review][Patch] No close > open time validation [availability-page.component.ts:100-106]
+- [ ] [Review][Patch] No persistence of existing restaurant data on page load [availability-page.component.ts:33-41]
+- [ ] [Review][Patch] Add/Remove buttons not disabled during save [availability-page.component.html:64-71]
+- [x] [Review][Defer] Clearing number input reverts to stale value [availability-page.component.ts:66-78] — deferred, low priority input handling
+- [x] [Review][Defer] No upper bound on capacity/count [availability-page.component.ts:66-78] — deferred, low priority
+- [x] [Review][Defer] getRestaurantByOwner picks first of multiple [onboarding.service.ts:117-126] — deferred, one restaurant per account
+- [x] [Review][Defer] router.navigate failure leaves user in limbo [availability-page.component.ts:115] — deferred, rare edge case
+- [x] [Review][Defer] User navigates away mid-submission [availability-page.component.ts:92-121] — deferred, SPA lifecycle
+- [x] [Review][Defer] Route not nested under /onboarding [app.routes.ts:46-53] — deferred, architectural decision
+- [x] [Review][Defer] Midday time wrap unhandled [restaurant.ts] — deferred, data model limitation

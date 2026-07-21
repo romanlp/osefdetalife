@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, WritableSignal } from '@angular/core';
+import { Component, inject, signal, computed, WritableSignal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -22,7 +22,7 @@ interface DaySchedule {
   styleUrls: ['./availability-page.component.scss'],
   imports: [FormsModule, MatButton, MatIconButton, MatCardModule, MatInput, MatFormField, MatLabel, MatProgressBar, MatCheckbox],
 })
-export class AvailabilityPageComponent {
+export class AvailabilityPageComponent implements OnInit {
   private onboardingService = inject(OnboardingService);
   private router = inject(Router);
 
@@ -43,17 +43,52 @@ export class AvailabilityPageComponent {
   hasOpenDays = computed(() => this.days.some(d => d.isOpen()));
   hasTableGroups = computed(() => this.tableGroups().length > 0);
 
+  hasValidTimeRanges = computed(() => {
+    return this.days
+      .filter(d => d.isOpen())
+      .every(d => d.openTime() < d.closeTime());
+  });
+
   canContinue = computed(() => {
-    return this.hasOpenDays() && this.hasTableGroups() && !this.loading();
+    return this.hasOpenDays() && this.hasTableGroups() && this.hasValidTimeRanges() && !this.loading();
   });
 
   hoursError = computed(() => {
-    return !this.hasOpenDays() ? 'Set your opening hours to continue' : null;
+    if (!this.hasOpenDays()) return 'Set your opening hours to continue';
+    if (!this.hasValidTimeRanges()) return 'Close time must be after open time';
+    return null;
   });
 
   tableGroupsError = computed(() => {
     return this.hasOpenDays() && !this.hasTableGroups() ? 'Add at least one table group to continue' : null;
   });
+
+  async ngOnInit() {
+    try {
+      const user = this.onboardingService.getCurrentUser();
+      if (!user) return;
+
+      const restaurant = await this.onboardingService.getRestaurantByOwner(user.uid);
+      if (!restaurant) return;
+
+      if (restaurant.hours) {
+        for (const day of this.days) {
+          const dayHours = restaurant.hours[day.dayNumber];
+          if (dayHours) {
+            day.isOpen.set(true);
+            day.openTime.set(dayHours.open);
+            day.closeTime.set(dayHours.close);
+          }
+        }
+      }
+
+      if (restaurant.tableGroups) {
+        this.tableGroups.set(restaurant.tableGroups);
+      }
+    } catch {
+      // Silently ignore — defaults will be used
+    }
+  }
 
   addTableGroup() {
     this.tableGroups.update(groups => [...groups, { capacity: 2, count: 1 }]);
