@@ -140,6 +140,12 @@ so that the widget can show available times and table sizes.
 - [Source: src/app/onboarding/onboarding-page/onboarding-page.component.ts — Step 1 pattern]
 - [Source: src/app/app.routes.ts — Current routing structure]
 
+### ATDD Artifacts
+
+- Checklist: `_bmad-output/test-artifacts/atdd-checklist-1-5-onboarding-availability-step.md`
+- E2E tests: `tests/e2e/onboarding-availability.spec.ts`
+- Component tests: `src/app/onboarding/availability-page/availability-page.component.spec.ts`
+
 ## Dev Agent Record
 
 ### Agent Model Used
