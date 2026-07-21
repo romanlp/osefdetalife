@@ -238,7 +238,6 @@ so that my restaurant is identified on the platform.
 - [x] [Review][Defer] `createdAt` type mismatch — Date vs Firestore Timestamp [onboarding.service.ts:65] — deferred, existing pattern from Story 1.2
 - [x] [Review][Defer] `FormsModule` used instead of Signal Forms [onboarding-page.component.ts:2] — deferred, consistent with existing code
 - [x] [Review][Defer] Guard picks first unordered doc (no ordering guarantee) [onboarding.guard.ts:19] — deferred, AD-13 assumes one restaurant per account
-- [x] [Review][Defer] `@Injectable` instead of `@Service` [onboarding.service.ts:13] — deferred, @Service may not be available
 - [x] [Review][Defer] No Firestore caching in guards [onboarding.guard.ts:14-15] — deferred, pre-existing pattern
 
 ### Review Triage Log

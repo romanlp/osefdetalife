@@ -1,10 +1,10 @@
 import {
   EnvironmentProviders,
   inject,
-  Injectable,
   InjectionToken,
   Injector,
   makeEnvironmentProviders,
+  Service,
   VERSION,
 } from '@angular/core';
 import { registerVersion, type FirebaseApp } from 'firebase/app';
@@ -143,9 +143,7 @@ export function provideStorage(): EnvironmentProviders {
   ]);
 }
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class Firebase {
   public app = inject(PROVIDED_FIREBASE_APP);
   public appCheck = inject(APP_CHECK);
