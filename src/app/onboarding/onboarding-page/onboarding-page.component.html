@@ -39,6 +39,8 @@
           <mat-hint align="end" class="text-green-700">{{ slugHint() }}</mat-hint>
         } @else if (slugAvailable() === false) {
           <mat-error>{{ slugHint() }}</mat-error>
+        } @else if (slugError()) {
+          <mat-error>{{ slugError() }}</mat-error>
         } @else if (slugHint()) {
           <mat-hint align="end">{{ slugHint() }}</mat-hint>
         }

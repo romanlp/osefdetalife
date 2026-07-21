@@ -24,6 +24,7 @@ export class OnboardingPageComponent {
   error = signal<string | null>(null);
   slugAvailable = signal<boolean | null>(null);
   slugChecking = signal(false);
+  slugError = signal<string | null>(null);
   userEditedSlug = signal(false);
 
   private slugCheckTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -68,6 +69,7 @@ export class OnboardingPageComponent {
       this.slug.set('');
       this.slugAvailable.set(null);
       this.slugChecking.set(false);
+      this.slugError.set(null);
       return;
     }
     const normalized = this.onboardingService.generateSlug(value);
@@ -91,10 +93,12 @@ export class OnboardingPageComponent {
     if (!slug.trim()) {
       this.slugAvailable.set(null);
       this.slugChecking.set(false);
+      this.slugError.set(null);
       return;
     }
 
     this.slugChecking.set(true);
+    this.slugError.set(null);
     const generation = ++this.slugCheckGeneration;
 
     this.slugCheckTimeout = setTimeout(async () => {
@@ -106,6 +110,7 @@ export class OnboardingPageComponent {
       } catch {
         if (this.slugCheckGeneration === generation) {
           this.slugAvailable.set(null);
+          this.slugError.set('Unable to check slug availability. Please try again.');
         }
       } finally {
         if (this.slugCheckGeneration === generation) {

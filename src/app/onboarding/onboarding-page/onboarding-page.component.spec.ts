@@ -94,6 +94,34 @@ describe('OnboardingPageComponent', () => {
       expect(component.slugAvailable()).toBe(false);
     });
 
+    it('should show error message when slug check fails', async () => {
+      vi.spyOn(onboardingService, 'checkSlugAvailability').mockRejectedValue(new Error('Firestore error'));
+
+      component.onSlugInput('my-restaurant');
+      vi.advanceTimersByTime(300);
+      await fixture.whenStable();
+
+      expect(component.slugAvailable()).toBeNull();
+      expect(component.slugError()).toBe('Unable to check slug availability. Please try again.');
+    });
+
+    it('should clear slug error when slug input changes', async () => {
+      vi.spyOn(onboardingService, 'checkSlugAvailability').mockRejectedValue(new Error('Firestore error'));
+
+      component.onSlugInput('my-restaurant');
+      vi.advanceTimersByTime(300);
+      await fixture.whenStable();
+
+      expect(component.slugError()).toBe('Unable to check slug availability. Please try again.');
+
+      vi.spyOn(onboardingService, 'checkSlugAvailability').mockResolvedValue(true);
+      component.onSlugInput('new-restaurant');
+      vi.advanceTimersByTime(300);
+      await fixture.whenStable();
+
+      expect(component.slugError()).toBeNull();
+    });
+
     it('should clear availability when slug is empty', () => {
       component.onSlugInput('');
       expect(component.slugAvailable()).toBeNull();
