@@ -1,11 +1,11 @@
 ---
 baseline_commit: b7178c5
-status: ready-for-dev
+status: done
 ---
 
 # Story 1.5: Onboarding — Availability Step
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
