@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { OnboardingPageComponent } from './onboarding-page.component';
@@ -45,27 +45,30 @@ describe('OnboardingPageComponent', () => {
     vi.useRealTimers();
   });
 
+  async function advanceDebounce(): Promise<void> {
+    await vi.advanceTimersByTimeAsync(300);
+    fixture.detectChanges();
+    await fixture.whenStable();
+  }
+
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
   describe('slug generation', () => {
     it('should auto-generate slug from restaurant name', async () => {
-      component.name.set('The Blue Bistro');
-      vi.advanceTimersByTime(300);
-      await fixture.whenStable();
-      expect(component.slug()).toBe('the-blue-bistro');
+      component.onboardingForm.name().value.set('The Blue Bistro');
+      await vi.advanceTimersByTimeAsync(300);
+      expect(component.formData().slug).toBe('the-blue-bistro');
     });
 
     it('should update slug when name changes', async () => {
-      component.name.set('Joe');
-      vi.advanceTimersByTime(300);
-      await fixture.whenStable();
-      expect(component.slug()).toBe('joe');
-      component.name.set('Joe\'s Pizza');
-      vi.advanceTimersByTime(300);
-      await fixture.whenStable();
-      expect(component.slug()).toBe('joes-pizza');
+      component.onboardingForm.name().value.set('Joe');
+      await vi.advanceTimersByTimeAsync(300);
+      expect(component.formData().slug).toBe('joe');
+      component.onboardingForm.name().value.set('Joe\'s Pizza');
+      await vi.advanceTimersByTimeAsync(300);
+      expect(component.formData().slug).toBe('joes-pizza');
     });
   });
 
@@ -73,23 +76,26 @@ describe('OnboardingPageComponent', () => {
     it('should check slug availability after debounce', async () => {
       const spy = vi.spyOn(onboardingService, 'checkSlugAvailability').mockResolvedValue(true);
 
-      component.onSlugInput('my-restaurant');
-
-      expect(component.slugChecking()).toBe(true);
-
-      vi.advanceTimersByTime(300);
-      await fixture.whenStable();
+      component.onboardingForm.slug().value.set('my-restaurant');
+      await advanceDebounce();
 
       expect(spy).toHaveBeenCalledWith('my-restaurant');
       expect(component.slugAvailable()).toBe(true);
     });
 
+    it('should not check slug availability before debounce completes', () => {
+      vi.spyOn(onboardingService, 'checkSlugAvailability').mockResolvedValue(true);
+
+      component.onboardingForm.slug().value.set('my-restaurant');
+      expect(onboardingService.checkSlugAvailability).not.toHaveBeenCalled();
+      expect(component.slugAvailable()).toBeNull();
+    });
+
     it('should show taken slug message when unavailable', async () => {
       vi.spyOn(onboardingService, 'checkSlugAvailability').mockResolvedValue(false);
 
-      component.onSlugInput('taken-slug');
-      vi.advanceTimersByTime(300);
-      await fixture.whenStable();
+      component.onboardingForm.slug().value.set('taken-slug');
+      await advanceDebounce();
 
       expect(component.slugAvailable()).toBe(false);
     });
@@ -97,9 +103,8 @@ describe('OnboardingPageComponent', () => {
     it('should show error message when slug check fails', async () => {
       vi.spyOn(onboardingService, 'checkSlugAvailability').mockRejectedValue(new Error('Firestore error'));
 
-      component.onSlugInput('my-restaurant');
-      vi.advanceTimersByTime(300);
-      await fixture.whenStable();
+      component.onboardingForm.slug().value.set('my-restaurant');
+      await advanceDebounce();
 
       expect(component.slugAvailable()).toBeNull();
       expect(component.slugError()).toBe('Unable to check slug availability. Please try again.');
@@ -108,22 +113,22 @@ describe('OnboardingPageComponent', () => {
     it('should clear slug error when slug input changes', async () => {
       vi.spyOn(onboardingService, 'checkSlugAvailability').mockRejectedValue(new Error('Firestore error'));
 
-      component.onSlugInput('my-restaurant');
-      vi.advanceTimersByTime(300);
-      await fixture.whenStable();
+      component.onboardingForm.slug().value.set('my-restaurant');
+      await advanceDebounce();
 
       expect(component.slugError()).toBe('Unable to check slug availability. Please try again.');
 
       vi.spyOn(onboardingService, 'checkSlugAvailability').mockResolvedValue(true);
-      component.onSlugInput('new-restaurant');
-      vi.advanceTimersByTime(300);
-      await fixture.whenStable();
+      component.onboardingForm.slug().value.set('new-restaurant');
+      await advanceDebounce();
 
       expect(component.slugError()).toBeNull();
     });
 
-    it('should clear availability when slug is empty', () => {
-      component.onSlugInput('');
+    it('should clear availability when slug is empty', async () => {
+      component.onboardingForm.slug().value.set('');
+      await advanceDebounce();
+
       expect(component.slugAvailable()).toBeNull();
       expect(component.slugChecking()).toBe(false);
     });
@@ -131,22 +136,24 @@ describe('OnboardingPageComponent', () => {
 
   describe('form validation', () => {
     it('should disable continue button when name is empty', () => {
-      component.name.set('');
-      component.slug.set('');
+      component.onboardingForm.name().value.set('');
+      component.onboardingForm.slug().value.set('');
       expect(component.canContinue()).toBe(false);
     });
 
-    it('should disable continue button when slug is not available', () => {
-      component.name.set('Test');
-      component.slug.set('test');
-      component.slugAvailable.set(false);
+    it('should disable continue button when slug is not available', async () => {
+      vi.spyOn(onboardingService, 'checkSlugAvailability').mockResolvedValue(false);
+      component.onboardingForm.name().value.set('Test');
+      component.onboardingForm.slug().value.set('test');
+      await advanceDebounce();
       expect(component.canContinue()).toBe(false);
     });
 
-    it('should enable continue button when name and slug are valid', () => {
-      component.name.set('Test');
-      component.slug.set('test');
-      component.slugAvailable.set(true);
+    it('should enable continue button when name and slug are valid', async () => {
+      vi.spyOn(onboardingService, 'checkSlugAvailability').mockResolvedValue(true);
+      component.onboardingForm.name().value.set('Test');
+      component.onboardingForm.slug().value.set('test');
+      await advanceDebounce();
       expect(component.canContinue()).toBe(true);
     });
   });
@@ -155,10 +162,11 @@ describe('OnboardingPageComponent', () => {
     it('should call createRestaurant and navigate on success', async () => {
       const createSpy = vi.spyOn(onboardingService, 'createRestaurant').mockResolvedValue('new-id');
       const navigateSpy = vi.spyOn(TestBed.inject(Router), 'navigate' as never);
+      vi.spyOn(onboardingService, 'checkSlugAvailability').mockResolvedValue(true);
 
-      component.name.set('Blue Bistro');
-      component.slug.set('blue-bistro');
-      component.slugAvailable.set(true);
+      component.onboardingForm.name().value.set('Blue Bistro');
+      component.onboardingForm.slug().value.set('blue-bistro');
+      await advanceDebounce();
 
       await component.continueToStep2();
 
@@ -169,11 +177,12 @@ describe('OnboardingPageComponent', () => {
     it('should include address when provided', async () => {
       const createSpy = vi.spyOn(onboardingService, 'createRestaurant').mockResolvedValue('new-id');
       vi.spyOn(TestBed.inject(Router), 'navigate' as never);
+      vi.spyOn(onboardingService, 'checkSlugAvailability').mockResolvedValue(true);
 
-      component.name.set('Blue Bistro');
-      component.slug.set('blue-bistro');
-      component.slugAvailable.set(true);
-      component.address.set('123 Main St');
+      component.onboardingForm.name().value.set('Blue Bistro');
+      component.onboardingForm.slug().value.set('blue-bistro');
+      component.onboardingForm.address().value.set('123 Main St');
+      await advanceDebounce();
 
       await component.continueToStep2();
 
@@ -182,10 +191,11 @@ describe('OnboardingPageComponent', () => {
 
     it('should set error on failure', async () => {
       vi.spyOn(onboardingService, 'createRestaurant').mockRejectedValue(new Error('Firestore error'));
+      vi.spyOn(onboardingService, 'checkSlugAvailability').mockResolvedValue(true);
 
-      component.name.set('Blue Bistro');
-      component.slug.set('blue-bistro');
-      component.slugAvailable.set(true);
+      component.onboardingForm.name().value.set('Blue Bistro');
+      component.onboardingForm.slug().value.set('blue-bistro');
+      await advanceDebounce();
 
       await component.continueToStep2();
 
@@ -210,7 +220,7 @@ describe('OnboardingPageComponent', () => {
     });
 
     it('should show slug preview when slug is set', async () => {
-      component.name.set('Test Restaurant');
+      component.onboardingForm.name().value.set('Test Restaurant');
       fixture.detectChanges();
 
       const el = fixture.nativeElement as HTMLElement;
