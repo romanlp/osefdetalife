@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, effect, debounced } from '@angular/core';
+import { Component, inject, signal, computed, effect, debounced, resource } from '@angular/core';
 import { form, FormField, required } from '@angular/forms/signals';
 import { MatButton } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -36,13 +36,21 @@ export class OnboardingPageComponent {
   loading = signal(false);
   error = signal<string | null>(null);
   userEditedSlug = signal(false);
-  slugAvailable = signal<boolean | null>(null);
-  slugChecking = signal(false);
-  slugError = signal<string | null>(null);
-  private slugCheckGeneration = 0;
 
   private slug = computed(() => this.formData().slug);
-  debouncedSlug = debounced(this.slug, 300);
+  private debouncedSlug = debounced(this.slug, 300);
+
+  slugCheck = resource({
+    params: () => {
+      const slug = this.debouncedSlug.value();
+      return slug?.trim() ? { slug: slug.trim() } : undefined;
+    },
+    loader: ({ params }) => this.onboardingService.checkSlugAvailability(params.slug),
+  });
+
+  slugAvailable = computed(() => this.slugCheck.status() === 'resolved' ? this.slugCheck.value() ?? null : null);
+  slugChecking = computed(() => this.slugCheck.status() === 'loading' || this.slugCheck.status() === 'reloading');
+  slugError = computed(() => this.slugCheck.status() === 'error' ? 'Unable to check slug availability. Please try again.' : null);
 
   slugPreview = computed(() => {
     const s = this.formData().slug;
@@ -62,37 +70,6 @@ export class OnboardingPageComponent {
   });
 
   constructor() {
-    effect(() => {
-      const slug = this.debouncedSlug.value();
-      const trimmed = slug?.trim();
-      if (!trimmed) {
-        this.slugAvailable.set(null);
-        this.slugChecking.set(false);
-        this.slugError.set(null);
-        return;
-      }
-      this.slugChecking.set(true);
-      this.slugError.set(null);
-      const generation = ++this.slugCheckGeneration;
-      this.onboardingService.checkSlugAvailability(trimmed).then(
-        (available) => {
-          if (this.slugCheckGeneration === generation) {
-            this.slugAvailable.set(available);
-          }
-        },
-        () => {
-          if (this.slugCheckGeneration === generation) {
-            this.slugAvailable.set(null);
-            this.slugError.set('Unable to check slug availability. Please try again.');
-          }
-        },
-      ).finally(() => {
-        if (this.slugCheckGeneration === generation) {
-          this.slugChecking.set(false);
-        }
-      });
-    });
-
     effect(() => {
       const name = this.formData().name;
       if (name.trim().length > 0 && !this.userEditedSlug()) {

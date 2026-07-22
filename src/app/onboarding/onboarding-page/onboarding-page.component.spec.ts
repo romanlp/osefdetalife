@@ -45,10 +45,11 @@ describe('OnboardingPageComponent', () => {
     vi.useRealTimers();
   });
 
-  async function advanceDebounce(): Promise<void> {
+  async function advanceSlugCheck(): Promise<void> {
     await vi.advanceTimersByTimeAsync(300);
     fixture.detectChanges();
-    await fixture.whenStable();
+    await vi.advanceTimersByTimeAsync(0);
+    fixture.detectChanges();
   }
 
   it('should create', () => {
@@ -77,7 +78,7 @@ describe('OnboardingPageComponent', () => {
       const spy = vi.spyOn(onboardingService, 'checkSlugAvailability').mockResolvedValue(true);
 
       component.onboardingForm.slug().value.set('my-restaurant');
-      await advanceDebounce();
+      await advanceSlugCheck();
 
       expect(spy).toHaveBeenCalledWith('my-restaurant');
       expect(component.slugAvailable()).toBe(true);
@@ -95,7 +96,7 @@ describe('OnboardingPageComponent', () => {
       vi.spyOn(onboardingService, 'checkSlugAvailability').mockResolvedValue(false);
 
       component.onboardingForm.slug().value.set('taken-slug');
-      await advanceDebounce();
+      await advanceSlugCheck();
 
       expect(component.slugAvailable()).toBe(false);
     });
@@ -104,7 +105,7 @@ describe('OnboardingPageComponent', () => {
       vi.spyOn(onboardingService, 'checkSlugAvailability').mockRejectedValue(new Error('Firestore error'));
 
       component.onboardingForm.slug().value.set('my-restaurant');
-      await advanceDebounce();
+      await advanceSlugCheck();
 
       expect(component.slugAvailable()).toBeNull();
       expect(component.slugError()).toBe('Unable to check slug availability. Please try again.');
@@ -114,20 +115,20 @@ describe('OnboardingPageComponent', () => {
       vi.spyOn(onboardingService, 'checkSlugAvailability').mockRejectedValue(new Error('Firestore error'));
 
       component.onboardingForm.slug().value.set('my-restaurant');
-      await advanceDebounce();
+      await advanceSlugCheck();
 
       expect(component.slugError()).toBe('Unable to check slug availability. Please try again.');
 
       vi.spyOn(onboardingService, 'checkSlugAvailability').mockResolvedValue(true);
       component.onboardingForm.slug().value.set('new-restaurant');
-      await advanceDebounce();
+      await advanceSlugCheck();
 
       expect(component.slugError()).toBeNull();
     });
 
     it('should clear availability when slug is empty', async () => {
       component.onboardingForm.slug().value.set('');
-      await advanceDebounce();
+      await advanceSlugCheck();
 
       expect(component.slugAvailable()).toBeNull();
       expect(component.slugChecking()).toBe(false);
@@ -145,7 +146,7 @@ describe('OnboardingPageComponent', () => {
       vi.spyOn(onboardingService, 'checkSlugAvailability').mockResolvedValue(false);
       component.onboardingForm.name().value.set('Test');
       component.onboardingForm.slug().value.set('test');
-      await advanceDebounce();
+      await advanceSlugCheck();
       expect(component.canContinue()).toBe(false);
     });
 
@@ -153,7 +154,7 @@ describe('OnboardingPageComponent', () => {
       vi.spyOn(onboardingService, 'checkSlugAvailability').mockResolvedValue(true);
       component.onboardingForm.name().value.set('Test');
       component.onboardingForm.slug().value.set('test');
-      await advanceDebounce();
+      await advanceSlugCheck();
       expect(component.canContinue()).toBe(true);
     });
   });
@@ -166,7 +167,7 @@ describe('OnboardingPageComponent', () => {
 
       component.onboardingForm.name().value.set('Blue Bistro');
       component.onboardingForm.slug().value.set('blue-bistro');
-      await advanceDebounce();
+      await advanceSlugCheck();
 
       await component.continueToStep2();
 
@@ -182,7 +183,7 @@ describe('OnboardingPageComponent', () => {
       component.onboardingForm.name().value.set('Blue Bistro');
       component.onboardingForm.slug().value.set('blue-bistro');
       component.onboardingForm.address().value.set('123 Main St');
-      await advanceDebounce();
+      await advanceSlugCheck();
 
       await component.continueToStep2();
 
@@ -195,7 +196,7 @@ describe('OnboardingPageComponent', () => {
 
       component.onboardingForm.name().value.set('Blue Bistro');
       component.onboardingForm.slug().value.set('blue-bistro');
-      await advanceDebounce();
+      await advanceSlugCheck();
 
       await component.continueToStep2();
 
