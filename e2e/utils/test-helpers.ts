@@ -8,7 +8,7 @@ export async function waitForFirebaseReady(page: Page): Promise<void> {
 
 export async function clearFirestore(): Promise<void> {
   const response = await fetch(
-    `http://localhost:8080/v1/projects/firebase-crackling-fire-4704/databases/(default)/documents`,
+    `http://localhost:8081/v1/projects/demo-osefdetalife/databases/(default)/documents`,
     {
       method: 'DELETE',
     }
@@ -20,11 +20,11 @@ export async function clearFirestore(): Promise<void> {
 
 export async function clearAuth(): Promise<void> {
   const response = await fetch(
-    'http://localhost:9099/identitytoolkit.googleapis.com/v1/projects/firebase-crackling-fire-4704/accounts:delete',
+    'http://localhost:9099/emulator/v1/projects/demo-osefdetalife/accounts',
     {
-      method: 'POST',
+      method: 'DELETE',
       headers: {
-        'Content-Type': 'application/json',
+        Authorization: 'Bearer owner',
       },
     }
   );
