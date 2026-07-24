@@ -1,12 +1,12 @@
 import { defineConfig, devices } from '@playwright/test';
 
-process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8080';
+process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8081';
 process.env.FIREBASE_AUTH_EMULATOR_HOST = 'localhost:9099';
 process.env.GCLOUD_PROJECT = 'firebase-crackling-fire-4704';
 
 export default defineConfig({
   testDir: './e2e/tests',
-  fullyParallel: true,
+  fullyParallel: false,
   forbidOnly: !!process.env['CI'],
   retries: process.env['CI'] ? 2 : 0,
   workers: process.env['CI'] ? 1 : undefined,
@@ -25,7 +25,7 @@ export default defineConfig({
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
     env: {
-      FIRESTORE_EMULATOR_HOST: 'localhost:8080',
+      FIRESTORE_EMULATOR_HOST: 'localhost:8081',
       FIREBASE_AUTH_EMULATOR_HOST: 'localhost:9099',
       GCLOUD_PROJECT: 'firebase-crackling-fire-4704',
     },

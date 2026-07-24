@@ -3,9 +3,12 @@ import {
   collection,
   doc,
   getDoc,
+  getDocs,
   updateDoc,
   serverTimestamp,
   writeBatch,
+  query,
+  where,
 } from 'firebase/firestore';
 import { getFirebaseDb, getFirebaseAuth } from '../../shared/firebase-config';
 import type { Restaurant } from '../../shared/types/restaurant';
@@ -105,5 +108,20 @@ export class OnboardingService {
     if (!restaurantDoc.exists()) return null;
 
     return { id: restaurantDoc.id, ...restaurantDoc.data() } as Restaurant;
+  }
+
+  getCurrentUser() {
+    return this.auth.currentUser;
+  }
+
+  async getRestaurantByOwner(ownerId: string): Promise<Restaurant | null> {
+    const restaurantsRef = collection(this.db, 'restaurants');
+    const q = query(restaurantsRef, where('ownerId', '==', ownerId));
+    const snapshot = await getDocs(q);
+
+    if (snapshot.empty) return null;
+
+    const doc = snapshot.docs[0];
+    return { id: doc.id, ...doc.data() } as Restaurant;
   }
 }

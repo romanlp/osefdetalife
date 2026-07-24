@@ -41,7 +41,7 @@ let emulatorsConnected = false;
 export function connectToEmulators(): void {
   if (emulatorsConnected) return;
   if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
-    connectFirestoreEmulator(getFirebaseDb(), 'localhost', 8080);
+    connectFirestoreEmulator(getFirebaseDb(), 'localhost', 8081);
     connectAuthEmulator(getFirebaseAuth(), 'http://localhost:9099');
     emulatorsConnected = true;
   }

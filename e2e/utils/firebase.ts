@@ -26,7 +26,7 @@ export function getFirestoreInstance(): Firestore {
   if (!db) {
     db = getFirestore(getFirebaseApp());
     if (process.env['FIRESTORE_EMULATOR_HOST']) {
-      connectFirestoreEmulator(db, 'localhost', 8080);
+      connectFirestoreEmulator(db, 'localhost', 8081);
     }
   }
   return db;

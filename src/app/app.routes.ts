@@ -44,6 +44,14 @@ export const routes: Routes = [
     canActivate: [isAuthenticatedGuard, isNotOnboardedGuard],
   },
   {
+    path: 'onboarding/availability',
+    loadComponent: () =>
+      import('./onboarding/availability-page/availability-page.component').then(
+        (m) => m.AvailabilityPageComponent,
+      ),
+    canActivate: [isAuthenticatedGuard, isNotOnboardedGuard],
+  },
+  {
     path: '',
     redirectTo: 'dashboard',
     pathMatch: 'full',

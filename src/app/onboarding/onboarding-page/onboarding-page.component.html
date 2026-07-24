@@ -9,27 +9,27 @@
       <h1 class="text-2xl font-semibold">Tell us about your restaurant</h1>
     </div>
 
-    <form (ngSubmit)="continueToStep2()" class="flex flex-col gap-4">
+    <form (submit)="onSubmit($event)" class="flex flex-col gap-4">
       <mat-form-field appearance="outline" class="w-full">
         <mat-label>Restaurant name</mat-label>
         <input
           matInput
-          [ngModel]="name()"
-          (ngModelChange)="onNameInput($event)"
-          name="name"
-          required
+          [formField]="onboardingForm.name"
           placeholder="e.g. The Blue Bistro"
         />
       </mat-form-field>
+      @if (onboardingForm.name().touched() && onboardingForm.name().invalid()) {
+        @for (error of onboardingForm.name().errors(); track error) {
+          <span class="text-sm text-red-700">{{ error.message }}</span>
+        }
+      }
 
       <mat-form-field appearance="outline" class="w-full">
         <mat-label>Booking link slug</mat-label>
         <input
           matInput
-          [ngModel]="slug()"
-          (ngModelChange)="onSlugInput($event)"
-          name="slug"
-          required
+          [formField]="onboardingForm.slug"
+          (input)="onSlugInput()"
           placeholder="the-blue-bistro"
         />
         @if (slugPreview()) {
@@ -37,12 +37,21 @@
         }
         @if (slugAvailable() === true) {
           <mat-hint align="end" class="text-green-700">{{ slugHint() }}</mat-hint>
-        } @else if (slugAvailable() === false) {
-          <mat-error>{{ slugHint() }}</mat-error>
         } @else if (slugHint()) {
           <mat-hint align="end">{{ slugHint() }}</mat-hint>
         }
       </mat-form-field>
+      @if (slugAvailable() === false) {
+        <span class="text-sm text-red-700">{{ slugHint() }}</span>
+      }
+      @if (slugError()) {
+        <span class="text-sm text-red-700">{{ slugError() }}</span>
+      }
+      @if (onboardingForm.slug().touched() && onboardingForm.slug().invalid()) {
+        @for (error of onboardingForm.slug().errors(); track error) {
+          <span class="text-sm text-red-700">{{ error.message }}</span>
+        }
+      }
       @if (slugHint()) {
         <div class="sr-only" aria-live="polite">{{ slugHint() }}</div>
       }
@@ -51,9 +60,7 @@
         <mat-label>Address <span class="text-gray-600 text-sm">(optional)</span></mat-label>
         <input
           matInput
-          [ngModel]="address()"
-          (ngModelChange)="address.set($event)"
-          name="address"
+          [formField]="onboardingForm.address"
           placeholder="123 Main St, London"
         />
       </mat-form-field>
