@@ -4,9 +4,9 @@ import { getAuth, Auth, connectAuthEmulator } from 'firebase/auth';
 
 const firebaseConfig = {
   apiKey: 'test-api-key',
-  authDomain: 'demo-osefdetalife.firebaseapp.com',
-  projectId: 'demo-osefdetalife',
-  storageBucket: 'demo-osefdetalife.appspot.com',
+  authDomain: 'firebase-crackling-fire-4704.firebaseapp.com',
+  projectId: 'firebase-crackling-fire-4704',
+  storageBucket: 'firebase-crackling-fire-4704.appspot.com',
   messagingSenderId: '123456789',
   appId: '1:123456789:web:abc123',
 };
