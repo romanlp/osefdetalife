@@ -54,20 +54,22 @@ describe('BrandingPageComponent', () => {
     fixture = TestBed.createComponent(BrandingPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
   });
 
   describe('Step Indicator (AC: 1)', () => {
-    it.skip('[P0] should display step 3 of 3 caption', () => {
+    it('[P0] should display step 3 of 3 caption', () => {
       const stepIndicator = fixture.nativeElement.querySelector('p');
       expect(stepIndicator?.textContent).toContain('Step 3 of 3: Branding');
     });
 
-    it.skip('[P0] should display the "Style your booking widget" heading', () => {
+    it('[P0] should display the "Style your booking widget" heading', () => {
       const heading = fixture.nativeElement.querySelector('h1');
       expect(heading?.textContent).toContain('Style your booking widget');
     });
 
-    it.skip('[P1] should show a visible Skip link', () => {
+    it('[P1] should show a visible Skip link', () => {
       const skipLink = fixture.nativeElement.querySelector('[data-testid="skip-link"]');
       expect(skipLink).toBeTruthy();
       expect(skipLink?.textContent).toContain('Skip');
@@ -75,14 +77,14 @@ describe('BrandingPageComponent', () => {
   });
 
   describe('Color Pickers (AC: 2)', () => {
-    it.skip('[P0] should show primary and secondary color pickers', () => {
+    it('[P0] should show primary and secondary color pickers', () => {
       expect(fixture.nativeElement.querySelector('[data-testid="color-primary"]')).toBeTruthy();
       expect(fixture.nativeElement.querySelector('[data-testid="color-secondary"]')).toBeTruthy();
       expect(fixture.nativeElement.querySelector('[data-testid="hex-primary"]')).toBeTruthy();
       expect(fixture.nativeElement.querySelector('[data-testid="hex-secondary"]')).toBeTruthy();
     });
 
-    it.skip('[P0] should pre-fill colors from restaurant.whiteLabel', async () => {
+    it('[P0] should pre-fill colors from restaurant.whiteLabel', async () => {
       fixture.detectChanges();
       await fixture.whenStable();
       fixture.detectChanges();
@@ -93,12 +95,14 @@ describe('BrandingPageComponent', () => {
       expect(fixture.nativeElement.querySelector('[data-testid="hex-secondary"]')?.value).toBe('#27AE60');
     });
 
-    it.skip('[P1] should fall back to DESIGN palette when whiteLabel is missing', async () => {
+    it('[P1] should fall back to DESIGN palette when whiteLabel is missing', async () => {
       onboardingServiceSpy.getRestaurantByOwner.mockResolvedValue({
         ...RESTAURANT_FIXTURE,
         whiteLabel: undefined,
       } as unknown as Restaurant);
 
+      fixture = TestBed.createComponent(BrandingPageComponent);
+      component = fixture.componentInstance;
       fixture.detectChanges();
       await fixture.whenStable();
       fixture.detectChanges();
@@ -109,7 +113,7 @@ describe('BrandingPageComponent', () => {
       expect(fixture.nativeElement.querySelector('[data-testid="hex-secondary"]')?.value).toBe('#8FA67A');
     });
 
-    it.skip('[P1] should keep the hex text input and color swatch in sync', () => {
+    it('[P1] should keep the hex text input and color swatch in sync', () => {
       const hexInput = fixture.nativeElement.querySelector('[data-testid="hex-primary"]');
       hexInput.value = '#00ff88';
       hexInput.dispatchEvent(new Event('input'));
@@ -119,14 +123,14 @@ describe('BrandingPageComponent', () => {
       expect(fixture.nativeElement.querySelector('[data-testid="color-primary"]')?.value).toBe('#00ff88');
     });
 
-    it.skip('[P2] should expose aria-labels on the native color inputs', () => {
+    it('[P2] should expose aria-labels on the native color inputs', () => {
       expect(fixture.nativeElement.querySelector('[data-testid="color-primary"]')?.getAttribute('aria-label')).toBe('Primary color');
       expect(fixture.nativeElement.querySelector('[data-testid="color-secondary"]')?.getAttribute('aria-label')).toBe('Secondary color');
     });
   });
 
   describe('Hex Validation (AC: 2)', () => {
-    it.skip('[P0] should show an error message for an invalid hex color', () => {
+    it('[P0] should show an error message for an invalid hex color', () => {
       component.primaryColor.set('red');
       fixture.detectChanges();
 
@@ -135,7 +139,7 @@ describe('BrandingPageComponent', () => {
       expect(alert?.textContent.toLowerCase()).toContain('hex');
     });
 
-    it.skip('[P0] should disable Complete while hex colors are invalid', () => {
+    it('[P0] should disable Complete while hex colors are invalid', () => {
       component.primaryColor.set('12345');
       fixture.detectChanges();
 
@@ -143,7 +147,7 @@ describe('BrandingPageComponent', () => {
       expect(completeButton?.disabled).toBe(true);
     });
 
-    it.skip('[P1] should accept valid hex colors case-insensitively', () => {
+    it('[P1] should accept valid hex colors case-insensitively', () => {
       component.primaryColor.set('#aAbBcC');
       component.secondaryColor.set('#AaBbCc');
       fixture.detectChanges();
@@ -152,7 +156,7 @@ describe('BrandingPageComponent', () => {
       expect(fixture.nativeElement.querySelector('[data-testid="complete-button"]')?.disabled).toBe(false);
     });
 
-    it.skip('[P2] should announce validation errors via role="alert"', () => {
+    it('[P2] should announce validation errors via role="alert"', () => {
       component.primaryColor.set('not-a-color');
       fixture.detectChanges();
 
@@ -161,21 +165,25 @@ describe('BrandingPageComponent', () => {
   });
 
   describe('Custom Field (AC: 3)', () => {
-    it.skip('[P0] should render label, required, and enabled controls', () => {
+    it('[P0] should render label, required, and enabled controls', () => {
       expect(fixture.nativeElement.querySelector('[data-testid="custom-field-label"]')).toBeTruthy();
       expect(fixture.nativeElement.querySelector('[data-testid="custom-field-required"]')).toBeTruthy();
       expect(fixture.nativeElement.querySelector('[data-testid="custom-field-enabled"]')).toBeTruthy();
     });
 
-    it.skip('[P0] should default the custom field to disabled', () => {
+    it('[P0] should default the custom field to disabled', () => {
       expect(component.customFieldLabel()).toBe('');
       expect(component.customFieldRequired()).toBe(false);
       expect(component.customFieldEnabled()).toBe(false);
     });
 
-    it.skip('[P1] should pre-fill the custom field from restaurant.customField', async () => {
+    it('[P1] should pre-fill the custom field from restaurant.customField', async () => {
       onboardingServiceSpy.getRestaurantByOwner.mockResolvedValue(BRANDED_RESTAURANT_FIXTURE);
 
+      fixture = TestBed.createComponent(BrandingPageComponent);
+      component = fixture.componentInstance;
+      fixture.detectChanges();
+      await fixture.whenStable();
       fixture.detectChanges();
       await fixture.whenStable();
       fixture.detectChanges();
@@ -186,7 +194,7 @@ describe('BrandingPageComponent', () => {
       expect(fixture.nativeElement.querySelector('[data-testid="custom-field-label"]')?.value).toBe('Dietary notes');
     });
 
-    it.skip('[P1] should update customFieldLabel when the label input changes', () => {
+    it('[P1] should update customFieldLabel when the label input changes', () => {
       const labelInput = fixture.nativeElement.querySelector('[data-testid="custom-field-label"]');
       labelInput.value = 'Allergies';
       labelInput.dispatchEvent(new Event('input'));
@@ -195,7 +203,7 @@ describe('BrandingPageComponent', () => {
       expect(component.customFieldLabel()).toBe('Allergies');
     });
 
-    it.skip('[P2] should update customFieldRequired from the required toggle', () => {
+    it('[P2] should update customFieldRequired from the required toggle', () => {
       component.customFieldRequired.set(true);
       fixture.detectChanges();
 
@@ -205,7 +213,7 @@ describe('BrandingPageComponent', () => {
   });
 
   describe('Skip (AC: 4)', () => {
-    it.skip('[P0] should save only { onboardingCompleted: true } on Skip', async () => {
+    it('[P0] should save only { onboardingCompleted: true } on Skip', async () => {
       vi.spyOn(router, 'navigate').mockResolvedValue(true);
 
       component.primaryColor.set('#FF0000');
@@ -221,7 +229,7 @@ describe('BrandingPageComponent', () => {
       });
     });
 
-    it.skip('[P0] should not save whiteLabel or customField on Skip', async () => {
+    it('[P0] should not save whiteLabel or customField on Skip', async () => {
       vi.spyOn(router, 'navigate').mockResolvedValue(true);
 
       fixture.nativeElement.querySelector('[data-testid="skip-link"]')?.click();
@@ -233,7 +241,7 @@ describe('BrandingPageComponent', () => {
       expect(payload).not.toHaveProperty('customField');
     });
 
-    it.skip('[P1] should navigate to /dashboard on Skip', async () => {
+    it('[P1] should navigate to /dashboard on Skip', async () => {
       const navigateSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
 
       fixture.nativeElement.querySelector('[data-testid="skip-link"]')?.click();
@@ -245,7 +253,7 @@ describe('BrandingPageComponent', () => {
   });
 
   describe('Complete (AC: 5)', () => {
-    it.skip('[P0] should save whiteLabel, customField, and onboardingCompleted: true', async () => {
+    it('[P0] should save whiteLabel, customField, and onboardingCompleted: true', async () => {
       vi.spyOn(router, 'navigate').mockResolvedValue(true);
 
       component.primaryColor.set('#336699');
@@ -266,7 +274,7 @@ describe('BrandingPageComponent', () => {
       });
     });
 
-    it.skip('[P0] should persist customField even when the custom field is disabled', async () => {
+    it('[P0] should persist customField even when the custom field is disabled', async () => {
       vi.spyOn(router, 'navigate').mockResolvedValue(true);
 
       fixture.nativeElement.querySelector('[data-testid="complete-button"]')?.click();
@@ -280,7 +288,7 @@ describe('BrandingPageComponent', () => {
       });
     });
 
-    it.skip('[P1] should navigate to /dashboard on Complete', async () => {
+    it('[P1] should navigate to /dashboard on Complete', async () => {
       const navigateSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
 
       fixture.nativeElement.querySelector('[data-testid="complete-button"]')?.click();
@@ -290,7 +298,7 @@ describe('BrandingPageComponent', () => {
       expect(navigateSpy).toHaveBeenCalledWith(['/dashboard']);
     });
 
-    it.skip('[P1] should disable Complete with aria-busy while saving', async () => {
+    it('[P1] should disable Complete with aria-busy while saving', async () => {
       vi.spyOn(router, 'navigate').mockResolvedValue(true);
 
       const completeButton = fixture.nativeElement.querySelector('[data-testid="complete-button"]');
@@ -304,7 +312,7 @@ describe('BrandingPageComponent', () => {
       fixture.detectChanges();
     });
 
-    it.skip('[P1] should show the save error and not navigate when the update fails', async () => {
+    it('[P1] should show the save error and not navigate when the update fails', async () => {
       const navigateSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
       onboardingServiceSpy.updateRestaurant.mockRejectedValueOnce(new Error('Save failed'));
 
@@ -316,7 +324,7 @@ describe('BrandingPageComponent', () => {
       expect(navigateSpy).not.toHaveBeenCalled();
     });
 
-    it.skip('[P1] should enable Complete when colors are valid', () => {
+    it('[P1] should enable Complete when colors are valid', () => {
       const completeButton = fixture.nativeElement.querySelector('[data-testid="complete-button"]');
       expect(completeButton?.disabled).toBe(false);
     });

@@ -1,0 +1,146 @@
+<div class="h-screen flex items-center justify-center bg-[#FAF7F2]">
+  <mat-card appearance="outlined" class="relative w-full max-w-[480px] mx-4 p-6">
+    @if (loading()) {
+      <mat-progress-bar mode="indeterminate" class="absolute top-0 left-0 right-0" aria-label="Loading" />
+    }
+
+    <div class="mb-6 flex items-start justify-between gap-4">
+      <div>
+        <p class="text-sm text-gray-500 mb-1">Step 3 of 3: Branding</p>
+        <h1 class="text-2xl font-semibold">Style your booking widget</h1>
+      </div>
+      <a
+        href="#"
+        data-testid="skip-link"
+        class="text-sm text-gray-500 underline hover:text-gray-700"
+        [class.pointer-events-none]="loading()"
+        [attr.aria-disabled]="loading() || null"
+        (click)="skipOnboarding($event)"
+      >
+        Skip
+      </a>
+    </div>
+
+    <div class="flex flex-col gap-4">
+      <section>
+        <h2 class="text-lg font-medium mb-3">Colors</h2>
+        <div class="flex flex-col gap-3">
+          <div class="flex items-center gap-3">
+            <mat-form-field appearance="outline" class="flex-1">
+              <mat-label>Primary color</mat-label>
+              <input
+                matInput
+                type="text"
+                [ngModel]="primaryColor()"
+                (ngModelChange)="onPrimaryHexChange($event)"
+                name="hex-primary"
+                data-testid="hex-primary"
+                aria-label="Primary color hex value"
+                placeholder="#1A1A1A"
+                [disabled]="loading()"
+              />
+            </mat-form-field>
+            <input
+              type="color"
+              [value]="primaryColor()"
+              (input)="onPrimarySwatchChange(primarySwatch.value)"
+              #primarySwatch
+              data-testid="color-primary"
+              aria-label="Primary color"
+              [disabled]="loading()"
+              class="h-11 w-14 shrink-0 rounded border border-gray-300 bg-white p-1"
+            />
+          </div>
+
+          <div class="flex items-center gap-3">
+            <mat-form-field appearance="outline" class="flex-1">
+              <mat-label>Secondary color</mat-label>
+              <input
+                matInput
+                type="text"
+                [ngModel]="secondaryColor()"
+                (ngModelChange)="onSecondaryHexChange($event)"
+                name="hex-secondary"
+                data-testid="hex-secondary"
+                aria-label="Secondary color hex value"
+                placeholder="#8FA67A"
+                [disabled]="loading()"
+              />
+            </mat-form-field>
+            <input
+              type="color"
+              [value]="secondaryColor()"
+              (input)="onSecondarySwatchChange(secondarySwatch.value)"
+              #secondarySwatch
+              data-testid="color-secondary"
+              aria-label="Secondary color"
+              [disabled]="loading()"
+              class="h-11 w-14 shrink-0 rounded border border-gray-300 bg-white p-1"
+            />
+          </div>
+        </div>
+      </section>
+
+      @if (hexError()) {
+        <div role="alert" class="text-red-700 text-sm">{{ hexError() }}</div>
+      }
+
+      <section class="border-t pt-4 mt-2">
+        <h2 class="text-lg font-medium mb-3">Custom field</h2>
+        <div class="flex flex-col gap-3">
+          <mat-form-field appearance="outline">
+            <mat-label>Custom field label</mat-label>
+            <input
+              matInput
+              type="text"
+              [ngModel]="customFieldLabel()"
+              (ngModelChange)="onCustomFieldLabelChange($event)"
+              name="custom-field-label"
+              data-testid="custom-field-label"
+              placeholder="e.g. Dietary notes"
+              [disabled]="loading()"
+            />
+          </mat-form-field>
+
+          <mat-checkbox
+            [checked]="customFieldRequired()"
+            (change)="customFieldRequired.set($event.checked)"
+            [disabled]="loading()"
+            data-testid="custom-field-required"
+          >
+            Required
+          </mat-checkbox>
+
+          <mat-checkbox
+            [checked]="customFieldEnabled()"
+            (change)="customFieldEnabled.set($event.checked)"
+            [disabled]="loading()"
+            data-testid="custom-field-enabled"
+          >
+            Enabled
+          </mat-checkbox>
+        </div>
+      </section>
+
+      @if (error()) {
+        <div role="alert" class="text-red-700 text-sm">{{ error() }}</div>
+      }
+
+      <button
+        matButton="filled"
+        type="button"
+        [disabled]="!canComplete()"
+        [attr.aria-busy]="loading() || null"
+        data-testid="complete-button"
+        (click)="completeOnboarding()"
+        class="w-full"
+      >
+        @if (loading()) {
+          Saving...
+        } @else {
+          Complete
+        }
+      </button>
+    </div>
+  </mat-card>
+</div>

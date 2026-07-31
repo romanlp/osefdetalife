@@ -52,6 +52,14 @@ export const routes: Routes = [
     canActivate: [isAuthenticatedGuard, isNotOnboardedGuard],
   },
   {
+    path: 'onboarding/branding',
+    loadComponent: () =>
+      import('./onboarding/branding-page/branding-page.component').then(
+        (m) => m.BrandingPageComponent,
+      ),
+    canActivate: [isAuthenticatedGuard, isNotOnboardedGuard],
+  },
+  {
     path: '',
     redirectTo: 'dashboard',
     pathMatch: 'full',

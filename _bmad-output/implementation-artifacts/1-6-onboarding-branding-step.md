@@ -1,11 +1,11 @@
 ---
 baseline_commit: 7a7e6ff
-status: ready-for-dev
+status: done
 ---
 
 # Story 1.6: Onboarding — Branding Step
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -43,41 +43,41 @@ so that the widget matches my brand.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Create Branding Page Component (AC: 1, 2, 3, 5)
-  - [ ] Subtask 1.1: Create `src/app/onboarding/branding-page/branding-page.component.ts`
-  - [ ] Subtask 1.2: Implement step indicator ("Step 3 of 3: Branding")
-  - [ ] Subtask 1.3: Implement heading "Style your booking widget"
-  - [ ] Subtask 1.4: Implement "Skip" link (optional-step affordance, link-style button), disabled while saving
-  - [ ] Subtask 1.5: Implement primary color picker (hex text input + native color swatch)
-  - [ ] Subtask 1.6: Implement secondary color picker (hex text input + native color swatch)
-  - [ ] Subtask 1.7: Pre-fill sensible defaults from existing `restaurant.whiteLabel` (fallback to DESIGN palette `#1A1A1A` / `#8FA67A`)
-  - [ ] Subtask 1.8: Implement hex validation (`^#[0-9a-fA-F]{6}$`) with error message; block "Complete" when invalid
-  - [ ] Subtask 1.9: Implement custom field: label (text input), required (toggle), enabled (toggle), defaulting to disabled
-  - [ ] Subtask 1.10: Implement "Complete" button (filled, full-width) with loading state, error handling, disabled state + `aria-busy` during save
-  - [ ] Subtask 1.11: Style per DESIGN.md: centered card, max-width 480px, warm linen background
+- [x] Task 1: Create Branding Page Component (AC: 1, 2, 3, 5)
+  - [x] Subtask 1.1: Create `src/app/onboarding/branding-page/branding-page.component.ts`
+  - [x] Subtask 1.2: Implement step indicator ("Step 3 of 3: Branding")
+  - [x] Subtask 1.3: Implement heading "Style your booking widget"
+  - [x] Subtask 1.4: Implement "Skip" link (optional-step affordance, link-style button), disabled while saving
+  - [x] Subtask 1.5: Implement primary color picker (hex text input + native color swatch)
+  - [x] Subtask 1.6: Implement secondary color picker (hex text input + native color swatch)
+  - [x] Subtask 1.7: Pre-fill sensible defaults from existing `restaurant.whiteLabel` (fallback to DESIGN palette `#1A1A1A` / `#8FA67A`)
+  - [x] Subtask 1.8: Implement hex validation (`^#[0-9a-fA-F]{6}$`) with error message; block "Complete" when invalid
+  - [x] Subtask 1.9: Implement custom field: label (text input), required (toggle), enabled (toggle), defaulting to disabled
+  - [x] Subtask 1.10: Implement "Complete" button (filled, full-width) with loading state, error handling, disabled state + `aria-busy` during save
+  - [x] Subtask 1.11: Style per DESIGN.md: centered card, max-width 480px, warm linen background
 
-- [ ] Task 2: Update Onboarding Service (AC: 2, 5)
-  - [ ] Subtask 2.1: Update `createRestaurant` whiteLabel defaults from `#000000`/`#FFFFFF` to the DESIGN.md platform palette (`#1A1A1A` primary / `#8FA67A` secondary)
-  - [ ] Subtask 2.2: Reuse `updateRestaurant` for branding data — no new service methods required
+- [x] Task 2: Update Onboarding Service (AC: 2, 5)
+  - [x] Subtask 2.1: Update `createRestaurant` whiteLabel defaults from `#000000`/`#FFFFFF` to the DESIGN.md platform palette (`#1A1A1A` primary / `#8FA67A` secondary)
+  - [x] Subtask 2.2: Reuse `updateRestaurant` for branding data — no new service methods required
 
-- [ ] Task 3: Update Angular Routing (AC: 5)
-  - [ ] Subtask 3.1: Add `/onboarding/branding` route to `app.routes.ts` (lazy `loadComponent`, guards `[isAuthenticatedGuard, isNotOnboardedGuard]`)
-  - [ ] Subtask 3.2: Verify Step 2 "Continue" navigates to `/onboarding/branding` (already implemented in Story 1.5 — no change expected)
+- [x] Task 3: Update Angular Routing (AC: 5)
+  - [x] Subtask 3.1: Add `/onboarding/branding` route to `app.routes.ts` (lazy `loadComponent`, guards `[isAuthenticatedGuard, isNotOnboardedGuard]`)
+  - [x] Subtask 3.2: Verify Step 2 "Continue" navigates to `/onboarding/branding` (already implemented in Story 1.5 — no change expected)
 
-- [ ] Task 4: Write Unit Tests (AC: 1, 2, 3, 4, 5)
-  - [ ] Subtask 4.1: Test BrandingPageComponent — step indicator renders
-  - [ ] Subtask 4.2: Test BrandingPageComponent — "Skip" link visible
-  - [ ] Subtask 4.3: Test BrandingPageComponent — color pickers pre-filled from restaurant doc (or DESIGN defaults)
-  - [ ] Subtask 4.4: Test BrandingPageComponent — invalid hex blocks "Complete"
-  - [ ] Subtask 4.5: Test BrandingPageComponent — custom field defaults to disabled
-  - [ ] Subtask 4.6: Test BrandingPageComponent — "Complete" saves `{ whiteLabel, customField, onboardingCompleted: true }` (customField persisted even when `enabled: false`) and navigates to `/dashboard`
-  - [ ] Subtask 4.7: Test BrandingPageComponent — "Skip" saves only `onboardingCompleted: true` and navigates to `/dashboard`
-  - [ ] Subtask 4.8: Test OnboardingService — `createRestaurant` uses DESIGN palette defaults
+- [x] Task 4: Write Unit Tests (AC: 1, 2, 3, 4, 5)
+  - [x] Subtask 4.1: Test BrandingPageComponent — step indicator renders
+  - [x] Subtask 4.2: Test BrandingPageComponent — "Skip" link visible
+  - [x] Subtask 4.3: Test BrandingPageComponent — color pickers pre-filled from restaurant doc (or DESIGN defaults)
+  - [x] Subtask 4.4: Test BrandingPageComponent — invalid hex blocks "Complete"
+  - [x] Subtask 4.5: Test BrandingPageComponent — custom field defaults to disabled
+  - [x] Subtask 4.6: Test BrandingPageComponent — "Complete" saves `{ whiteLabel, customField, onboardingCompleted: true }` (customField persisted even when `enabled: false`) and navigates to `/dashboard`
+  - [x] Subtask 4.7: Test BrandingPageComponent — "Skip" saves only `onboardingCompleted: true` and navigates to `/dashboard`
+  - [x] Subtask 4.8: Test OnboardingService — `createRestaurant` uses DESIGN palette defaults
 
-- [ ] Task 5: E2E / ATDD Coverage (deferred to AT phase via `bmad-testarch-atdd`)
-  - [ ] Subtask 5.1: Generate red-phase checklist `_bmad-output/test-artifacts/atdd-checklist-1-6-onboarding-branding-step.md`
-  - [ ] Subtask 5.2: E2E tests: extend `e2e/tests/onboarding-wizard.spec.ts` (drive the fresh `onboardingPage` fixture through steps 1→3) or add `e2e/tests/onboarding-branding.spec.ts`; cover full complete flow and skip flow
-  - [ ] Subtask 5.3: Consider a seeded "in-progress" restaurant fixture (hours/tableGroups set, `onboardingCompleted: false`) to land directly on Step 3
+- [x] Task 5: E2E / ATDD Coverage (deferred to AT phase via `bmad-testarch-atdd`)
+  - [x] Subtask 5.1: Generate red-phase checklist `_bmad-output/test-artifacts/atdd-checklist-1-6-onboarding-branding-step.md`
+  - [x] Subtask 5.2: E2E tests: extend `e2e/tests/onboarding-wizard.spec.ts` (drive the fresh `onboardingPage` fixture through steps 1→3) or add `e2e/tests/onboarding-branding.spec.ts`; cover full complete flow and skip flow
+  - [x] Subtask 5.3: Consider a seeded "in-progress" restaurant fixture (hours/tableGroups set, `onboardingCompleted: false`) to land directly on Step 3
 
 ## Dev Notes
 
@@ -167,17 +167,45 @@ so that the widget matches my brand.
 ### ATDD Artifacts
 
 - Checklist: `_bmad-output/test-artifacts/atdd-checklist-1-6-onboarding-branding-step.md` (RED phase — 33 scaffolds)
-- E2E tests: `e2e/tests/onboarding-branding.spec.ts` (7 tests, all `test.skip`)
-- Component tests: `src/app/onboarding/branding-page/branding-page.component.spec.ts` (26 tests, all `it.skip`)
+- E2E tests: `e2e/tests/onboarding-branding.spec.ts` (7 tests, all activated and passing)
+- Component tests: `src/app/onboarding/branding-page/branding-page.component.spec.ts` (26 tests, all activated and passing)
 
 ## Dev Agent Record
 
 ### Agent Model Used
 
+- opencode / big-pickle (CLI agent session)
+
 ### Debug Log References
+
+- `/tmp/ngtest5.log`, `/tmp/ngtest6.log` — full `npx ng test --watch=false` runs (142/142 passed)
+- `/tmp/pw-branding.log`, `/tmp/pw-branding2.log`, `/tmp/pw-branding3.log` — E2E branding runs (final: 7/7 passed)
+- `/tmp/pw-full.log`, `/tmp/pw-full2.log`, `/tmp/pw-full3.log` — full E2E suite runs (28/29; 1 pre-existing flake in `e2e/fixtures/onboarding.fixture.ts` auth `waitForURL`, see Completion Notes)
+- `/tmp/pw-wizard.log`, `/tmp/pw-wizard2.log` — onboarding-wizard spec alone (8/8 passed)
+- `/tmp/lint.log` — `ng lint` clean
+- `/tmp/build.log` — `ng build` success (pre-existing initial-bundle budget warning, unrelated)
 
 ### Completion Notes List
 
+- Implemented the full branding step (Step 3 of 3): heading "Style your booking widget", "Skip" link, primary/secondary hex color pickers with native swatches, custom field (label + required/enabled checkboxes), "Complete" button with loading/error states.
+- Complete persists exactly `{ whiteLabel, customField, onboardingCompleted: true }` and navigates to `['/dashboard']`; Skip persists only `{ onboardingCompleted: true }` and navigates to `['/dashboard']`.
+- `createRestaurant` whiteLabel defaults changed to DESIGN palette `#1A1A1A` / `#8FA67A`.
+- Added `/onboarding/branding` route (lazy `loadComponent`, `[isAuthenticatedGuard, isNotOnboardedGuard]`); Step 2 "Continue" already navigated to it.
+- Unit tests: 142/142 green. Root cause of the 7 initially-red tests: `beforeEach` lacked `await fixture.whenStable()`; `ngOnInit`'s async `getRestaurantByOwner` resolved after the initial `detectChanges()`, leaving DOM stale. The 2 re-mock tests also re-triggered `ngOnInit` on a consumed fixture — fixed by recreating `fixture`/`component` inside those tests. Custom-field ngModel needs 2 `whenStable` cycles.
+- E2E: 7/7 green. Root causes of red tests: (a) `data-testid` on the `mat-slide-toggle`/`mat-checkbox` host doesn't expose a checkable role and host clicks don't toggle — switched to `mat-checkbox` and role-based selectors (`getByRole('checkbox', { name: 'Required' })`), matching the availability step; (b) form controls were not disabled during the async prefill, so rapid user input could be clobbered by `ngOnInit`'s prefill — fixed by `[disabled]="loading()"` on all inputs (Playwright auto-waits for enabled, eliminating the race; also correct UX).
+- Pre-existing full-suite flake (NOT caused by this story): `e2e/fixtures/onboarding.fixture.ts:57` `page.waitForURL(/\/(onboarding|dashboard)/)` times out after auth signup on a random test when the whole suite runs (28/29). Same fixture hits each run's failure; the branding and wizard specs each pass standalone. Left untouched (out of scope).
+
 ### File List
 
+- `src/app/onboarding/branding-page/branding-page.component.ts` — new component
+- `src/app/onboarding/branding-page/branding-page.component.html` — new template (hex inputs + swatches, custom field, alerts, Complete/Skip)
+- `src/app/onboarding/branding-page/branding-page.component.scss` — new (empty; Tailwind utilities inline)
+- `src/app/onboarding/branding-page/branding-page.component.spec.ts` — 26 activated tests
+- `src/app/services/onboarding.service.ts` — whiteLabel defaults → `#1A1A1A` / `#8FA67A`
+- `src/app/app.routes.ts` — `/onboarding/branding` route
+- `e2e/tests/onboarding-branding.spec.ts` — 7 activated tests (role-based checkbox selectors)
+- `_bmad-output/implementation-artifacts/sprint-status.yaml` — 1-6 → done
+
 ### Review Findings
+
+- Not yet reviewed — story marked `done` per `workflow.on_complete` customization. Recommended follow-up: run `code-review` with a different LLM.

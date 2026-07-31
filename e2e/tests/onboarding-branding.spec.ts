@@ -33,7 +33,7 @@ async function getRestaurantBySlug(db: Firestore, slug: string) {
 }
 
 test.describe('Onboarding Branding Step', () => {
-  test.skip('[P0] step 3 loads with step indicator, heading and skip link', async ({ onboardingPage }) => {
+  test('[P0] step 3 loads with step indicator, heading and skip link', async ({ onboardingPage }) => {
     await completeStepsOneAndTwo(onboardingPage, 'branding-loads-test');
 
     await expect(onboardingPage.getByText('Step 3 of 3: Branding')).toBeVisible();
@@ -44,7 +44,7 @@ test.describe('Onboarding Branding Step', () => {
     await expect(skipLink).toHaveAccessibleName('Skip');
   });
 
-  test.skip('[P0] color pickers are pre-filled with sensible defaults', async ({ onboardingPage }) => {
+  test('[P0] color pickers are pre-filled with sensible defaults', async ({ onboardingPage }) => {
     await completeStepsOneAndTwo(onboardingPage, 'branding-defaults-test');
 
     const primarySwatch = onboardingPage.getByTestId('color-primary');
@@ -61,7 +61,7 @@ test.describe('Onboarding Branding Step', () => {
     await expect(secondarySwatch).toHaveValue(DEFAULT_SECONDARY.toLowerCase());
   });
 
-  test.skip('[P0] complete flow saves branding data and marks onboarding complete', async ({ onboardingPage, db }) => {
+  test('[P0] complete flow saves branding data and marks onboarding complete', async ({ onboardingPage, db }) => {
     const slug = 'branding-complete-test';
     await completeStepsOneAndTwo(onboardingPage, slug);
 
@@ -69,7 +69,7 @@ test.describe('Onboarding Branding Step', () => {
     await onboardingPage.getByTestId('hex-secondary').fill('#ABCDEF');
 
     await onboardingPage.getByTestId('custom-field-label').fill('Party size');
-    await onboardingPage.getByTestId('custom-field-required').click();
+    await onboardingPage.getByRole('checkbox', { name: 'Required' }).check();
 
     await onboardingPage.getByRole('button', { name: 'Complete' }).click();
     await onboardingPage.waitForURL(/dashboard/);
@@ -81,7 +81,7 @@ test.describe('Onboarding Branding Step', () => {
     expect(restaurant.customField).toEqual({ label: 'Party size', required: true, enabled: false });
   });
 
-  test.skip('[P0] skip flow completes onboarding without saving branding changes', async ({ onboardingPage, db }) => {
+  test('[P0] skip flow completes onboarding without saving branding changes', async ({ onboardingPage, db }) => {
     const slug = 'branding-skip-test';
     await completeStepsOneAndTwo(onboardingPage, slug);
 
@@ -95,15 +95,15 @@ test.describe('Onboarding Branding Step', () => {
     expect(restaurant.whiteLabel).toEqual({ primaryColor: DEFAULT_PRIMARY, secondaryColor: DEFAULT_SECONDARY });
   });
 
-  test.skip('[P1] custom field defaults to disabled with required off', async ({ onboardingPage }) => {
+  test('[P1] custom field defaults to disabled with required off', async ({ onboardingPage }) => {
     await completeStepsOneAndTwo(onboardingPage, 'branding-customfield-defaults-test');
 
     await expect(onboardingPage.getByTestId('custom-field-label')).toBeVisible();
-    await expect(onboardingPage.getByTestId('custom-field-required')).not.toBeChecked();
-    await expect(onboardingPage.getByTestId('custom-field-enabled')).not.toBeChecked();
+    await expect(onboardingPage.getByRole('checkbox', { name: 'Required' })).not.toBeChecked();
+    await expect(onboardingPage.getByRole('checkbox', { name: 'Enabled' })).not.toBeChecked();
   });
 
-  test.skip('[P1] invalid hex shows an error and disables complete', async ({ onboardingPage }) => {
+  test('[P1] invalid hex shows an error and disables complete', async ({ onboardingPage }) => {
     await completeStepsOneAndTwo(onboardingPage, 'branding-invalid-hex-test');
 
     await onboardingPage.getByTestId('hex-primary').fill('#GGGGGG');
@@ -115,7 +115,7 @@ test.describe('Onboarding Branding Step', () => {
     await expect(onboardingPage.getByRole('button', { name: 'Complete' })).toBeDisabled();
   });
 
-  test.skip('[P2] hex text input and color swatch stay in sync', async ({ onboardingPage }) => {
+  test('[P2] hex text input and color swatch stay in sync', async ({ onboardingPage }) => {
     await completeStepsOneAndTwo(onboardingPage, 'branding-sync-test');
 
     await onboardingPage.getByTestId('hex-primary').fill('#345678');
