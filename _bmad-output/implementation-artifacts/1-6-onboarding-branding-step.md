@@ -164,11 +164,11 @@ so that the widget matches my brand.
 - [Source: src/app/routing/guard/onboarding.guard.ts — isNotOnboardedGuard / isOnboardedGuard flip]
 - [Source: e2e/fixtures/onboarding.fixture.ts — `onboardedUser` fixture pattern for a future seeded in-progress fixture]
 
-### ATDD Artifacts (planned)
+### ATDD Artifacts
 
-- Checklist: `_bmad-output/test-artifacts/atdd-checklist-1-6-onboarding-branding-step.md`
-- E2E tests: `e2e/tests/onboarding-branding.spec.ts`
-- Component tests: `src/app/onboarding/branding-page/branding-page.component.spec.ts`
+- Checklist: `_bmad-output/test-artifacts/atdd-checklist-1-6-onboarding-branding-step.md` (RED phase — 33 scaffolds)
+- E2E tests: `e2e/tests/onboarding-branding.spec.ts` (7 tests, all `test.skip`)
+- Component tests: `src/app/onboarding/branding-page/branding-page.component.spec.ts` (26 tests, all `it.skip`)
 
 ## Dev Agent Record
 
