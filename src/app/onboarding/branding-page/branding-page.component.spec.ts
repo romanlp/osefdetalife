@@ -320,7 +320,7 @@ describe('BrandingPageComponent', () => {
       await fixture.whenStable();
       fixture.detectChanges();
 
-      expect(fixture.nativeElement.querySelector('[role="alert"]')?.textContent).toContain('Save failed');
+      expect(fixture.nativeElement.querySelector('[role="alert"]')?.textContent).toContain('Something went wrong');
       expect(navigateSpy).not.toHaveBeenCalled();
     });
 

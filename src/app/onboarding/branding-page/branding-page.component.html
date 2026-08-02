@@ -1,6 +1,6 @@
 <div class="h-screen flex items-center justify-center bg-[#FAF7F2]">
   <mat-card appearance="outlined" class="relative w-full max-w-[480px] mx-4 p-6">
-    @if (loading()) {
+    @if (busy()) {
       <mat-progress-bar mode="indeterminate" class="absolute top-0 left-0 right-0" aria-label="Loading" />
     }
 
@@ -13,8 +13,9 @@
         href="#"
         data-testid="skip-link"
         class="text-sm text-gray-500 underline hover:text-gray-700"
-        [class.pointer-events-none]="loading()"
-        [attr.aria-disabled]="loading() || null"
+        [class.pointer-events-none]="busy()"
+        [attr.aria-disabled]="busy() || null"
+        [attr.tabindex]="busy() ? -1 : null"
         (click)="skipOnboarding($event)"
       >
         Skip
@@ -37,7 +38,7 @@
                 data-testid="hex-primary"
                 aria-label="Primary color hex value"
                 placeholder="#1A1A1A"
-                [disabled]="loading()"
+                [disabled]="busy()"
               />
             </mat-form-field>
             <input
@@ -47,7 +48,7 @@
               #primarySwatch
               data-testid="color-primary"
               aria-label="Primary color"
-              [disabled]="loading()"
+              [disabled]="busy()"
               class="h-11 w-14 shrink-0 rounded border border-gray-300 bg-white p-1"
             />
           </div>
@@ -64,7 +65,7 @@
                 data-testid="hex-secondary"
                 aria-label="Secondary color hex value"
                 placeholder="#8FA67A"
-                [disabled]="loading()"
+                [disabled]="busy()"
               />
             </mat-form-field>
             <input
@@ -74,7 +75,7 @@
               #secondarySwatch
               data-testid="color-secondary"
               aria-label="Secondary color"
-              [disabled]="loading()"
+              [disabled]="busy()"
               class="h-11 w-14 shrink-0 rounded border border-gray-300 bg-white p-1"
             />
           </div>
@@ -98,14 +99,14 @@
               name="custom-field-label"
               data-testid="custom-field-label"
               placeholder="e.g. Dietary notes"
-              [disabled]="loading()"
+              [disabled]="busy()"
             />
           </mat-form-field>
 
           <mat-checkbox
             [checked]="customFieldRequired()"
             (change)="customFieldRequired.set($event.checked)"
-            [disabled]="loading()"
+            [disabled]="busy()"
             data-testid="custom-field-required"
           >
             Required
@@ -114,7 +115,7 @@
           <mat-checkbox
             [checked]="customFieldEnabled()"
             (change)="customFieldEnabled.set($event.checked)"
-            [disabled]="loading()"
+            [disabled]="busy()"
             data-testid="custom-field-enabled"
           >
             Enabled
@@ -130,12 +131,12 @@
         matButton="filled"
         type="button"
         [disabled]="!canComplete()"
-        [attr.aria-busy]="loading() || null"
+        [attr.aria-busy]="busy() || null"
         data-testid="complete-button"
         (click)="completeOnboarding()"
         class="w-full"
       >
-        @if (loading()) {
+        @if (saving()) {
           Saving...
         } @else {
           Complete

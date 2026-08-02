@@ -29,8 +29,11 @@ const HEX_COLOR_PATTERN = /^#[0-9a-fA-F]{6}$/;
 export class BrandingPageComponent implements OnInit {
   private onboardingService = inject(OnboardingService);
   private router = inject(Router);
+  private restaurantId: string | null = null;
 
   loading = signal(false);
+  saving = signal(false);
+  prefillFailed = signal(false);
   error = signal<string | null>(null);
 
   primaryColor = signal<string>(DESIGN_PRIMARY);
@@ -49,7 +52,9 @@ export class BrandingPageComponent implements OnInit {
     return null;
   });
 
-  canComplete = computed(() => this.hexError() === null && !this.loading());
+  busy = computed(() => this.loading() || this.saving());
+
+  canComplete = computed(() => this.hexError() === null && !this.busy() && !this.prefillFailed());
 
   async ngOnInit() {
     this.loading.set(true);
@@ -60,18 +65,22 @@ export class BrandingPageComponent implements OnInit {
       const restaurant = await this.onboardingService.getRestaurantByOwner(user.uid);
       if (!restaurant) return;
 
+      this.restaurantId = restaurant.id;
+
       if (restaurant.whiteLabel) {
-        this.primaryColor.set(restaurant.whiteLabel.primaryColor);
-        this.secondaryColor.set(restaurant.whiteLabel.secondaryColor);
+        this.primaryColor.set(restaurant.whiteLabel.primaryColor ?? DESIGN_PRIMARY);
+        this.secondaryColor.set(restaurant.whiteLabel.secondaryColor ?? DESIGN_SECONDARY);
       }
 
       if (restaurant.customField) {
-        this.customFieldLabel.set(restaurant.customField.label);
-        this.customFieldRequired.set(restaurant.customField.required);
-        this.customFieldEnabled.set(restaurant.customField.enabled);
+        this.customFieldLabel.set(restaurant.customField.label ?? '');
+        this.customFieldRequired.set(restaurant.customField.required ?? false);
+        this.customFieldEnabled.set(restaurant.customField.enabled ?? false);
       }
-    } catch {
-      // Silently ignore — defaults will be used
+    } catch (e: unknown) {
+      console.error('Failed to prefill branding settings', e);
+      this.prefillFailed.set(true);
+      this.error.set('Unable to load your saved settings. Please refresh and try again.');
     } finally {
       this.loading.set(false);
     }
@@ -98,14 +107,13 @@ export class BrandingPageComponent implements OnInit {
   }
 
   async completeOnboarding() {
-    if (!this.canComplete()) return;
+    if (!this.canComplete() || !this.restaurantId) return;
 
-    this.loading.set(true);
+    this.saving.set(true);
     this.error.set(null);
 
     try {
-      const restaurantId = await this.getRestaurantId();
-      await this.onboardingService.updateRestaurant(restaurantId, {
+      await this.onboardingService.updateRestaurant(this.restaurantId, {
         whiteLabel: {
           primaryColor: this.primaryColor(),
           secondaryColor: this.secondaryColor(),
@@ -120,42 +128,36 @@ export class BrandingPageComponent implements OnInit {
 
       this.router.navigate(['/dashboard']);
     } catch (e: unknown) {
-      const message = e instanceof Error ? e.message : 'Something went wrong. Please try again.';
-      this.error.set(message);
+      console.error('Failed to complete onboarding', e);
+      this.error.set('Something went wrong. Please try again.');
     } finally {
-      this.loading.set(false);
+      this.saving.set(false);
     }
   }
 
   async skipOnboarding(event: Event) {
     event.preventDefault();
-    if (this.loading()) return;
+    if (this.busy()) return;
 
-    this.loading.set(true);
+    if (!this.restaurantId) {
+      this.error.set('Unable to load your restaurant. Please refresh and try again.');
+      return;
+    }
+
+    this.saving.set(true);
     this.error.set(null);
 
     try {
-      const restaurantId = await this.getRestaurantId();
-      await this.onboardingService.updateRestaurant(restaurantId, {
+      await this.onboardingService.updateRestaurant(this.restaurantId, {
         onboardingCompleted: true,
       });
 
       this.router.navigate(['/dashboard']);
     } catch (e: unknown) {
-      const message = e instanceof Error ? e.message : 'Something went wrong. Please try again.';
-      this.error.set(message);
+      console.error('Failed to skip onboarding', e);
+      this.error.set('Something went wrong. Please try again.');
     } finally {
-      this.loading.set(false);
+      this.saving.set(false);
     }
-  }
-
-  private async getRestaurantId(): Promise<string> {
-    const user = this.onboardingService.getCurrentUser();
-    if (!user) throw new Error('User not authenticated');
-
-    const restaurant = await this.onboardingService.getRestaurantByOwner(user.uid);
-    if (!restaurant) throw new Error('Restaurant not found');
-
-    return restaurant.id;
   }
 }

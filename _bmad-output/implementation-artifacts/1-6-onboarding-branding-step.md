@@ -208,4 +208,9 @@ so that the widget matches my brand.
 
 ### Review Findings
 
-- Not yet reviewed — story marked `done` per `workflow.on_complete` customization. Recommended follow-up: run `code-review` with a different LLM.
+- [x] [Review][Patch] Silent prefill failure can wipe existing saved branding on Complete (catch swallows read errors; Complete overwrites with defaults) [src/app/onboarding/branding-page/branding-page.component.ts:73]
+- [x] [Review][Patch] `loading()` conflates prefill and save — "Saving..." label and disabled state shown during initial prefill [src/app/onboarding/branding-page/branding-page.component.ts:33]
+- [x] [Review][Patch] `getRestaurantId()` re-queries Firestore on every submit (extra read + TOCTOU window) instead of reusing the prefill fetch [src/app/onboarding/branding-page/branding-page.component.ts:152]
+- [x] [Review][Patch] Partial `whiteLabel`/`customField` sub-fields flow unvalidated into the persisted payload (`set(undefined)` sticks hex error + swatch desync) [src/app/onboarding/branding-page/branding-page.component.ts:63]
+- [x] [Review][Patch] Raw SDK error messages surface verbatim in `role=alert`; prefill failures swallowed silently [src/app/onboarding/branding-page/branding-page.component.ts:122]
+- [x] [Review][Patch] Skip link stays keyboard-focusable/activatable while "disabled" (pointer-events + aria-disabled only) [src/app/onboarding/branding-page/branding-page.component.html:12]
