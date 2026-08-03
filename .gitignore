@@ -53,6 +53,7 @@ Thumbs.db
 .bmad-loop/
 .claude/
 .opencode/
+.cline/
 
 # Firebase
 firestore-debug.log
