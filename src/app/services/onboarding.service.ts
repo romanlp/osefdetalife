@@ -59,8 +59,8 @@ export class OnboardingService {
         hours: {},
         tableGroups: [],
         whiteLabel: {
-          primaryColor: '#000000',
-          secondaryColor: '#FFFFFF',
+          primaryColor: '#1A1A1A',
+          secondaryColor: '#8FA67A',
         },
         onboardingCompleted: false,
         createdAt: new Date(),
