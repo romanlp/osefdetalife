@@ -241,14 +241,14 @@ describe('BrandingPageComponent', () => {
       expect(payload).not.toHaveProperty('customField');
     });
 
-    it('[P1] should navigate to /dashboard on Skip', async () => {
+    it('[P1] should navigate to /dashboard/deploy on Skip', async () => {
       const navigateSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
 
       fixture.nativeElement.querySelector('[data-testid="skip-link"]')?.click();
       await fixture.whenStable();
       fixture.detectChanges();
 
-      expect(navigateSpy).toHaveBeenCalledWith(['/dashboard']);
+      expect(navigateSpy).toHaveBeenCalledWith(['/dashboard/deploy']);
     });
   });
 
@@ -288,14 +288,14 @@ describe('BrandingPageComponent', () => {
       });
     });
 
-    it('[P1] should navigate to /dashboard on Complete', async () => {
+    it('[P1] should navigate to /dashboard/deploy on Complete', async () => {
       const navigateSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
 
       fixture.nativeElement.querySelector('[data-testid="complete-button"]')?.click();
       await fixture.whenStable();
       fixture.detectChanges();
 
-      expect(navigateSpy).toHaveBeenCalledWith(['/dashboard']);
+      expect(navigateSpy).toHaveBeenCalledWith(['/dashboard/deploy']);
     });
 
     it('[P1] should disable Complete with aria-busy while saving', async () => {

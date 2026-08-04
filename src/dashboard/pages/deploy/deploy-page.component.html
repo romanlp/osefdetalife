@@ -1,0 +1,59 @@
+<div class="min-h-screen flex items-center justify-center bg-[#FAF7F2]">
+  <section class="w-full max-w-[480px] mx-4 p-6">
+    <p class="text-sm text-gray-500 mb-1">Step 3 of 3: Deploy</p>
+    <h1 class="text-2xl font-semibold mb-2">Deploy your booking widget</h1>
+    <p class="text-gray-600 mb-6">
+      Add the code below to your website to embed your booking widget.
+    </p>
+
+    @if (loading()) {
+      <div role="status" aria-live="polite" class="text-gray-500">
+        Loading your embed code...
+      </div>
+    } @else if (!restaurant()) {
+      <div role="alert" class="text-red-700 text-sm">
+        {{ error() ?? 'Unable to load your restaurant. Please refresh and try again.' }}
+      </div>
+    } @else {
+      <label for="embed-code" class="block text-sm font-medium mb-2">
+        Embed code
+      </label>
+      <pre
+        id="embed-code"
+        data-testid="embed-code"
+        class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-x-auto whitespace-pre-wrap mb-4"
+        aria-label="Embed code for your booking widget"
+        >{{ embedSnippet() }}</pre
+      >
+
+      <button
+        type="button"
+        data-testid="copy-button"
+        (click)="copy()"
+        class="w-full mb-2 bg-gray-900 text-gray-100 rounded-lg py-3 font-medium hover:bg-gray-800"
+      >
+        Copy embed code
+      </button>
+
+      @if (copied()) {
+        <p data-testid="copied-message" role="status" class="text-green-700 text-sm mb-2">
+          Copied!
+        </p>
+      }
+
+      @if (copyError()) {
+        <p role="alert" class="text-red-700 text-sm mb-2">{{ copyError() }}</p>
+      }
+
+      <a
+        data-testid="demo-link"
+        [href]="demoUrl()"
+        target="_blank"
+        rel="noopener"
+        class="inline-block text-sm underline hover:text-gray-900"
+      >
+        View demo page
+      </a>
+    }
+  </section>
+</div>

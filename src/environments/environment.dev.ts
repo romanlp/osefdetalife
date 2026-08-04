@@ -16,5 +16,6 @@ export const environment = {
     measurementId: 'G-WJXGK09509'
   },
   recaptcha: '6LceYDslAAAAAIKVsZ4r0z3q96ZLnfcMB2S-mJ0W',
-  appCheckToken: true
+  appCheckToken: true,
+  widgetBundleUrl: 'http://localhost:4200/widget/booking-widget.mjs'
 };
