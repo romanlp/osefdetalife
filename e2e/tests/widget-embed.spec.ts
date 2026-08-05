@@ -2,17 +2,17 @@ import { test, expect } from '@playwright/test';
 import * as path from 'path';
 import * as fs from 'fs';
 
-const distPath = path.join(process.cwd(), 'dist', 'widget');
+const distPath = path.join(process.cwd(), 'build', 'widget');
 
 function getMjsContent(): string {
   const files = fs.readdirSync(distPath);
   const mjsFile = files.find((f) => f.endsWith('.mjs'));
-  if (!mjsFile) throw new Error('No .mjs file found in dist/widget/');
+  if (!mjsFile) throw new Error('No .mjs file found in build/widget/');
   return fs.readFileSync(path.join(distPath, mjsFile), 'utf-8');
 }
 
 test.describe('Widget Embed', () => {
-  test('[P0] should build widget to dist/widget/', async () => {
+  test('[P0] should build widget to build/widget/', async () => {
     expect(fs.existsSync(distPath)).toBeTruthy();
   });
 

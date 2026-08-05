@@ -4,13 +4,13 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 test.describe('Story 1.1: Project Scaffolding - Build & Firebase (ATDD)', () => {
-  test('[P0] AC4: Widget builds to standalone JS bundle at dist/widget/', async () => {
+  test('[P0] AC4: Widget builds to standalone JS bundle at build/widget/', async () => {
     // THIS TEST WILL FAIL - Vite build not configured yet
     // Run Vite build for widget
     execSync('npm run build:widget', { cwd: process.cwd() });
 
-    // Verify bundle exists at dist/widget/
-    const bundlePath = path.join(process.cwd(), 'dist', 'widget');
+    // Verify bundle exists at build/widget/
+    const bundlePath = path.join(process.cwd(), 'build', 'widget');
     expect(fs.existsSync(bundlePath)).toBeTruthy();
 
     // Verify bundle files exist
@@ -24,7 +24,7 @@ test.describe('Story 1.1: Project Scaffolding - Build & Firebase (ATDD)', () => 
     execSync('npm run build:widget', { cwd: process.cwd() });
 
     // Read the bundle file
-    const bundlePath = path.join(process.cwd(), 'dist', 'widget');
+    const bundlePath = path.join(process.cwd(), 'build', 'widget');
     const jsFiles = fs.readdirSync(bundlePath).filter((f) => f.endsWith('.js') || f.endsWith('.mjs'));
 
     // Verify custom element is registered
