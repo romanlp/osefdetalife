@@ -9,7 +9,7 @@ export default defineConfig({
       fileName: 'booking-widget',
       formats: ['es'],
     },
-    outDir: 'dist/widget',
+    outDir: 'build/widget',
     rollupOptions: {
       external: ['firebase/app', 'firebase/firestore', 'firebase/auth'],
       output: {

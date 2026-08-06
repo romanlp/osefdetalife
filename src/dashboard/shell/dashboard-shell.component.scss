@@ -1,0 +1,17 @@
+:host {
+  display: block;
+  height: 100vh;
+}
+
+.dashboard-shell {
+  display: flex;
+  height: 100vh;
+}
+
+.dashboard-main {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  background: var(--bg-color);
+  color: var(--color);
+}

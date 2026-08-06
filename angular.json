@@ -45,7 +45,12 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              {
+                "glob": "**/*",
+                "input": "build/widget",
+                "output": "/widget"
+              }
             ],
             "styles": [
               "src/styles.scss"
@@ -105,7 +110,8 @@
         "test": {
           "builder": "@angular/build:unit-test",
           "options": {
-            "tsConfig": "tsconfig.spec.json"
+            "tsConfig": "tsconfig.spec.json",
+            "isolate": true
           }
         },
         "lint": {

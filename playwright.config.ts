@@ -44,7 +44,7 @@ export default defineConfig({
       timeout: 30_000,
     },
     {
-      command: 'npm run start',
+      command: 'npm run build:widget && npm run start',
       url: 'http://localhost:4210',
       reuseExistingServer: !process.env['CI'],
       timeout: 120_000,

@@ -126,7 +126,7 @@ export class BrandingPageComponent implements OnInit {
         onboardingCompleted: true,
       });
 
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(['/dashboard/deploy']);
     } catch (e: unknown) {
       console.error('Failed to complete onboarding', e);
       this.error.set('Something went wrong. Please try again.');
@@ -152,7 +152,7 @@ export class BrandingPageComponent implements OnInit {
         onboardingCompleted: true,
       });
 
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(['/dashboard/deploy']);
     } catch (e: unknown) {
       console.error('Failed to skip onboarding', e);
       this.error.set('Something went wrong. Please try again.');

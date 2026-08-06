@@ -5,7 +5,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build --configuration production",
+    "build": "npm run build:widget && ng build --configuration production",
     "test": "ng test",
     "test:watch": "ng test --watch",
     "test:coverage": "ng test --no-watch",

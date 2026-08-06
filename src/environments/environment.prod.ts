@@ -11,5 +11,6 @@ export const environment = {
     measurementId: 'G-WJXGK09509'
   },
   recaptcha: '6LceYDslAAAAAIKVsZ4r0z3q96ZLnfcMB2S-mJ0W',
-  appCheckToken: false
+  appCheckToken: false,
+  widgetBundleUrl: 'https://firebase-crackling-fire-4704.web.app/widget/booking-widget.mjs'
 };
