@@ -11,7 +11,9 @@ initializeApp(environment.firebase);
 if (environment.production) {
   enableProdMode();
 } else {
-  connectToEmulators();
+  if (environment.useEmulators) {
+    connectToEmulators();
+  }
   //@ts-expect-error error
   window['FIREBASE_APPCHECK_DEBUG_TOKEN'] = environment.appCheckToken;
 }
