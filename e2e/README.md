@@ -79,8 +79,12 @@ All accept `overrides` partial for targeted test data.
 
 - Unit tests (`ng test`) run first
 - E2E tests (`ng e2e`) run after unit tests pass
+- The app is served with `ng serve --configuration e2e` (see `playwright.config.ts`), which uses `environment.e2e.ts` with `useEmulators: true`
+- Firebase emulators run with the real project ID `firebase-crackling-fire-4704` (Auth `9099`, Firestore `8081`) so the emulator, the app, and the test SDK agree on one project
 - JUnit XML output at `e2e/results/junit.xml` for CI ingestion
 - HTML report at `playwright-report/` for debugging
+
+See `docs/environments.md` for the full environment/emulator strategy.
 
 ```bash
 # CI command
@@ -91,7 +95,7 @@ npm run test:ci
 
 | Issue | Fix |
 |-------|-----|
-| Emulator already in use | Kill existing: `lsof -ti:8080 \| xargs kill -9` |
+| Emulator already in use | Kill existing: `lsof -ti:8081 \| xargs kill -9` |
 | Tests timeout | Ensure emulators running and app building |
 | Flaky selectors | Use `data-testid` instead of CSS/text selectors |
 | Auth emulator errors | Check `e2e/utils/firebase.ts` config matches `firebase.json` |

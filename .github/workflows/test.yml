@@ -125,19 +125,29 @@ jobs:
           java-version: '21'
 
       - name: Start Firebase Emulators
-        run: npx firebase emulators:start --only=auth,firestore --project demo-osefdetalife &
+        run: npx firebase emulators:start --only=auth,firestore --project firebase-crackling-fire-4704 &
         env:
-          FIREBASE_PROJECT: demo-osefdetalife
+          FIREBASE_PROJECT: firebase-crackling-fire-4704
 
       - name: Wait for emulators
-        run: sleep 10
+        run: |
+          for i in $(seq 1 60); do
+            if curl -sf "http://localhost:9099/emulator/v1/projects/firebase-crackling-fire-4704/config" >/dev/null 2>&1 \
+              && curl -sf "http://localhost:8081/emulator/v1/projects/firebase-crackling-fire-4704/databases/%28default%29/documents" >/dev/null 2>&1; then
+              echo "Emulators ready"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Emulators did not become ready in time" >&2
+          exit 1
 
       - name: Run E2E tests (shard ${{ matrix.shard }}/2)
         run: npx playwright test --shard=${{ matrix.shard }}/2
         env:
-          FIRESTORE_EMULATOR_HOST: localhost:8080
+          FIRESTORE_EMULATOR_HOST: localhost:8081
           FIREBASE_AUTH_EMULATOR_HOST: localhost:9099
-          GCLOUD_PROJECT: demo-osefdetalife
+          GCLOUD_PROJECT: firebase-crackling-fire-4704
 
       - name: Upload test results
         if: failure()
@@ -198,12 +208,22 @@ jobs:
           java-version: '21'
 
       - name: Start Firebase Emulators
-        run: npx firebase emulators:start --only=auth,firestore --project demo-osefdetalife &
+        run: npx firebase emulators:start --only=auth,firestore --project firebase-crackling-fire-4704 &
         env:
-          FIREBASE_PROJECT: demo-osefdetalife
+          FIREBASE_PROJECT: firebase-crackling-fire-4704
 
       - name: Wait for emulators
-        run: sleep 10
+        run: |
+          for i in $(seq 1 60); do
+            if curl -sf "http://localhost:9099/emulator/v1/projects/firebase-crackling-fire-4704/config" >/dev/null 2>&1 \
+              && curl -sf "http://localhost:8081/emulator/v1/projects/firebase-crackling-fire-4704/databases/%28default%29/documents" >/dev/null 2>&1; then
+              echo "Emulators ready"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Emulators did not become ready in time" >&2
+          exit 1
 
       - name: Run burn-in loop (5 iterations)
         run: |
@@ -214,16 +234,16 @@ jobs:
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             if [ $i -gt 1 ]; then
               echo "Resetting emulator data..."
-              curl -s -f -X DELETE "http://localhost:8080/emulator/v1/projects/demo-osefdetalife/databases/%28default%29/documents" || true
-              curl -s -f -X DELETE -H "Authorization: Bearer owner" "http://localhost:9099/emulator/v1/projects/demo-osefdetalife/accounts" || true
+              curl -s -f -X DELETE "http://localhost:8081/emulator/v1/projects/firebase-crackling-fire-4704/databases/%28default%29/documents" || true
+              curl -s -f -X DELETE -H "Authorization: Bearer owner" "http://localhost:9099/emulator/v1/projects/firebase-crackling-fire-4704/accounts" || true
             fi
             npx playwright test || exit 1
           done
           echo "Burn-in complete - no flaky tests detected"
         env:
-          FIRESTORE_EMULATOR_HOST: localhost:8080
+          FIRESTORE_EMULATOR_HOST: localhost:8081
           FIREBASE_AUTH_EMULATOR_HOST: localhost:9099
-          GCLOUD_PROJECT: demo-osefdetalife
+          GCLOUD_PROJECT: firebase-crackling-fire-4704
 
       - name: Upload burn-in failure artifacts
         if: failure()

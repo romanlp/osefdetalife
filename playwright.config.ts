@@ -6,6 +6,7 @@ process.env.GCLOUD_PROJECT = 'firebase-crackling-fire-4704';
 
 export default defineConfig({
   testDir: './e2e/tests',
+  globalTeardown: './e2e/global-teardown.ts',
   fullyParallel: false,
   forbidOnly: !!process.env['CI'],
   retries: process.env['CI'] ? 2 : 0,
@@ -38,13 +39,13 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command: 'npx firebase emulators:start --only=auth,firestore --project demo-osefdetalife',
+      command: 'npx firebase emulators:start --only=auth,firestore --project firebase-crackling-fire-4704',
       port: 9099,
       reuseExistingServer: true,
       timeout: 30_000,
     },
     {
-      command: 'npm run build:widget && npm run start',
+      command: 'npm run build:widget && ng serve --configuration e2e',
       url: 'http://localhost:4210',
       reuseExistingServer: !process.env['CI'],
       timeout: 120_000,

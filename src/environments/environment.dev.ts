@@ -16,7 +16,10 @@ export const environment = {
     measurementId: 'G-WJXGK09509'
   },
   recaptcha: '6LceYDslAAAAAIKVsZ4r0z3q96ZLnfcMB2S-mJ0W',
-  appCheckToken: true,
+  appCheckToken: '5c2f9d1e-7b4a-4c3e-9d8f-1a2b3c4d5e6f',
+  // Local dev toggle: `true` = use Firebase emulators (auth/firestore),
+  // `false` = talk to the real Firebase project. CI uses environment.e2e.ts
+  // (always emulators), production uses environment.prod.ts (never emulators).
   useEmulators: false,
   widgetBundleUrl: 'http://localhost:4200/widget/booking-widget.mjs'
 };
