@@ -1,4 +1,5 @@
 import {
+  APP_INITIALIZER,
   EnvironmentProviders,
   inject,
   InjectionToken,
@@ -87,6 +88,12 @@ export function provideAppCheck(): EnvironmentProviders {
           isTokenAutoRefreshEnabled: true,
         });
       },
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (appCheck: AppCheck) => () => appCheck,
+      deps: [APP_CHECK],
+      multi: true,
     },
   ]);
 }
