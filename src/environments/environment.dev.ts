@@ -21,5 +21,5 @@ export const environment = {
   // `false` = talk to the real Firebase project. CI uses environment.e2e.ts
   // (always emulators), production uses environment.prod.ts (never emulators).
   useEmulators: false,
-  widgetBundleUrl: 'http://localhost:4200/widget/booking-widget.mjs'
+  widgetBundleUrl: 'http://localhost:4210/widget/booking-widget.mjs'
 };

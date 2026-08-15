@@ -21,7 +21,7 @@ const RESTAURANT_FIXTURE: Restaurant = {
   createdAt: new Date('2026-01-01T00:00:00Z'),
 };
 
-const WIDGET_BUNDLE_URL = 'http://localhost:4200/widget/booking-widget.mjs';
+const WIDGET_BUNDLE_URL = 'http://localhost:4210/widget/booking-widget.mjs';
 
 class AuthServiceStub {
   user = signal<User | null>(null);
