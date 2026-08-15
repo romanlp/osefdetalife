@@ -103,7 +103,7 @@ action_items:
     epic: 1
     action: "Delete or wire createRestaurantWithSlug dead code (F2)"
     owner: "Dev agent (Amelia)"
-    status: open
+    status: done
     ref: "_bmad-output/implementation-artifacts/epic-1-retro-2026-08-14.md"
   - id: "epic-1-retro-item-5-tick-review-boxes"
     epic: 1

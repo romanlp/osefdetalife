@@ -5,13 +5,12 @@ import {
   getDoc,
   getDocs,
   updateDoc,
-  serverTimestamp,
-  writeBatch,
   query,
   where,
 } from 'firebase/firestore';
 import { getFirebaseDb, getFirebaseAuth } from '../../shared/firebase-config';
 import type { Restaurant } from '../../shared/types/restaurant';
+import { createRestaurantWithSlug } from '../../shared/slug-utils';
 
 @Service()
 export class OnboardingService {
@@ -51,7 +50,7 @@ export class OnboardingService {
     this.loading.set(true);
 
     try {
-      const restaurantData: Omit<Restaurant, 'id'> = {
+      const restaurantData: Omit<Restaurant, 'id' | 'createdAt'> = {
         name,
         slug,
         ownerId: user.uid,
@@ -63,7 +62,6 @@ export class OnboardingService {
           secondaryColor: '#8FA67A',
         },
         onboardingCompleted: false,
-        createdAt: new Date(),
       };
 
       if (address) {
@@ -71,23 +69,11 @@ export class OnboardingService {
       }
 
       const restaurantRef = doc(collection(this.db, 'restaurants'));
+      const restaurantId = restaurantRef.id;
 
-      const batch = writeBatch(this.db);
-      batch.set(restaurantRef, {
-        ...restaurantData,
-        createdAt: serverTimestamp(),
-      });
+      await createRestaurantWithSlug(restaurantId, slug, restaurantData);
 
-      const slugRef = doc(this.db, 'slugs', slug);
-      batch.set(slugRef, {
-        restaurantId: restaurantRef.id,
-        ownerId: user.uid,
-        createdAt: serverTimestamp(),
-      });
-
-      await batch.commit();
-
-      return restaurantRef.id;
+      return restaurantId;
     } finally {
       this.loading.set(false);
     }
