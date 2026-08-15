@@ -117,7 +117,7 @@ action_items:
     action: "Bake green sharded e2e into each Epic 2 story done gate; consider merge
       gate (F6)"
     owner: "Roman"
-    status: open
+    status: in-progress
     ref: "_bmad-output/implementation-artifacts/epic-1-retro-2026-08-14.md"
   - id: "epic-1-retro-item-7-generic-reset-errors"
     epic: 1
