@@ -1,4 +1,4 @@
-import { Service, signal } from '@angular/core';
+import { Service, signal, inject } from '@angular/core';
 import {
   getAuth,
   signInWithEmailAndPassword,
@@ -11,10 +11,12 @@ import {
   onAuthStateChanged,
   type User,
 } from 'firebase/auth';
+import { OnboardingService } from './onboarding.service';
 
 @Service()
 export class AuthService {
   private auth = getAuth();
+  private onboardingService = inject(OnboardingService);
   user = signal<User | null>(null);
 
   constructor() {
@@ -59,12 +61,10 @@ export class AuthService {
     const user = this.auth.currentUser;
     if (!user) return false;
 
-    const creationTime = user.metadata.creationTime;
-    const lastSignInTime = user.metadata.lastSignInTime;
+    const restaurant = await this.onboardingService.getRestaurantByOwner(user.uid);
+    if (!restaurant) return true;
 
-    if (!creationTime || !lastSignInTime) return false;
-
-    return creationTime === lastSignInTime;
+    return !restaurant.onboardingCompleted;
   }
 
   getErrorMessage(code: string | undefined): string {
@@ -72,11 +72,10 @@ export class AuthService {
 
     switch (code) {
       case 'auth/user-not-found':
-        return 'No account found with this email';
+      case 'auth/invalid-email':
+        return 'If an account exists, a reset email has been sent';
       case 'auth/wrong-password':
         return 'Incorrect password';
-      case 'auth/invalid-email':
-        return 'Invalid email address';
       case 'auth/too-many-requests':
         return 'Too many attempts. Please try again later';
       case 'auth/popup-closed-by-user':
