@@ -78,56 +78,9 @@ development_status:
   3-6-white-label-custom-field-settings: backlog
   3-7-account-settings: backlog
   epic-3-retrospective: optional
-action_items:
-  - id: "epic-1-retro-item-1-verify-prod-widget-bundle-url"
+- id: "epic-1-retro-item-14-story-number-format"
     epic: 1
-    action: "Verify prod hosting domain and set the real widgetBundleUrl in environment.prod.ts
-      (F4)"
-    owner: "Roman"
-    status: open
-    ref: "_bmad-output/implementation-artifacts/epic-1-retro-2026-08-14.md"
-  - id: "epic-1-retro-item-2-fix-dev-widget-port"
-    epic: 1
-    action: "Fix dev widgetBundleUrl port 4200 to 4210 or derive from location (F5)"
-    owner: "Dev agent (Amelia)"
-    status: done
-    ref: "_bmad-output/implementation-artifacts/epic-1-retro-2026-08-14.md"
-  - id: "epic-1-retro-item-3-harden-slug-rule"
-    epic: 1
-    action: "Add slug ownership and id-format validation to firestore.rules slugs
-      create with emulator tests (F3)"
-    owner: "Dev agent (Amelia)"
-    status: done
-    ref: "_bmad-output/implementation-artifacts/epic-1-retro-2026-08-14.md"
-  - id: "epic-1-retro-item-4-slug-utils-dead-code"
-    epic: 1
-    action: "Delete or wire createRestaurantWithSlug dead code (F2)"
-    owner: "Dev agent (Amelia)"
-    status: done
-    ref: "_bmad-output/implementation-artifacts/epic-1-retro-2026-08-14.md"
-  - id: "epic-1-retro-item-5-tick-review-boxes"
-    epic: 1
-    action: "Tick stale review boxes in story files 1-3 and 1-4 and adopt one review-record
-      format (F1, F8)"
-    owner: "Dev agent (Amelia)"
-    status: done
-    ref: "_bmad-output/implementation-artifacts/epic-1-retro-2026-08-14.md"
-  - id: "epic-1-retro-item-6-ci-in-the-tail"
-    epic: 1
-    action: "Bake green sharded e2e into each Epic 2 story done gate; consider merge
-      gate (F6)"
-    owner: "Roman"
-    status: in-progress
-    ref: "_bmad-output/implementation-artifacts/epic-1-retro-2026-08-14.md"
-  - id: "epic-1-retro-item-7-generic-reset-errors"
-    epic: 1
-    action: "Make reset-password errors generic to stop account enumeration (F10)"
-    owner: "Dev agent (Amelia)"
-    status: done
-    ref: "_bmad-output/implementation-artifacts/epic-1-retro-2026-08-14.md"
-  - id: "epic-1-retro-item-8-isfirstsignin"
-    epic: 1
-    action: "Revisit isFirstSignIn() timestamp-equality check (F9)"
+    action: "Standardize story-number format: update git_evidence.py to match both dot (1.3) and dash (1-3) formats in commit subjects (F14)"
     owner: "Dev agent (Amelia)"
     status: done
     ref: "_bmad-output/implementation-artifacts/epic-1-retro-2026-08-14.md"
