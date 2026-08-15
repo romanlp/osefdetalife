@@ -239,19 +239,19 @@ so that I can access the dashboard.
 
 #### Patches
 
-- [ ] [Review][Patch] `firestore-debug.log` committed to repo — Add to `.gitignore`, `git rm --cached`
-- [ ] [Review][Patch] `isFirstSignIn()` unreliable — string equality fragile, undefined metadata returns `true`, missing in signup flow [`auth.service.ts:60-70`]
-- [ ] [Review][Patch] Error handling swallows context — `e.code` may be `undefined` on non-Firebase errors, no logging [`login-page.component.ts:32`, `signup-page.component.ts:43`, `reset-password-page.component.ts:31`]
-- [ ] [Review][Patch] Test suite is superficial — tests check method existence, not behavior [`*.spec.ts`]
-- [ ] [Review][Patch] Duplicate `getErrorMessage` logic across 3 components [`login-page.component.ts:53-67`, `signup-page.component.ts:63-75`, `reset-password-page.component.ts:37-45`]
-- [ ] [Review][Patch] `ChangeDetectionStrategy.OnPush` explicitly set — violates AGENTS.md (default in Angular 22+) [All 3 new components]
-- [ ] [Review][Patch] No input validation before Firebase calls — empty email/password sent directly [`login-page.component.ts:24-35`, `signup-page.component.ts:25-46`, `reset-password-page.component.ts:23-34`]
-- [ ] [Review][Patch] Auth guard `getCurrentUser` reject path not handled — unhandled promise rejection [`authenticated.guard.ts:14-20`]
-- [ ] [Review][Patch] Reset password reveals account existence via `auth/user-not-found` [`reset-password-page.component.ts:39`]
-- [ ] [Review][Patch] `signUpWithGoogle` always routes to `/onboarding` — ignores `isFirstSignIn()` check [`signup-page.component.ts:49-60`]
-- [ ] [Review][Patch] Google `popup-blocked-by-user` not explicitly handled [`login-page.component.ts`, `signup-page.component.ts`]
-- [ ] [Review][Patch] Email verification sent but user not informed [`signup-page.component.ts:41`]
-- [ ] [Review][Patch] Error messages missing `role="alert"` for screen readers [All error `<div>` elements]
+- [x] [Review][Patch] `firestore-debug.log` committed to repo — Add to `.gitignore`, `git rm --cached` (fixed in 501c8a0)
+- [x] [Review][Patch] `isFirstSignIn()` unreliable — string equality fragile, undefined metadata returns `true`, missing in signup flow [`auth.service.ts:60-70`] (fixed: now checks restaurant.onboardingCompleted)
+- [x] [Review][Patch] Error handling swallows context — `e.code` may be `undefined` on non-Firebase errors, no logging [`login-page.component.ts:32`, `signup-page.component.ts:43`, `reset-password-page.component.ts:31`] (fixed: console.error added)
+- [ ] [Review][Patch] Test suite is superficial — tests check method existence, not behavior [`*.spec.ts`] (ongoing)
+- [x] [Review][Patch] Duplicate `getErrorMessage` logic across 3 components [`login-page.component.ts:53-67`, `signup-page.component.ts:63-75`, `reset-password-page.component.ts:37-45`] (fixed: consolidated in AuthService.getErrorMessage)
+- [x] [Review][Patch] `ChangeDetectionStrategy.OnPush` explicitly set — violates AGENTS.md (default in Angular 22+) [All 3 new components] (fixed: removed)
+- [x] [Review][Patch] No input validation before Firebase calls — empty email/password sent directly [`login-page.component.ts:24-35`, `signup-page.component.ts:25-46`, `reset-password-page.component.ts:23-34`] (fixed: validation added in all three components)
+- [ ] [Review][Patch] Auth guard `getCurrentUser` reject path not handled — unhandled promise rejection [`authenticated.guard.ts:14-20`] (deferred: pre-existing pattern)
+- [x] [Review][Patch] Reset password reveals account existence via `auth/user-not-found` [`reset-password-page.component.ts:39`] (fixed: generic error message prevents enumeration)
+- [x] [Review][Patch] `signUpWithGoogle` always routes to `/onboarding` — ignores `isFirstSignIn()` check [`signup-page.component.ts:49-60`] (fixed: now calls isFirstSignIn())
+- [x] [Review][Patch] Google `popup-blocked-by-user` not explicitly handled [`login-page.component.ts`, `signup-page.component.ts`] (fixed: handled via AuthService.getErrorMessage)
+- [ ] [Review][Patch] Email verification sent but user not informed [`signup-page.component.ts:41`] (deferred: feature gap)
+- [x] [Review][Patch] Error messages missing `role="alert"` for screen readers [All error `<div>` elements] (fixed: all error divs have role="alert")
 
 #### Deferred
 
