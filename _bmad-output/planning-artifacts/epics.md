@@ -21,31 +21,31 @@ This document provides the complete epic and story breakdown for osefdetalife, d
 
 ### Functional Requirements
 
-FR-1: Widget renders as `<booking-widget>` custom element via embed code. Shows restaurant name and address (if configured) on landing step with "Book now" button.
+FR-1: Booking page renders at `/book/{slug}`. Shows restaurant name and address (if configured) on landing step with "Book a Table" button.
 FR-2: Party size selector shows options 1-8. Party size is required before proceeding.
 FR-3: Calendar shows only dates where restaurant is open (based on hours config). Closed dates are hidden.
-FR-4: Time picker shows available 15-minute slots for selected party size and date. If no availability, show "No availability for this date" message.
+FR-4: Time picker shows available 15-minute slots for selected party size and date. If no availability, show "No available times for this date" message.
 FR-5: Details form shows: Name (required), Email (required), Custom field (optional, label set by restaurant). If custom field not configured, field is not visible.
 FR-6: On submit: booking created in Firestore with status "confirmed". Confirmation screen shows summary: date, time, party size.
 FR-7: Back button available on all steps except landing. Returns to previous step with selection preserved.
 FR-8: Loading spinner shown during step transitions and data fetches.
 FR-9: Invalid slug: "Restaurant not found" message. Firebase down: "Something went wrong. Please try again." message.
-FR-10: Widget adapts to mobile and desktop. Fixed width (min 375px), full width of container.
-FR-11: Project includes a standalone HTML page that embeds the widget for development and testing. Page allows entering a restaurant slug and renders the widget.
+FR-10: Booking page adapts to mobile and desktop. Full viewport width.
+FR-11: Dashboard includes an in-app preview of the booking page. Preview renders the booking page for the restaurant's slug.
 FR-12: Dashboard home shows list of bookings for today. Each booking shows: time, party size, diner name, custom field value (if configured).
 FR-13: Date picker allows selecting any date. "Today" button returns to today's view.
 FR-14: When no bookings for selected date, show "No bookings for this date" message.
-FR-15: Bookings appear in dashboard immediately when created via widget (no refresh required) — real-time updates.
+FR-15: Bookings appear in dashboard immediately when created via the public booking page (no refresh required) — real-time updates.
 FR-16: Restaurant owner can update restaurant name. Changes saved immediately.
 FR-17: Restaurant owner can set open/close times for each day of week. Each day can be marked as closed. Weekly schedule saved as `Record<number, {open, close}>`.
-FR-18: Restaurant owner can update address. Displayed on widget landing page.
+FR-18: Restaurant owner can update address. Displayed on the booking page landing step.
 FR-19: Timezone auto-assigned to UTC on creation. Editable via dropdown for future flexibility.
 FR-20: Restaurant owner can add table groups by entering capacity (number) and count (number). Multiple groups supported.
 FR-21: Restaurant owner can edit capacity and count of existing table groups.
 FR-22: Restaurant owner can delete a table group. Existing bookings for that capacity are preserved but no new bookings can be made for that capacity.
-FR-23: Restaurant owner can set primary color (hex picker). Applied to widget accent elements.
-FR-24: Restaurant owner can set secondary color (hex picker). Applied to widget secondary elements.
-FR-25: Restaurant owner can set: label (text), required (toggle), enabled (toggle). If disabled, field is not shown on widget.
+FR-23: Restaurant owner can set primary color (hex picker). Applied to booking page accent elements.
+FR-24: Restaurant owner can set secondary color (hex picker). Applied to booking page secondary elements.
+FR-25: Restaurant owner can set: label (text), required (toggle), enabled (toggle). If disabled, field is not shown on the booking page.
 FR-26: Restaurant owner can change password from dashboard. Requires current password confirmation.
 FR-27: Sign out button in header/nav. Returns to login page.
 FR-28: Restaurant owner can create account with email and password. System sends email verification on sign up.
@@ -60,10 +60,10 @@ FR-36: Onboarding Step 5 — Table Groups (required). Form to add capacity + cou
 FR-37: Onboarding Step 6 — White-Label Colors (optional). Color pickers for primary and secondary. Sensible defaults.
 FR-38: Onboarding Step 7 — Custom Field (optional). Label input, required toggle, enabled toggle. Defaults to disabled.
 FR-39: Restaurant owner can skip optional steps (address, colors, custom field). Completes onboarding without skipped steps. Allows completing skipped steps later in Settings.
-FR-40: After wizard completes, restaurant owner is redirected to dashboard. Onboarding marked complete. Widget live with configured slug.
-FR-41: Dashboard includes a "Deploy" page showing embed code snippet. Includes restaurant slug. Provides link to demo page.
-FR-42: One-click copy button for embed code. Copies to clipboard. Shows confirmation message.
-FR-43: Embed code page includes link to demo page. Opens in new tab. Shows widget rendering with restaurant's configuration.
+FR-40: After wizard completes, restaurant owner is redirected to dashboard. Onboarding marked complete. Public booking page live at `/book/{slug}`.
+FR-41: Dashboard includes a "Booking Link" page showing the booking link and QR code. Includes restaurant slug.
+FR-42: One-click copy button for the booking link. Copies to clipboard. Shows confirmation message.
+FR-43: Booking link page includes in-app preview of the booking page. Opens within the dashboard. Shows the booking page rendering with restaurant's configuration.
 FR-44: System stores restaurant profile in Firestore at `restaurants/{restaurantId}`. Stores: name, slug (unique), ownerId, address, colors, customField, createdAt. Enforces required fields.
 FR-45: System stores table groups as subcollection at `restaurants/{restaurantId}/tables/{tableId}`. Stores: capacity, count.
 FR-46: System stores opening hours as field on restaurant document. `Record<number, {open, close}>`. Keys are ISO day numbers (1=Monday, 7=Sunday).
@@ -71,42 +71,41 @@ FR-47: System stores bookings as subcollection at `restaurants/{restaurantId}/bo
 FR-48: System resolves slug to restaurant ID via `slugs/{slug}` → `{restaurantId}`. Creates slug document on restaurant creation. Enforces uniqueness via Firestore transaction.
 FR-49: Any user can read restaurant profile, hours, and tables. Blocks unauthenticated write access.
 FR-50: Authenticated owner can manage own restaurant. Allows write access to own profile, hours, tables, bookings. Blocks cross-restaurant access.
-FR-51: Diner can create bookings without authentication. System validates document shape and restaurant existence via Firestore rules. Validates required fields. Blocks read access (owner-only). Blocks update/delete.
+FR-51: Diner can create bookings without authentication. System validates document shape and restaurant existence via Firestore rules. Validates required fields. Blocks read access (owner-only), except the unauthenticated filtered availability read authorized by AD-14. Blocks update/delete.
 FR-52: System calculates availability at query time. Queries existing bookings for selected date. Subtracts booked tables from table groups. Returns available 15-minute slots.
 FR-53: System enforces unique slugs across all restaurants. Uses Firestore transaction. Rejects slug if taken. Allows slug change by owner.
 
 ### NonFunctional Requirements
 
-NFR-1: Widget load time < 2 seconds (validates FR-1 through FR-11).
+NFR-1: Booking page load time < 2 seconds (validates FR-1 through FR-10).
 NFR-2: Booking completion rate > 80% (validates FR-1 through FR-5).
 NFR-3: Onboarding completion time < 10 minutes (validates FR-31 through FR-40).
 NFR-4: Slug lookup < 100ms.
 NFR-5: Firestore SLA 99.9%.
 NFR-6: WCAG 2.1 AA accessibility compliance.
 NFR-7: Security Rules enforce all access control.
-NFR-8: 5 restaurants embed widget in first month.
+NFR-8: 5 restaurants share their booking link in first month.
 NFR-9: 50 bookings per restaurant per month (steady state).
 
 ### Additional Requirements (Architecture)
 
 - Serverless-event-driven architecture on Firebase. No servers to manage.
-- Direct Firebase from browser (no API layer). Widget and dashboard use Firebase client SDK directly.
+- Direct Firebase from browser (no API layer). Booking page and dashboard use Firebase client SDK directly.
 - Firestore Security Rules enforce access control.
-- Web Components with Shadow DOM for widget rendering (style isolation).
+- Single Angular app hosting both the public booking page and the dashboard (one build, one deploy).
 - Compute-on-read for availability (no pre-computed slots).
 - No table splitting (party of N requires single table of capacity >= N).
 - Auto-confirm bookings (status "confirmed" immediately).
 - One restaurant per account (MVP).
-- Firebase Hosting for dashboard deployment.
-- Vite for widget build tool.
-- TypeScript 7.x for both widget and dashboard.
+- Firebase Hosting for app deployment.
+- TypeScript 7.x for the single Angular app.
 - Weekly recurring hours (no holiday overrides for MVP).
 - All dates/times in restaurant's configured IANA timezone.
 - Booking duration: configurable per restaurant (default 2 hours), stored on booking document.
 
 ### UX Design Requirements
 
-UX-DR1: Widget container — min 375px width, responsive wider, Shadow DOM isolation, white-labeled with restaurant colors via CSS custom properties.
+UX-DR1: Booking page container — full viewport width, responsive, white-labeled with restaurant colors via CSS custom properties.
 UX-DR2: Party size selector — 2×4 grid of circular buttons, single select, selected state uses accent fill.
 UX-DR3: Date calendar — minimal month grid, open days selectable, closed days hidden entirely (not grayed), selected state uses accent fill.
 UX-DR4: Time slots — horizontal scroll container, 15-min increments, pill-shaped buttons, single select, accent fill.
@@ -118,22 +117,22 @@ UX-DR9: Date picker — above booking list, "Today" button returns to current da
 UX-DR10: Onboarding card — centered, max-width 480px, step number + title, form content, primary CTA, "Skip" link for optional steps.
 UX-DR11: Dark mode — full palette inversion from day one. Warm linen becomes deep ink, sage brightens for dark surfaces.
 UX-DR12: Typography — Inter font family, 700 weight headings, 400 weight body, 500 weight meta. No display sizes.
-UX-DR13: Spacing scale — 4/8/12/16/24/32/48px. Generous vertical rhythm in widget steps.
-UX-DR14: Border radius — 8px inputs/small, 12px cards/buttons/widget, 16px modals/onboarding.
+UX-DR13: Spacing scale — 4/8/12/16/24/32/48px. Generous vertical rhythm in booking page steps.
+UX-DR14: Border radius — 8px inputs/small, 12px cards/buttons/inner panels on the booking page, 16px modals/onboarding.
 UX-DR15: Elevation — subtle card shadow (0 1px 3px rgba(0,0,0,0.04)), hairline borders, no heavy shadows.
-UX-DR16: Widget step transitions — smooth fade or slide animations. Loading spinner during transitions.
+UX-DR16: Booking page step transitions — smooth fade or slide animations. Loading spinner during transitions.
 UX-DR17: Back navigation — arrow button on all steps except landing. Preserves all selections.
 UX-DR18: Error states — "Restaurant not found" for invalid slug, "Something went wrong. Please try again." for Firebase errors, retry button on transient errors.
-UX-DR19: Empty states — "No available times for this date" (widget), "No bookings for this date" (dashboard), helpful guidance not apologetic.
-UX-DR20: Focus management — widget step transitions move focus to new step heading, tab order follows reading order.
+UX-DR19: Empty states — "No available times for this date" (booking page), "No bookings for this date" (dashboard), helpful guidance not apologetic.
+UX-DR20: Focus management — booking page step transitions move focus to new step heading, tab order follows reading order.
 UX-DR21: Screen reader support — step changes announced ("Step 2 of 6: Party Size"), form inputs have associated labels, error messages via aria-describedby.
-UX-DR22: Tap targets — minimum 44px (widget) / 48px (dashboard).
+UX-DR22: Tap targets — minimum 44px (booking page) / 48px (dashboard).
 UX-DR23: Voice and tone — short complete sentences, no exclamation marks, no corporate enthusiasm. "Book a Table" not "Reserve your spot now!".
 UX-DR24: Microcopy patterns — "You're all set." (confirmation), "No bookings for this date" (empty), "Let's set up your restaurant" (onboarding).
 
 ### FR Coverage Map
 
-FR-1: Epic 2 — Widget landing page
+FR-1: Epic 2 — Booking page landing
 FR-2: Epic 2 — Party size selection
 FR-3: Epic 2 — Date selection (open dates only)
 FR-4: Epic 2 — Time slot selection
@@ -143,7 +142,7 @@ FR-7: Epic 2 — Back navigation
 FR-8: Epic 2 — Loading states
 FR-9: Epic 2 — Error handling
 FR-10: Epic 2 — Responsive design
-FR-11: Epic 2 — Demo page
+FR-11: Epic 1 — In-app preview of the booking page
 FR-12: Epic 3 — Today's bookings list
 FR-13: Epic 3 — Date picker navigation
 FR-14: Epic 3 — Empty state
@@ -173,9 +172,9 @@ FR-37: Epic 1 — Onboarding: white-label colors
 FR-38: Epic 1 — Onboarding: custom field
 FR-39: Epic 1 — Skip optional steps
 FR-40: Epic 1 — Onboarding completion
-FR-41: Epic 1 — Deploy page (embed code)
-FR-42: Epic 1 — Copy embed code
-FR-43: Epic 1 — Demo page link
+FR-41: Epic 1 — Booking Link page (booking link + QR)
+FR-42: Epic 1 — Copy booking link
+FR-43: Epic 1 — Preview booking page
 FR-44: Epic 1 — Restaurant profile data model
 FR-45: Epic 1 — Table groups data model
 FR-46: Epic 1 — Opening hours data model
@@ -190,12 +189,12 @@ FR-53: Epic 1 — Slug uniqueness enforcement
 ## Epic List
 
 ### Epic 1: Restaurant Setup & Onboarding
-Restaurant owner can sign up, configure their restaurant (name, hours, tables, colors), and get an embed code to deploy the widget.
-**FRs covered:** FR-28 to FR-46, FR-48 to FR-50, FR-53 (23 FRs)
+Restaurant owner can sign up, configure their restaurant (name, hours, tables, colors), and get a booking link to their public booking page.
+**FRs covered:** FR-11, FR-28 to FR-46, FR-48 to FR-50, FR-53 (24 FRs)
 
-### Epic 2: Diner Booking Widget
-Diners can book tables through the embeddable widget on the restaurant's website.
-**FRs covered:** FR-1 to FR-11, FR-47, FR-51, FR-52 (14 FRs)
+### Epic 2: Public Booking Journey
+Diners can book tables on the public booking page at `/book/{slug}`.
+**FRs covered:** FR-1 to FR-10, FR-47, FR-51, FR-52 (13 FRs)
 
 ### Epic 3: Restaurant Dashboard & Management
 Restaurant owner can view today's bookings in real-time and manage all restaurant settings from the dashboard.
@@ -205,26 +204,25 @@ Restaurant owner can view today's bookings in real-time and manage all restauran
 
 ## Epic 1: Restaurant Setup & Onboarding
 
-Restaurant owner can sign up, configure their restaurant (name, hours, tables, colors), and get an embed code to deploy the widget.
+Restaurant owner can sign up, configure their restaurant (name, hours, tables, colors), and get a booking link to their public booking page.
 
 ### Story 1.1: Project Scaffolding & Firebase Setup
 
 As a developer,
-I want the project scaffolded with Angular (dashboard), Vite (widget), shared types, and Firebase configured,
+I want the project scaffolded with Angular (dashboard + public booking page), shared types, and Firebase configured,
 So that all subsequent stories have a foundation to build on.
 
 **Acceptance Criteria:**
 
 **Given** the project root
 **When** I run `npm install` and `ng serve`
-**Then** the Angular dashboard app boots on localhost with a placeholder home route
+**Then** the Angular app boots on localhost with a placeholder home route
 **And** TypeScript strict mode is enabled
-**And** the project structure matches the Architecture Spine (`src/dashboard/`, `src/widget/`, `src/shared/`)
+**And** the project structure matches the Architecture Spine (`src/dashboard/`, `src/shared/`)
 
-**Given** the widget directory
-**When** I run the Vite build
-**Then** a standalone JS bundle is produced at `dist/widget/`
-**And** the bundle exports a `<booking-widget>` custom element
+**Given** the Angular app
+**When** I run `ng build`
+**Then** a single production bundle is produced for the public booking page and dashboard
 
 **Given** the shared directory
 **When** I import from `src/shared/`
@@ -326,7 +324,7 @@ So that my restaurant is identified on the platform.
 **Given** the basics step
 **When** the owner types a restaurant name
 **Then** a slug is auto-generated in real-time (lowercase, hyphens, no special characters)
-**And** the slug preview shows: "Your booking link: bookable.co/{slug}"
+**And** the slug preview shows: "Your booking link: {baseUrl}/book/{slug}"
 
 **Given** the basics step
 **When** the owner edits the slug field
@@ -350,7 +348,7 @@ So that my restaurant is identified on the platform.
 
 As a restaurant owner,
 I want to configure my opening hours and table groups,
-So that the widget can show available times.
+So that the public booking page can show available times.
 
 **Acceptance Criteria:**
 
@@ -392,8 +390,8 @@ So that the widget can show available times.
 ### Story 1.6: Onboarding — Branding Step
 
 As a restaurant owner,
-I want to customize my widget colors and add a custom field,
-So that the widget matches my brand.
+I want to customize my booking page colors and add a custom field,
+So that the booking page matches my brand.
 
 **Acceptance Criteria:**
 
@@ -425,80 +423,80 @@ So that the widget matches my brand.
 
 ---
 
-### Story 1.7: Onboarding Completion & Deploy
+### Story 1.7: Onboarding Completion & Booking Link
 
 As a restaurant owner,
-I want to see my embed code and know how to deploy the widget,
-So that I can add the booking widget to my website.
+I want to see my booking link and QR code,
+So that diners can book through my public booking page.
 
 **Acceptance Criteria:**
 
 **Given** the owner completes onboarding
 **When** they are redirected from the wizard
-**Then** the Deploy page is shown in the dashboard sidebar
-**And** the page displays the embed code snippet with the restaurant's slug
+**Then** the Booking Link page is shown in the dashboard sidebar
+**And** the page displays the restaurant's booking link and QR code
 
-**Given** the Deploy page
-**When** the owner views the embed code
-**Then** it includes a `<script>` tag pointing to the widget bundle
-**And** it includes a `<booking-widget restaurant="{slug}">` element
+**Given** the Booking Link page
+**When** the owner views the booking link
+**Then** the page shows the booking link `{baseUrl}/book/{slug}` (baseUrl = the deployed Firebase Hosting URL for the app)
+**And** it shows the QR code for the booking link
 
-**Given** the Deploy page
+**Given** the Booking Link page
 **When** the owner clicks the copy button
-**Then** the embed code is copied to the clipboard
-**And** a confirmation message "Copied!" is shown
+**Then** the booking link is copied to the clipboard
+**And** a confirmation message "Copied" is shown
 
-**Given** the Deploy page
-**When** the owner clicks the demo page link
-**Then** a new tab opens with the demo page
-**And** the demo page renders the widget with the restaurant's configuration
+**Given** the Booking Link page
+**When** the owner opens the preview
+**Then** an in-app preview of the booking page is shown
+**And** the preview renders with the restaurant's configuration
 
 **Given** the dashboard
 **When** the owner signs in after completing onboarding
 **Then** they land on the dashboard (not the onboarding wizard)
-**And** the sidebar shows all navigation items (Bookings, Info, Hours, Tables, Branding, Deploy, Account)
+**And** the sidebar shows all navigation items (Bookings, Info, Hours, Tables, Branding, Booking Link, Account)
 
 ---
 
-## Epic 2: Diner Booking Widget
+## Epic 2: Public Booking Journey
 
-Diners can book tables through the embeddable widget on the restaurant's website.
+Diners can book tables on the public booking page at `/book/{slug}`.
 
-### Story 2.1: Widget Foundation & Landing
+### Story 2.1: Public Booking Page Foundation & Landing
 
 As a diner,
-I want to see the restaurant's name and a "Book a Table" button when I visit their website,
+I want to see the restaurant's name and a "Book a Table" button when I open their booking link,
 So that I can start the booking process.
 
 **Acceptance Criteria:**
 
-**Given** a restaurant has deployed the widget
-**When** the embed code is added to a webpage
-**Then** a `<booking-widget>` custom element renders
-**And** the widget is isolated in Shadow DOM (host page CSS cannot affect it)
+**Given** a restaurant has created its booking link
+**When** a diner opens `/book/{slug}`
+**Then** the public booking page renders
+**And** the page is white-labeled with the restaurant's colors via CSS custom properties
 
-**Given** the widget renders
+**Given** the booking page renders
 **When** it loads with a valid restaurant slug
 **Then** the restaurant name is displayed
 **And** the address is displayed (if configured)
 **And** a "Book a Table" button is visible
 
-**Given** the widget renders
+**Given** the booking page renders
 **When** it loads with an invalid slug
 **Then** a "Restaurant not found" message is displayed
 **And** no booking flow is initiated
 
-**Given** the widget renders
+**Given** the booking page renders
 **When** Firebase is unavailable
 **Then** a "Something went wrong. Please try again." message is displayed
 **And** a retry button is shown
 
-**Given** the widget
+**Given** the booking page
 **When** it loads
-**Then** the container is min-width 375px and responsive wider
-**And** the styling matches DESIGN.md (warm linen background, Inter font, 12px border radius)
+**Then** the page fills the full viewport and is responsive
+**And** the styling matches DESIGN.md (warm linen background, Inter font, rounded corners on cards and panels)
 
-**Given** the widget
+**Given** the booking page
 **When** it loads
 **Then** a loading spinner is shown during data fetches
 **And** the spinner hides when data is ready
@@ -521,7 +519,7 @@ So that I can see available times for my group.
 
 **Given** the party size step
 **When** the diner taps a number
-**Then** that number is selected (sage green fill, white text)
+**Then** that number is selected (`{accent}` fill, white text)
 **And** the calendar step loads automatically
 
 **Given** the calendar step
@@ -533,7 +531,7 @@ So that I can see available times for my group.
 **Given** the calendar step
 **When** the diner selects an open date
 **Then** the time slot step loads automatically
-**And** the selected date is highlighted (sage green fill)
+**And** the selected date is highlighted (`{accent}` fill)
 
 **Given** the calendar step
 **When** the diner taps the back button
@@ -569,7 +567,7 @@ So that I can choose a convenient time.
 **Given** the time slot step
 **When** the diner selects a time slot
 **Then** the details form step loads automatically
-**And** the selected time is highlighted (sage green fill)
+**And** the selected time is highlighted (`{accent}` fill)
 
 **Given** the time slot step
 **When** the diner taps the back button
@@ -577,7 +575,7 @@ So that I can choose a convenient time.
 **And** the previously selected date is preserved
 
 **Given** the availability calculation
-**When** the widget queries for available slots
+**When** the booking page queries for available slots
 **Then** the system queries existing bookings for the date
 **And** subtracts booked tables from table groups
 **And** returns available 15-minute slots within opening hours
@@ -618,7 +616,7 @@ So that my table is reserved.
 
 **Given** the confirmation step
 **When** it loads
-**Then** a centered checkmark icon (sage green) is displayed
+**Then** a centered checkmark icon (`{accent}`) is displayed
 **And** the booking summary shows: date, time, party size
 **And** the message reads "You're all set."
 **And** no action buttons are shown (flow complete)
@@ -652,50 +650,20 @@ So that the booking flow feels polished and reliable.
 **Then** focus moves to the new step heading
 **And** screen readers announce "Step N of 6: {Step Name}"
 
-**Given** the widget
+**Given** the booking page
 **When** a Firestore error occurs
 **Then** "Something went wrong. Please try again." is displayed
 **And** a retry button is shown
 
-**Given** the widget
+**Given** the booking page
 **When** the slug does not match any restaurant
 **Then** "Restaurant not found" is displayed
 **And** no booking flow is initiated
 
-**Given** the widget
+**Given** the booking page
 **When** it loads
 **Then** tap targets are minimum 44px
 **And** all text meets WCAG 2.1 AA contrast ratios
-
----
-
-### Story 2.6: Demo Page
-
-As a developer,
-I want a standalone HTML page that embeds the widget for testing,
-So that I can verify the widget works during development.
-
-**Acceptance Criteria:**
-
-**Given** the project
-**When** I open the demo page
-**Then** a standalone HTML page is displayed
-**And** an input field allows entering a restaurant slug
-**And** a "Load Widget" button renders the widget with the entered slug
-
-**Given** the demo page
-**When** a valid slug is entered and "Load Widget" is clicked
-**Then** the `<booking-widget>` element is rendered on the page
-**And** the widget loads the restaurant's configuration
-
-**Given** the demo page
-**When** an invalid slug is entered
-**Then** the widget displays "Restaurant not found"
-
-**Given** the demo page
-**When** it loads
-**Then** the page is styled simply (neutral background, centered widget)
-**And** no external dependencies are required (inline CSS only)
 
 ---
 
@@ -718,7 +686,7 @@ So that I can access all management sections.
 
 **Given** the sidebar
 **When** it loads
-**Then** nav items are displayed: Bookings, Restaurant Info, Opening Hours, Table Groups, White Label, Deploy, Account
+**Then** nav items are displayed: Bookings, Restaurant Info, Opening Hours, Table Groups, White Label, Booking Link, Account
 **And** each item has an icon and label
 **And** the active item has a sage green left border
 
@@ -783,7 +751,7 @@ So that I can prepare for service.
 **And** today's bookings are displayed
 
 **Given** the bookings page
-**When** a new booking is created via the widget
+**When** a new booking is created via the public booking page
 **Then** it appears in the list immediately (no refresh required)
 **And** the list scrolls to maintain position
 
@@ -798,7 +766,7 @@ So that I can prepare for service.
 
 As a restaurant owner,
 I want to update my restaurant name, address, and timezone,
-So that my information is accurate on the widget.
+So that my information is accurate on the booking page.
 
 **Acceptance Criteria:**
 
@@ -816,7 +784,7 @@ So that my information is accurate on the widget.
 **Given** the Restaurant Info page
 **When** the owner updates the address
 **Then** the change is saved immediately
-**And** the widget landing page reflects the new address
+**And** the booking page reflects the new address
 
 **Given** the Restaurant Info page
 **When** the owner changes the timezone
@@ -839,7 +807,7 @@ So that my information is accurate on the widget.
 
 As a restaurant owner,
 I want to configure my weekly opening hours,
-So that the widget shows accurate availability.
+So that the public booking page shows accurate availability.
 
 **Acceptance Criteria:**
 
@@ -865,7 +833,7 @@ So that the widget shows accurate availability.
 
 **Given** the Opening Hours page
 **When** changes are saved
-**Then** the widget calendar updates to reflect the new open dates
+**Then** the booking page calendar updates to reflect the new open dates
 **And** a confirmation message is shown
 
 ---
@@ -874,7 +842,7 @@ So that the widget shows accurate availability.
 
 As a restaurant owner,
 I want to add, edit, and delete table groups,
-So that the widget can calculate availability accurately.
+So that the booking page can calculate availability accurately.
 
 **Acceptance Criteria:**
 
@@ -916,8 +884,8 @@ So that the widget can calculate availability accurately.
 ### Story 3.6: White Label & Custom Field Settings
 
 As a restaurant owner,
-I want to customize my widget colors and configure a custom field,
-So that the widget matches my brand and collects the info I need.
+I want to customize my booking page colors and configure a custom field,
+So that the booking page matches my brand and collects the info I need.
 
 **Acceptance Criteria:**
 
@@ -930,12 +898,12 @@ So that the widget matches my brand and collects the info I need.
 **Given** the White Label page
 **When** the owner changes the primary color
 **Then** the color is saved
-**And** the widget preview updates to reflect the new color
+**And** the booking page preview updates to reflect the new color
 
 **Given** the White Label page
 **When** the owner changes the secondary color
 **Then** the color is saved
-**And** the widget preview updates to reflect the new color
+**And** the booking page preview updates to reflect the new color
 
 **Given** the White Label page
 **When** the owner configures the custom field
@@ -944,13 +912,13 @@ So that the widget matches my brand and collects the info I need.
 
 **Given** the White Label page
 **When** the owner disables the custom field
-**Then** the custom field is not shown on the widget
+**Then** the custom field is not shown on the booking page
 **And** the label and required settings are preserved
 
 **Given** the White Label page
 **When** changes are saved
 **Then** a confirmation message is shown
-**And** the widget reflects the new configuration immediately
+**And** the booking page reflects the new configuration immediately
 
 ---
 

@@ -51,3 +51,37 @@ Items surfaced during code reviews that are pre-existing issues or out of scope 
 - source_spec: `_bmad-output/implementation-artifacts/1-7-onboarding-completion-deploy.md`
   summary: `ng build`/`ng serve` now require `dist/widget` to exist (new assets input) — `npm run build` chains `build:widget` first; a clean-clone `ng serve` needs one `npm run build:widget`
   evidence: angular.json assets entry copies `dist/widget/**` → `/widget`
+
+## Public Booking Page pivot review (2026-08-15)
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-pivot-public-booking-docs.md`
+  summary: AD-14 security model as approved cannot be implemented exactly as written — Firestore Security Rules cannot validate which fields a query filters by, so "rules must validate that both fields are present in the query" is not enforceable as stated
+  evidence: User decision 2026-08-15: keep AD-14 as approved, log risks. Related gaps: AD-5 availability calc queries by date only (partySize filter conflicts); no restaurantId scoping (cross-restaurant enumeration); unauthenticated reads expose diner PII (name/email/customFieldValue) with no field projection. Escalate to architect review before the firestore.rules story.
+
+- source_spec: `_bmad-output/planning-artifacts/briefs/brief-osefdetalife-2026-07-12/brief.md`
+  summary: Product brief still defines the embeddable widget model and is cited as an Architecture source; not updated by the pivot
+  evidence: Out of approved scope (proposal 1–19 covers PRD/Architecture/UX DESIGN+EXPERIENCE/epics/sprint-status only).
+
+- source_spec: `_bmad-output/planning-artifacts/prds/prd-osefdetalife-2026-07-12/prd.html` and `_bmad-output/planning-artifacts/architecture/architecture-osefdetalife-2026-07-12/architecture.html`
+  summary: prd.html (FR-11 "Demo Page" :561, SM-1 widget load :716, SM-4 "embed widget" :719) and architecture.html (AD-1 script-tag embed rule :388, Shadow DOM rule :420-425, Web Components/Vite stack :574-576, `widget/` structural seed :584-588, widget diagram/capability map :645/:662/:681/:686) still describe the pre-pivot widget model beside the updated docs
+  evidence: Generated HTML artifacts (rendered copies of prd.md / ARCHITECTURE-SPINE.md); not in pivot scope.
+
+- source_spec: `_bmad-output/planning-artifacts/implementation-readiness-report-2026-07-14.md`
+  summary: Report still gates Epic 2 on widget-era FRs / AD-1 / Story 2.1-2.6
+  evidence: Pre-existing report; not in pivot scope.
+
+- source_spec: `_bmad-output/planning-artifacts/ux-designs/ux-osefdetalife-2026-07-14/mockups/key-widget-landing.html` (and key-widget-party-size.html, directions-4.html)
+  summary: UX mockup HTML files still render the 375px widget frame
+  evidence: Visual mockup artifacts; regeneration is a design task outside the docs-only pivot.
+
+- source_spec: `_bmad-output/planning-artifacts/epics.md`
+  summary: No standalone FR for QR generation/scannability; in-app preview is covered redundantly by FR-11, FR-41, FR-43
+  evidence: Proposal scope ended at the FR-41/42/43 rework; a standalone QR FR is a post-pivot enhancement.
+
+- source_spec: `_bmad-output/planning-artifacts/epics.md` (NFR-8) / `prd.md` (SM-4)
+  summary: Metrics count booking-link sharing, not diner landings on the public page; no acquisition metric for the booking page
+  evidence: Proposal 3 approved "5 restaurants share booking link" as the metric; landing-rate is a post-pivot addition.
+
+- source_spec: `_bmad-output/implementation-artifacts/sprint-status.yaml`
+  summary: Epic 1 retro action items (epic-1-retro-item-1-verify-prod-widget-bundle-url, epic-1-retro-item-2-fix-dev-widget-port) reference widgetBundleUrl — obsolete under the pivot
+  evidence: sprint-status.yaml is verify-only in this spec; retro items are historical records.
