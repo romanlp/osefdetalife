@@ -1,17 +1,17 @@
 ---
-title: "Product Brief: [TBD]"
+title: "Product Brief: Bookable"
 status: approved
 created: 2026-07-12
-updated: 2026-07-12
+updated: 2026-08-14
 ---
 
-# Product Brief: [TBD]
+# Product Brief: Bookable
 
 ## Executive Summary
 
-[TBD] is a white-label, embeddable booking widget that lets restaurants accept table reservations directly on their own website — fully branded to match their identity. Restaurants get a simple dashboard to configure their availability and view incoming bookings, while diners get a seamless, fast booking experience that feels native to the restaurant's site.
+Bookable is a first-party public booking page platform that lets restaurants accept table reservations via a dedicated page at /book/{slug} — fully branded to match their identity. Restaurants get a simple dashboard to configure their availability and view incoming bookings, while diners get a seamless, fast booking experience that feels native to the restaurant's site.
 
-The product fills a clear gap in the UK restaurant market: existing solutions are either too complex (full floor plan editors designed for large operators) or too basic (simple capacity counters that don't reflect real table configurations). Meanwhile, per-cover commission models from legacy platforms like OpenTable are pushing price-sensitive independent restaurants toward flat-fee alternatives. [TBD] combines white-label control, table-group configuration, and a monthly subscription — giving small restaurants the professionalism of enterprise tools without the complexity or cost.
+The product fills a clear gap in the UK restaurant market: existing solutions are either too complex (full floor plan editors designed for large operators) or too basic (simple capacity counters that don't reflect real table configurations). Meanwhile, per-cover commission models from legacy platforms like OpenTable are pushing price-sensitive independent restaurants toward flat-fee alternatives. Bookable combines white-label control, table-group configuration, and a monthly subscription — giving small restaurants the professionalism of enterprise tools without the complexity or cost.
 
 This is a personal learning project built by a solo developer with Angular + Firebase, designed to grow organically as a side project. The MVP targets restaurants with ~50 covers and a single location, with a clear path toward AI-assisted booking management and third-party integrations (Google Reserve, POS sync) in future releases.
 
@@ -25,10 +25,10 @@ This is a personal learning project built by a solo developer with Angular + Fir
 
 ## The Solution
 
-An embeddable booking widget that restaurants configure and deploy on their own website. The widget reflects the restaurant's brand (colors, logo, custom fields) and handles the booking flow end-to-end: selecting date, time, party size, and submitting the reservation.
+A public booking page at /book/{slug} that restaurants configure and share with diners. The page reflects the restaurant's brand (colors, logo, custom fields) and handles the booking flow end-to-end: selecting party size, date, time, and submitting the reservation.
 
 **Diner-facing (the widget):**
-- Clean, fast booking flow embedded on the restaurant's website
+- Clean, fast booking flow on the restaurant's dedicated booking page at /book/{slug}
 - Date/time/party size selection
 - One optional custom field (e.g., dietary requirements, occasion, special requests) — label set by restaurant
 - Confirmation screen
@@ -42,7 +42,7 @@ An embeddable booking widget that restaurants configure and deploy on their own 
 
 ## What Makes This Different
 
-1. **White-label by default:** The widget lives on the restaurant's website, looks like the restaurant's brand. No third-party UI, no marketplace branding, no account creation for diners.
+1. **White-label by default:** The booking page lives at the restaurant's /book/{slug} URL, looks like the restaurant's brand. No third-party UI, no marketplace branding, no account creation for diners.
 
 2. **Table groups (not maps, not headcount):** The right level of complexity for small restaurants. Sophisticated enough to reflect real dining room configurations, simple enough to configure in 5 minutes.
 
@@ -79,7 +79,7 @@ An embeddable booking widget that restaurants configure and deploy on their own 
 ## Scope
 
 ### In for MVP
-- Embeddable booking widget (date, time, party size, one custom text field)
+- Public booking page at /book/{slug} (party size, date, time, one custom text field)
 - Restaurant dashboard: settings (hours, table config, white-label)
 - Restaurant dashboard: read-only booking list
 - Flat monthly subscription (no payment processing in MVP — manual or Stripe link)
@@ -102,4 +102,4 @@ If this works, the natural progression is:
 - **Mid-term:** Google Reserve integration, POS sync (Toast, Lightspeed), voice AI for phone bookings
 - **Long-term:** AI-assisted booking management (predict no-shows, suggest optimal seating, forecast demand), cross-channel loyalty, multi-location dashboard
 
-The vision is a platform that starts simple and grows with the restaurant — from a booking widget to a complete guest management layer, always flat-fee, always white-label.
+The vision is a platform that starts simple and grows with the restaurant — from a public booking page to a complete guest management layer, always flat-fee, always white-label.

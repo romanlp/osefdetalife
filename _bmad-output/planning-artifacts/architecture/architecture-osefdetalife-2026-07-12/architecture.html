@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Architecture Spine — osefdetalife-booking</title>
+  <title>Architecture Spine — Bookable Public Booking Page</title>
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
   <style>
     :root {
@@ -339,13 +339,14 @@
   <div class="container">
     <header>
       <h1>Architecture Spine</h1>
-      <p style="font-size: 1.25rem; color: var(--text); margin-bottom: 0.5rem;">osefdetalife-booking</p>
+      <p style="font-size: 1.25rem; color: var(--text); margin-bottom: 0.5rem;">Bookable Public Booking Page</p>
       <div class="meta">
         <div class="meta-item"><strong>Type:</strong> architecture-spine</div>
         <div class="meta-item"><strong>Purpose:</strong> build-substrate</div>
         <div class="meta-item"><strong>Altitude:</strong> feature</div>
         <div class="meta-item"><strong>Status:</strong> <span class="badge badge-final">final</span></div>
         <div class="meta-item"><strong>Created:</strong> 2026-07-12</div>
+        <div class="meta-item"><strong>Updated:</strong> 2026-08-14</div>
       </div>
     </header>
 
@@ -357,7 +358,7 @@
       <div class="layers">
         <div class="layer">
           <div class="layer-label">Presentation</div>
-          <div class="layer-value">Web Component (widget) + Angular SPA (dashboard)</div>
+          <div class="layer-value">Angular route /book/{slug} (booking page) + Angular SPA (dashboard)</div>
         </div>
         <div class="layer">
           <div class="layer-label">Data</div>
@@ -369,7 +370,7 @@
         </div>
         <div class="layer">
           <div class="layer-label">Deployment</div>
-          <div class="layer-value">Firebase Hosting (dashboard) + CDN (widget script)</div>
+          <div class="layer-value">Firebase Hosting (single app: dashboard + booking page)</div>
         </div>
       </div>
     </section>
@@ -380,12 +381,12 @@
         <div class="ad-card">
           <div class="ad-header">
             <span class="ad-id">AD-1</span>
-            <span class="ad-title">Widget Deployment via Script Tag</span>
+            <span class="ad-title">Public Booking Route</span>
           </div>
           <div class="ad-details">
-            <span class="ad-label">Binds:</span><span class="ad-value">widget, deployment</span>
-            <span class="ad-label">Prevents:</span><span class="ad-value">npm package or iframe approaches</span>
-            <span class="ad-label">Rule:</span><span class="ad-value">Widget renders as a custom element (<code>&lt;booking-widget&gt;</code>) on any website. Restaurant adds <code>&lt;script src="..."&gt;</code> and <code>&lt;booking-widget restaurant="slug"&gt;&lt;/booking-widget&gt;</code> to their page.</span>
+            <span class="ad-label">Binds:</span><span class="ad-value">booking page, deployment</span>
+            <span class="ad-label">Prevents:</span><span class="ad-value">embeddable widget approaches</span>
+            <span class="ad-label">Rule:</span><span class="ad-value">The public booking page renders at <code>/book/{slug}</code> within the Angular app. Restaurants share the booking link (and QR code) with diners; no embedding of code is required.</span>
           </div>
         </div>
 
@@ -395,10 +396,10 @@
             <span class="ad-title">Direct Firebase from Browser</span>
           </div>
           <div class="ad-details">
-            <span class="ad-label">Binds:</span><span class="ad-value">all data access (widget + dashboard)</span>
+            <span class="ad-label">Binds:</span><span class="ad-value">all data access (booking page + dashboard)</span>
             <span class="ad-label">Prevents:</span><span class="ad-value">API layer overhead, server-side complexity</span>
             <span class="ad-label">Rule:</span><span class="ad-value">Widget and dashboard use Firebase client SDK directly. Firestore Security Rules enforce access control. No Cloud Functions for MVP.</span>
-            <span class="ad-label">Security:</span><span class="ad-value">Unauthenticated writes scoped to <code>create</code> only on <code>bookings</code>. Rules validate that <code>restaurantId</code> references an existing restaurant. Widget and dashboard rule sets authored together.</span>
+            <span class="ad-label">Security:</span><span class="ad-value">Unauthenticated writes scoped to <code>create</code> only on <code>bookings</code>. Rules validate that <code>restaurantId</code> references an existing restaurant. Booking page and dashboard rule sets authored together.</span>
           </div>
         </div>
 
@@ -492,12 +493,12 @@
         <div class="ad-card">
           <div class="ad-header">
             <span class="ad-id">AD-10</span>
-            <span class="ad-title">Widget Flow: Party Size → Times → Date → Details → Confirmation</span>
+            <span class="ad-title">Booking Flow: Party Size → Date → Times → Details → Confirmation</span>
           </div>
           <div class="ad-details">
             <span class="ad-label">Binds:</span><span class="ad-value">widget UX</span>
             <span class="ad-label">Prevents:</span><span class="ad-value">date-first flow</span>
-            <span class="ad-label">Rule:</span><span class="ad-value">Diner selects party size first, then sees available times for that party size. Calendar shows all operating dates.</span>
+            <span class="ad-label">Rule:</span><span class="ad-value">Diner selects party size first, then picks a date, then sees available times for that date. Calendar shows all operating dates.</span>
           </div>
         </div>
 
@@ -567,13 +568,11 @@
           <tr><th>Name</th><th>Version</th><th>Purpose</th></tr>
         </thead>
         <tbody>
-          <tr><td>Angular</td><td>22+</td><td>Dashboard SPA</td></tr>
-          <tr><td>Firebase Hosting</td><td>—</td><td>Dashboard deployment</td></tr>
+          <tr><td>Angular</td><td>22+</td><td>Dashboard SPA + Booking Page</td></tr>
+          <tr><td>Firebase Hosting</td><td>—</td><td>Dashboard + Booking Page deployment</td></tr>
           <tr><td>Firestore</td><td>—</td><td>Primary database</td></tr>
           <tr><td>Firebase Auth</td><td>—</td><td>Authentication</td></tr>
-          <tr><td>Web Components</td><td>v1</td><td>Widget rendering (Custom Elements + Shadow DOM)</td></tr>
-          <tr><td>TypeScript</td><td>7.x</td><td>Language for both widget and dashboard</td></tr>
-          <tr><td>Vite</td><td>—</td><td>Widget build tool (lightweight, fast)</td></tr>
+          <tr><td>TypeScript</td><td>7.x</td><td>Language for booking page and dashboard</td></tr>
         </tbody>
       </table>
     </section>
@@ -581,11 +580,11 @@
     <section>
       <h2>Structural Seed</h2>
       <pre><code>src/
-  widget/                    # Embeddable booking widget (Web Component)
-    booking-widget.ts        # Custom element definition
-    components/              # Widget UI components
-    styles/                  # Shadow DOM styles
-    firebase.ts              # Firebase client config for widget
+  booking/                   # Public booking page (/book/{slug})
+    pages/                   # Route-level components (landing, party-size, date, time, details, confirmation)
+    components/              # Booking page UI components
+    styles/                  # Component styles
+    firebase.ts              # Firebase client config for booking page
   dashboard/                 # Restaurant management dashboard (Angular)
     app/
       components/            # Angular components
@@ -678,12 +677,12 @@ graph TB
         </div>
         <div class="cap-row">
           <div>Diner booking flow</div>
-          <div><code>widget/</code></div>
-          <div>AD-1, AD-4, AD-10</div>
+          <div><code>booking/</code></div>
+          <div>AD-1, AD-10</div>
         </div>
         <div class="cap-row">
           <div>Availability calculation</div>
-          <div><code>widget/</code> + Firestore</div>
+          <div><code>booking/</code> + Firestore</div>
           <div>AD-5, AD-6</div>
         </div>
         <div class="cap-row">
@@ -723,7 +722,7 @@ graph TB
     </section>
 
     <footer>
-      <p>Architecture Spine — osefdetalife-booking · Created 2026-07-12 · Status: final</p>
+      <p>Architecture Spine — Bookable Public Booking Page · Created 2026-07-12 · Updated 2026-08-14 · Status: final</p>
     </footer>
   </div>
 
