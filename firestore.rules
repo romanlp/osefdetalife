@@ -30,6 +30,21 @@ service cloud.firestore {
         && data.restaurantId is string;
     }
 
+    // AD-14 public projection: availability-only fields, no diner PII.
+    function validatePublicBookingData(data) {
+      return data.date is string
+        && data.date.size() > 0
+        && data.time is string
+        && data.time.size() > 0
+        && data.partySize is number
+        && data.partySize > 0
+        && data.status == 'confirmed'
+        && data.restaurantId is string
+        && !('name' in data)
+        && !('email' in data)
+        && !('customFieldValue' in data);
+    }
+
     function isExistingRestaurant(restaurantId) {
       return exists(/databases/$(database)/documents/restaurants/$(restaurantId));
     }
@@ -63,15 +78,25 @@ service cloud.firestore {
         allow delete: if isOwner(restaurantId);
       }
 
-      // Bookings — unauthenticated create with validation, owner read, public availability read (AD-14)
+      // Bookings — unauthenticated create with validation, owner-only read (contains diner PII)
       match /bookings/{bookingId} {
-        // AD-14: Public booking page needs unauthenticated read for availability calculation
-        // Only allowed when query filters by BOTH date and partySize
-        allow read: if request.auth == null
-                      && request.query.date != null
-                      && request.query.partySize != null;
         allow read: if isOwner(restaurantId);
         allow create: if validateBookingData(request.resource.data)
+                      && request.resource.data.restaurantId == restaurantId
+                      && isExistingRestaurant(request.resource.data.restaurantId);
+        allow update: if isOwner(restaurantId)
+                      && request.resource.data.status == 'cancelled'
+                      && resource.data.status == 'confirmed';
+        allow delete: if false;
+      }
+
+      // Bookings public projection (AD-14) — non-PII availability fields, public read.
+      // Mirrors bookings/{bookingId} with only date/time/partySize/status for the
+      // public booking page's availability calculation. Written in the same batch as
+      // the full booking. PII fields are rejected on write.
+      match /bookings-public/{bookingId} {
+        allow read: if true;
+        allow create: if validatePublicBookingData(request.resource.data)
                       && request.resource.data.restaurantId == restaurantId
                       && isExistingRestaurant(request.resource.data.restaurantId);
         allow update: if isOwner(restaurantId)

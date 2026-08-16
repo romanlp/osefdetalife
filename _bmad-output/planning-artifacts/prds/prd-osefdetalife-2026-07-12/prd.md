@@ -494,6 +494,7 @@ System stores bookings as subcollection. Realizes UJ-1, UJ-3.
 - System creates subcollection at `restaurants/{restaurantId}/bookings/{bookingId}`.
 - System stores: date, time, partySize, name, email, customFieldValue, status, createdAt.
 - System sets default status to `confirmed`.
+- System also creates a non-PII public projection at `restaurants/{restaurantId}/bookings-public/{bookingId}` (date, time, partySize, status) in the same batch (AD-14), so the public booking page can compute availability without exposing diner PII.
 
 #### FR-48: Slug Resolution
 System resolves slug to restaurant ID. Realizes UJ-1.
@@ -528,14 +529,15 @@ Diner can create bookings without authentication. System validates document shap
 - System validates required fields: date, time, partySize, name, email, status.
 - System validates status is `"confirmed"`.
 - System validates restaurantId references an existing restaurant.
-- System blocks read access to bookings (owner-only for MVP).
-- System blocks update/delete access to bookings.
+- System blocks read access to full bookings (owner-only — these documents hold diner PII).
+- System allows unauthenticated read of the non-PII `bookings-public` projection for the public booking page's availability calculation (AD-14).
+- System blocks update/delete access to bookings (except owner cancellation).
 
 #### FR-52: Compute-on-Read Availability
 System calculates availability at query time. Realizes UJ-1.
 
 **Consequences (testable):**
-- System queries existing bookings for selected date.
+- System queries the public `bookings-public` projection (non-PII: date, time, partySize, status) for selected date.
 - System subtracts booked tables from table groups.
 - System returns available 15-minute slots.
 - System handles no availability gracefully.

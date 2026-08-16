@@ -79,6 +79,14 @@ const VALID_BOOKING = {
   status: 'confirmed' as const,
 };
 
+const VALID_PUBLIC_BOOKING = {
+  restaurantId: 'rest-1',
+  date: '2026-07-20',
+  time: '19:00',
+  partySize: 4,
+  status: 'confirmed' as const,
+};
+
 async function seedAdminData(path: string, data: Record<string, unknown>) {
   await setDoc(doc(adminDb, path), data);
 }
@@ -223,6 +231,12 @@ describe('Firestore Security Rules', () => {
       ).resolves.toBeDefined();
     });
 
+    it('should deny unauthenticated read of full booking (PII)', async () => {
+      await expect(
+        getDoc(doc(unauthDb, 'restaurants/rest-1/bookings/bk-1'))
+      ).rejects.toThrow();
+    });
+
     it('should allow owner to cancel a confirmed booking', async () => {
       // Seed a fresh confirmed booking
       await seedAdminData('restaurants/rest-1/bookings/bk-cancel', VALID_BOOKING);
@@ -256,6 +270,58 @@ describe('Firestore Security Rules', () => {
     it('should deny delete', async () => {
       await expect(
         deleteDoc(doc(user1Db, 'restaurants/rest-1/bookings/bk-1'))
+      ).rejects.toThrow();
+    });
+  });
+
+  describe('Bookings public projection subcollection (AD-14)', () => {
+    it('should allow unauthenticated read of public projection', async () => {
+      await seedAdminData('restaurants/rest-1/bookings-public/bk-1', VALID_PUBLIC_BOOKING);
+      await expect(
+        getDoc(doc(unauthDb, 'restaurants/rest-1/bookings-public/bk-1'))
+      ).resolves.toBeDefined();
+    });
+
+    it('should allow unauthenticated create with non-PII data', async () => {
+      await expect(
+        setDoc(doc(unauthDb, 'restaurants/rest-1/bookings-public/bk-pub-1'), VALID_PUBLIC_BOOKING)
+      ).resolves.toBeUndefined();
+    });
+
+    it('should deny create with PII fields', async () => {
+      await expect(
+        setDoc(doc(unauthDb, 'restaurants/rest-1/bookings-public/bk-pii'), {
+          ...VALID_PUBLIC_BOOKING,
+          name: 'John Doe',
+          email: 'john@example.com',
+        })
+      ).rejects.toThrow();
+    });
+
+    it('should deny create with invalid status', async () => {
+      await expect(
+        setDoc(doc(unauthDb, 'restaurants/rest-1/bookings-public/bk-bad-status'), {
+          ...VALID_PUBLIC_BOOKING,
+          status: 'pending',
+        })
+      ).rejects.toThrow();
+    });
+
+    it('should allow owner to cancel a confirmed public projection', async () => {
+      await seedAdminData('restaurants/rest-1/bookings-public/bk-cancel', VALID_PUBLIC_BOOKING);
+      await expect(
+        updateDoc(doc(user1Db, 'restaurants/rest-1/bookings-public/bk-cancel'), {
+          status: 'cancelled',
+        })
+      ).resolves.toBeUndefined();
+    });
+
+    it('should deny non-owner updating public projection', async () => {
+      await seedAdminData('restaurants/rest-1/bookings-public/bk-2', VALID_PUBLIC_BOOKING);
+      await expect(
+        updateDoc(doc(user2Db, 'restaurants/rest-1/bookings-public/bk-2'), {
+          status: 'cancelled',
+        })
       ).rejects.toThrow();
     });
   });

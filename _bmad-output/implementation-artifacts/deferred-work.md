@@ -56,7 +56,7 @@ Items surfaced during code reviews that are pre-existing issues or out of scope 
 
 - source_spec: `_bmad-output/implementation-artifacts/spec-pivot-public-booking-docs.md`
   summary: AD-14 security model as approved cannot be implemented exactly as written — Firestore Security Rules cannot validate which fields a query filters by, so "rules must validate that both fields are present in the query" is not enforceable as stated
-  evidence: User decision 2026-08-15: keep AD-14 as approved, log risks. Related gaps: AD-5 availability calc queries by date only (partySize filter conflicts); no restaurantId scoping (cross-restaurant enumeration); unauthenticated reads expose diner PII (name/email/customFieldValue) with no field projection. Escalate to architect review before the firestore.rules story.
+  evidence: RESOLVED 2026-08-16 — AD-14 reworked to a public projection subcollection `bookings-public/{bookingId}` holding only non-PII fields (date, time, partySize, status). Full bookings stay owner-only; PII never lives on the readable document, so no query-filter validation is needed. firestore.rules + rules spec + ARCHITECTURE-SPINE AD-14 + PRD FR-47/51/52 + epics.md updated. Residual risks: cross-restaurant enumeration limited to availability metadata (date/time/partySize), and client must write both documents in one batch.
 
 - source_spec: `_bmad-output/planning-artifacts/briefs/brief-osefdetalife-2026-07-12/brief.md`
   summary: Product brief still defines the embeddable widget model and is cited as an Architecture source; not updated by the pivot

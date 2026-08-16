@@ -67,12 +67,12 @@ FR-43: Booking link page includes in-app preview of the booking page. Opens with
 FR-44: System stores restaurant profile in Firestore at `restaurants/{restaurantId}`. Stores: name, slug (unique), ownerId, address, colors, customField, createdAt. Enforces required fields.
 FR-45: System stores table groups as subcollection at `restaurants/{restaurantId}/tables/{tableId}`. Stores: capacity, count.
 FR-46: System stores opening hours as field on restaurant document. `Record<number, {open, close}>`. Keys are ISO day numbers (1=Monday, 7=Sunday).
-FR-47: System stores bookings as subcollection at `restaurants/{restaurantId}/bookings/{bookingId}`. Stores: date, time, partySize, name, email, customFieldValue, status, createdAt. Default status: "confirmed".
+FR-47: System stores bookings as subcollection at `restaurants/{restaurantId}/bookings/{bookingId}`. Stores: date, time, partySize, name, email, customFieldValue, status, createdAt. Default status: "confirmed". Also stores a non-PII public projection at `restaurants/{restaurantId}/bookings-public/{bookingId}` (date, time, partySize, status) written in the same batch (AD-14).
 FR-48: System resolves slug to restaurant ID via `slugs/{slug}` → `{restaurantId}`. Creates slug document on restaurant creation. Enforces uniqueness via Firestore transaction.
 FR-49: Any user can read restaurant profile, hours, and tables. Blocks unauthenticated write access.
 FR-50: Authenticated owner can manage own restaurant. Allows write access to own profile, hours, tables, bookings. Blocks cross-restaurant access.
-FR-51: Diner can create bookings without authentication. System validates document shape and restaurant existence via Firestore rules. Validates required fields. Blocks read access (owner-only), except the unauthenticated filtered availability read authorized by AD-14. Blocks update/delete.
-FR-52: System calculates availability at query time. Queries existing bookings for selected date. Subtracts booked tables from table groups. Returns available 15-minute slots.
+FR-51: Diner can create bookings without authentication. System validates document shape and restaurant existence via Firestore rules. Validates required fields. Blocks read access to full bookings (owner-only, PII protected); the public booking page's availability calc reads the non-PII `bookings-public` projection authorized by AD-14. Blocks update/delete.
+FR-52: System calculates availability at query time. Queries the public `bookings-public` projection (non-PII: date, time, partySize, status) for selected date. Subtracts booked tables from table groups. Returns available 15-minute slots.
 FR-53: System enforces unique slugs across all restaurants. Uses Firestore transaction. Rejects slug if taken. Allows slug change by owner.
 
 ### NonFunctional Requirements
@@ -576,7 +576,7 @@ So that I can choose a convenient time.
 
 **Given** the availability calculation
 **When** the booking page queries for available slots
-**Then** the system queries existing bookings for the date
+**Then** the system queries the public `bookings-public` projection (non-PII: date, time, partySize, status) for the date
 **And** subtracts booked tables from table groups
 **And** returns available 15-minute slots within opening hours
 
@@ -611,7 +611,7 @@ So that my table is reserved.
 
 **Given** the details form
 **When** the diner submits with valid data
-**Then** a booking document is created in Firestore with status "confirmed"
+**Then** a booking document is created in Firestore with status "confirmed" and a matching non-PII `bookings-public` projection is created in the same batch (AD-14)
 **And** the confirmation step loads
 
 **Given** the confirmation step
@@ -671,43 +671,44 @@ So that the booking flow feels polished and reliable.
 
 Restaurant owner can view today's bookings in real-time and manage all restaurant settings from the dashboard.
 
-### Story 3.1: Dashboard Layout & Sidebar
+### Story 3.1: Dashboard Shell Polish — Sign Out, Responsive, Styling
 
 As a restaurant owner,
-I want a dashboard with sidebar navigation and sign out,
-So that I can access all management sections.
+I want a dashboard that is polished, responsive, and lets me sign out,
+So that I can use the dashboard comfortably on any device and end my session securely.
+
+**Note:** The dashboard shell, 240px sidebar with all nav items (Bookings, Info, Hours, Tables, Branding, Booking Link, Account), icons, and sage-green active state were already built in Story 1.7 (`src/dashboard/shell/dashboard-shell.component.ts`, `dashboard-sidebar.component.ts`). This story delivers the remaining polish: sign-out, narrow-viewport collapse, and the DESIGN.md styling pass. It must not rebuild the shell or duplicate 1.7's sidebar ACs.
 
 **Acceptance Criteria:**
-
-**Given** an authenticated restaurant owner
-**When** they load the dashboard
-**Then** a sidebar (240px) is displayed on the left
-**And** the main content area fills the remaining width
-
-**Given** the sidebar
-**When** it loads
-**Then** nav items are displayed: Bookings, Restaurant Info, Opening Hours, Table Groups, White Label, Booking Link, Account
-**And** each item has an icon and label
-**And** the active item has a sage green left border
-
-**Given** the sidebar
-**When** the owner clicks a nav item
-**Then** the corresponding settings page is displayed in the main content area
-**And** the active state updates
 
 **Given** the sidebar
 **When** the owner clicks "Sign Out"
 **Then** they are signed out from Firebase Auth
 **And** redirected to the login page
 
-**Given** the dashboard
+**Given** the sidebar
 **When** it loads on a narrow viewport (< 768px)
 **Then** the sidebar collapses to icons only
 **And** the main content area fills the width
 
+**Given** the sidebar
+**When** it is collapsed to icons only
+**Then** each nav item shows its icon with a tooltip/aria-label
+**And** the active item keeps the sage green left border
+
 **Given** the dashboard
-**When** it loads
+**When** it loads on any viewport
 **Then** the styling matches DESIGN.md (warm linen background, sidebar with hairline border, Inter font)
+
+**Given** the dashboard shell
+**When** the owner views the sidebar
+**Then** the Deploy nav item is renamed "Booking Link" per the 2026-08-14 public-booking-page pivot
+**And** the sidebar matches the section set in 1.7 (Bookings, Info, Hours, Tables, Branding, Booking Link, Account)
+
+**Given** the dashboard
+**When** each management section has a route (built in stories 3.2–3.7)
+**Then** the sidebar nav items link to those routes
+**And** the active state updates to the current section
 
 ---
 

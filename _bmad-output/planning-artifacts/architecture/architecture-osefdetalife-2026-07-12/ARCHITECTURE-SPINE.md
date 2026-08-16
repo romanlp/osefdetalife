@@ -106,12 +106,12 @@ companions: []
 - **Prevents:** multi-location complexity
 - **Rule:** Single restaurant per auth account. Multi-location deferred to next version.
 
-### AD-14 — Public Booking Availability Read
+### AD-14 — Public Booking Availability Read (public projection)
 
-- **Binds:** booking availability calculation, security rules
+- **Binds:** booking availability calculation, security rules, booking data model
 - **Prevents:** owner-only booking reads blocking the public booking page's availability calc
-- **Rule:** Bookings are readable without authentication only when the query filters by both `date` and `partySize`, and only for the availability calculation on the public booking page. Firestore rules must validate that both fields are present in the query.
-- **Security:** Medium risk — unauthenticated booking reads are exposed; mitigated by restricting reads to filter-only queries validated by the rules.
+- **Rule:** Availability reads happen against a public projection subcollection `restaurants/{restaurantId}/bookings-public/{bookingId}`, written in the same batch as the full booking. The projection stores only non-PII fields — `date`, `time`, `partySize`, `status` — and is publicly readable (`allow read: if true`). Full bookings remain owner-only-read and hold diner PII (`name`, `email`, `customFieldValue`). Rules reject PII fields on the projection (`!('name' in data) && !('email' in data) && !('customFieldValue' in data)`). Owner cancellation updates both documents.
+- **Security:** Low-medium risk — the public surface contains no diner PII, so unauthenticated reads of `bookings-public` expose only availability data. Cross-restaurant enumeration is limited to date/time/partySize metadata. Firestore rules cannot validate query filters, so "filter-only reads" are enforced structurally (PII simply never lives on the readable document) instead of via rules.
 
 ## Consistency Conventions
 
