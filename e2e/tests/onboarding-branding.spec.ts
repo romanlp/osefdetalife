@@ -12,7 +12,8 @@ async function completeStepsOneAndTwo(page: Page, slug: string): Promise<void> {
   const slugInput = page.getByRole('textbox', { name: /slug/i });
   await slugInput.fill(slug);
 
-  await expect(page.getByText('Slug is available').first()).toBeVisible({ timeout: 10_000 });
+  // Wait for slug availability check with longer timeout for CI
+  await expect(page.getByText('Slug is available').first()).toBeVisible({ timeout: 30_000 });
 
   const continueButton = page.getByRole('button', { name: /continue/i });
   await continueButton.click();

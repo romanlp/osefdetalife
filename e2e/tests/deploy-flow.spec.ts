@@ -50,7 +50,7 @@ test.describe('Deploy Flow', () => {
     }
   });
 
-  test('[P0] Deploy page shows embed code with the restaurant slug and widget bundle', async ({
+  test('[P0] Deploy page shows booking link with the restaurant slug', async ({
     page,
     onboardedUser,
   }) => {
@@ -58,11 +58,21 @@ test.describe('Deploy Flow', () => {
     await signInAsOnboardedOwner(page, onboardedUser.userData);
     await goToDeployPage(page);
 
-    const embed = page.getByTestId('embed-code');
-    await expect(embed).toBeVisible();
-    await expect(embed).toContainText('<script');
-    await expect(embed).toContainText('booking-widget.mjs');
-    await expect(embed).toContainText(`<booking-widget restaurant="${slug}"></booking-widget>`);
+    const bookingLink = page.getByTestId('booking-link');
+    await expect(bookingLink).toBeVisible();
+    await expect(bookingLink).toHaveValue(new RegExp(`/book/${slug}$`));
+  });
+
+  test('[P0] Deploy page shows QR code for the booking link', async ({
+    page,
+    onboardedUser,
+  }) => {
+    await signInAsOnboardedOwner(page, onboardedUser.userData);
+    await goToDeployPage(page);
+
+    const qrImg = page.locator('img[alt="QR code for your booking link"]');
+    await expect(qrImg).toBeVisible();
+    await expect(qrImg).toHaveAttribute('src', /api\.qrserver\.com/);
   });
 
   test('[P0] clicking the copy button shows the "Copied!" confirmation', async ({ page, onboardedUser }) => {
@@ -74,23 +84,19 @@ test.describe('Deploy Flow', () => {
     await expect(page.getByTestId('copied-message')).toHaveText('Copied!');
   });
 
-  test('[P0] demo link opens in a new tab and carries the restaurant slug', async ({ page, onboardedUser }) => {
+  test('[P0] preview button opens booking page in new tab', async ({ page, onboardedUser }) => {
     const slug = await getRestaurantSlug(onboardedUser);
     await signInAsOnboardedOwner(page, onboardedUser.userData);
     await goToDeployPage(page);
 
-    const demoLink = page.getByTestId('demo-link');
-    await expect(demoLink).toBeVisible();
-    await expect(demoLink).toHaveAttribute('href', new RegExp(`/assets/demo\\.html\\?slug=${slug}`));
-    await expect(demoLink).toHaveAttribute('target', '_blank');
-    await expect(demoLink).toHaveAttribute('rel', 'noopener');
-  });
+    const previewBtn = page.getByTestId('preview-button');
+    await expect(previewBtn).toBeVisible();
+    await expect(previewBtn).toHaveText('Preview booking page');
 
-  test('[P1] demo page renders a booking-widget element for the restaurant slug', async ({ page, onboardedUser }) => {
-    const slug = await getRestaurantSlug(onboardedUser);
-
-    await page.goto(`/assets/demo.html?slug=${slug}`);
-
-    await expect(page.locator('booking-widget')).toBeVisible({ timeout: 10_000 });
+    const [newPage] = await Promise.all([
+      page.waitForEvent('popup'),
+      previewBtn.click(),
+    ]);
+    await expect(newPage).toHaveURL(new RegExp(`/book/${slug}`));
   });
 });
