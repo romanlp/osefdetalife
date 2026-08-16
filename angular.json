@@ -45,12 +45,7 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",
-              "src/assets",
-              {
-                "glob": "**/*",
-                "input": "build/widget",
-                "output": "/widget"
-              }
+              "src/assets"
             ],
             "styles": [
               "src/styles.scss"

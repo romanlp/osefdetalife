@@ -63,8 +63,13 @@ service cloud.firestore {
         allow delete: if isOwner(restaurantId);
       }
 
-      // Bookings — unauthenticated create with validation, owner read
+      // Bookings — unauthenticated create with validation, owner read, public availability read (AD-14)
       match /bookings/{bookingId} {
+        // AD-14: Public booking page needs unauthenticated read for availability calculation
+        // Only allowed when query filters by BOTH date and partySize
+        allow read: if request.auth == null
+                      && request.query.date != null
+                      && request.query.partySize != null;
         allow read: if isOwner(restaurantId);
         allow create: if validateBookingData(request.resource.data)
                       && request.resource.data.restaurantId == restaurantId

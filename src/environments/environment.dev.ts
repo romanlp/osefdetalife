@@ -20,6 +20,5 @@ export const environment = {
   // Local dev toggle: `true` = use Firebase emulators (auth/firestore),
   // `false` = talk to the real Firebase project. CI uses environment.e2e.ts
   // (always emulators), production uses environment.prod.ts (never emulators).
-  useEmulators: false,
-  widgetBundleUrl: 'http://localhost:4210/widget/booking-widget.mjs'
+  useEmulators: false
 };
