@@ -1,7 +1,7 @@
 ---
 title: Restaurant Booking Platform
 created: 2026-07-12
-updated: 2026-07-13
+updated: 2026-08-14
 ---
 
 # PRD: Restaurant Booking Platform
@@ -11,17 +11,17 @@ updated: 2026-07-13
 This PRD is for the product manager, architect, and downstream workflow owners (UX, dev, QA). It's structured with Glossary-anchored vocabulary, features grouped with FRs nested, assumptions tagged inline and indexed. This PRD builds on the Product Brief and Architecture Spine, it does not duplicate them.
 
 ## 1. Vision
-A white-label, embeddable booking widget for small independent restaurants in the United Kingdom. The widget renders on the restaurant's own website via a script tag, letting diners book tables without leaving the restaurant's site. Restaurants manage bookings from a simple Angular dashboard.
+A white-label public booking page for small independent restaurants in the United Kingdom. Each restaurant gets a first-party public booking page at `/book/{slug}`, letting diners book tables directly on the platform. Restaurants manage bookings from a simple Angular dashboard.
 
-The platform targets small restaurants (~50 covers) who want to take online bookings without paying per-cover commissions to platforms like OpenTable. A flat monthly subscription fee makes costs predictable. The widget is fully white-labeled — it appears as part of the restaurant's website, with customizable colors and optional custom fields.
+The platform targets small restaurants (~50 covers) who want to take online bookings without paying per-cover commissions to platforms like OpenTable. A flat monthly subscription fee makes costs predictable. The public booking page is fully white-labeled — it carries the restaurant's brand with customizable colors and optional custom fields.
 
-For MVP, the system provides: a diner-facing booking widget (landing → party size → date → time → details → confirmation), a restaurant-facing dashboard (settings + read-only booking list), and a guided onboarding flow. No integrations, no payments, no AI — just a simple, beautiful booking experience.
+For MVP, the system provides: a diner-facing public booking page (landing → party size → date → time → details → confirmation), a restaurant-facing dashboard (settings + read-only booking list), and a guided onboarding flow. No integrations, no payments, no AI — just a simple, beautiful booking experience.
 
 ## 2. Target User
 
 ### 2.1 Jobs To Be Done
 - **Restaurant Owner:** "I want to take online bookings without paying per-cover fees, so I can focus on cooking, not logistics."
-- **Restaurant Owner:** "I want a booking widget that looks like part of my website, so diners trust the experience."
+- **Restaurant Owner:** "I want a public booking page that carries my brand, so diners trust the experience."
 - **Restaurant Owner:** "I want to see today's bookings at a glance, so I can prepare for service."
 - **Diner:** "I want to book a table quickly, without creating an account, so I can get on with my day."
 - **Diner:** "I want to see available times for my party size, so I can choose what works best."
@@ -34,20 +34,20 @@ For MVP, the system provides: a diner-facing booking widget (landing → party s
 
 ### 2.3 Key User Journeys
 
-- **UJ-1. Diner books a table via the widget.**
-  - **Persona + context:** Alex, a diner visiting a restaurant's website to book dinner for 4.
-  - **Entry state:** On restaurant's website, clicks "Book a Table" button.
-  - **Path:** Widget opens → selects party size (4) → sees available time slots for today → selects 19:00 → fills name + email → submits.
+- **UJ-1. Diner books a table via the public booking page.**
+  - **Persona + context:** Alex, a diner opening a restaurant's booking link to book dinner for 4.
+  - **Entry state:** Opens the shared booking link to the restaurant's public booking page at `/book/{slug}`.
+  - **Path:** Booking page opens → selects party size (4) → picks today's date → sees available time slots for that date → selects 19:00 → fills name + email → submits.
   - **Climax:** Confirmation screen shows booking details. Diner knows the table is reserved.
-  - **Resolution:** Diner receives confirmation (displayed on screen). Widget closes or stays open for another booking.
-  - **Edge case:** No availability for party of 4 today. Widget shows next available date.
+  - **Resolution:** Diner receives confirmation (displayed on screen). Page stays open for another booking.
+  - **Edge case:** No availability for party of 4 today. Booking page shows next available date.
 
 - **UJ-2. Restaurant owner sets up their account.**
   - **Persona + context:** Maria, a restaurant owner who wants to start taking online bookings.
   - **Entry state:** On platform website, clicks "Sign Up".
   - **Path:** Creates account (email/password or Google) → onboarding wizard guides through: restaurant name, slug, address, opening hours, table groups, colors, custom field → completes setup.
-  - **Climax:** Dashboard shows empty booking list. Embed code page provides the script tag. Maria copies the code.
-  - **Resolution:** Maria pastes embed code into her website. Widget is live. She can now see bookings in the dashboard.
+  - **Climax:** Dashboard shows empty booking list. Booking link page shows the restaurant's booking link and QR code. Maria copies the link.
+  - **Resolution:** Maria shares her booking link with diners. The public booking page is live at `/book/{slug}`. She can now see bookings in the dashboard.
   - **Edge case:** Maria skips optional steps (colors, custom field) and completes them later in Settings.
 
 - **UJ-3. Restaurant owner checks today's bookings.**
@@ -56,15 +56,15 @@ For MVP, the system provides: a diner-facing booking widget (landing → party s
   - **Path:** Dashboard loads → shows today's bookings by default → Maria sees list of bookings with times, party sizes, names.
   - **Climax:** Maria knows exactly what to expect for tonight's service.
   - **Resolution:** Maria closes dashboard. Bookings are confirmed, no action needed.
-  - **Edge case:** No bookings today. Dashboard shows empty state with encouragement to share the widget.
+  - **Edge case:** No bookings today. Dashboard shows empty state with encouragement to share the booking link.
 
 ## 3. Glossary
 - **Table Group** — A set of identical tables (e.g., "3 × four-tops"). The basic unit for availability calculation. Cardinality: restaurant has 1+ table groups.
-- **Slug** — URL-safe unique identifier for a restaurant (e.g., "the-blue-bistro"). Used in widget embed and URL resolution. One per restaurant.
+- **Slug** — URL-safe unique identifier for a restaurant (e.g., "the-blue-bistro"). Used in the public booking page URL (`/book/{slug}`) and URL resolution. One per restaurant.
 - **Compute-on-Read** — Availability calculated at query time by checking existing bookings against table groups. No pre-computed slots stored.
 - **15-Minute Slot** — Time granularity for available booking times (e.g., 18:00, 18:15, 18:30, 18:45).
-- **White-Label** — Widget renders under restaurant's brand (colors, name) with no platform branding visible to diners.
-- **Embed Code** — HTML snippet restaurant adds to their website: `<script>` tag + `<booking-widget>` custom element.
+- **White-Label** — Public booking page renders under restaurant's brand (colors, name) with no platform branding visible to diners.
+- **Booking Link** — Shareable URL to a restaurant's public booking page at `/book/{slug}`, paired with a QR code. Diners open the link to book directly on the platform.
 - **Onboarding Wizard** — Guided setup flow after sign up, walking restaurant through all configurable settings.
 - **Restaurant Profile** — Firestore document containing restaurant metadata (name, slug, address, colors, custom field).
 - **Booking Status** — Current state of a booking: `confirmed` (default) or `cancelled`. Read-only in MVP dashboard.
@@ -72,19 +72,19 @@ For MVP, the system provides: a diner-facing booking widget (landing → party s
 
 ## 4. Features
 
-### 4.1 Booking Widget (Diner-Facing)
-**Description:** An embeddable Web Component that renders on the restaurant's website. Diners go through a multi-step flow: landing → party size → date → time → details → confirmation. The widget is white-labeled with restaurant colors. Realizes UJ-1, UJ-3.
+### 4.1 Public Booking Page (Diner-Facing)
+**Description:** A first-party public booking page that renders at `/book/{slug}`. Diners go through a multi-step flow: landing → party size → date → time → details → confirmation. The booking page is white-labeled with restaurant colors. Realizes UJ-1.
 
 **Functional Requirements:**
 
-#### FR-1: Widget Landing
-Widget renders as `<booking-widget>` custom element. Shows restaurant name and address (if configured) on landing step with "Book now" button. Realizes UJ-1.
+#### FR-1: Booking Page Landing
+Booking page renders at `/book/{slug}`. Shows restaurant name and address (if configured) on landing step with "Book a Table" button. Realizes UJ-1.
 
 **Consequences (testable):**
-- System renders as custom element via embed code.
+- System renders the public booking page at `/book/{slug}`.
 - System displays restaurant name from restaurant profile.
 - System displays address if configured (hidden if not).
-- System shows "Book now" button to start booking flow.
+- System shows "Book a Table" button to start booking flow.
 
 #### FR-2: Party Size Selection
 Party size selector shows options 1-8. Party size is required before proceeding. Realizes UJ-1.
@@ -104,13 +104,13 @@ Calendar shows only dates where restaurant is open (based on hours config). Clos
 - System limits selection to current date and future dates.
 
 #### FR-4: Time Selection
-Time picker shows available 15-minute slots for selected party size and date. If no availability, show "No availability for this date" message. Realizes UJ-1.
+Time picker shows available 15-minute slots for selected party size and date. If no availability, show "No available times for this date" message. Realizes UJ-1.
 
 **Consequences (testable):**
 - System queries bookings for the selected date and party size.
 - System calculates availability by subtracting booked tables from table groups.
 - System returns available slots in 15-minute increments within opening hours.
-- System displays "No availability for this date" when no slots available.
+- System displays "No available times for this date" when no slots available.
 
 #### FR-5: Booking Details Form
 Details form shows: Name (required), Email (required), Custom field (optional, label set by restaurant). If custom field not configured, field is not visible. Realizes UJ-1.
@@ -155,20 +155,20 @@ Invalid slug: "Restaurant not found" message. Firebase down: "Something went wro
 - System allows retry on transient errors.
 
 #### FR-10: Responsive Design
-Widget adapts to mobile and desktop. Fixed width, full width of container. Realizes UJ-1.
+Booking page adapts to mobile and desktop. Full viewport width. Realizes UJ-1.
 
 **Consequences (testable):**
 - System adapts layout for mobile and desktop screens.
-- System uses fixed width within container.
+- System uses full viewport width.
 - System maintains usability on touch devices.
 
-#### FR-11: Demo Page
-Project includes a standalone HTML page that embeds the widget for development and testing. Page allows entering a restaurant slug and renders the widget. Realizes UJ-1.
+#### FR-11: In-App Preview
+Dashboard includes an in-app preview of the booking page. Preview renders the booking page for the restaurant's slug. Realizes UJ-1.
 
 **Consequences (testable):**
-- System provides standalone HTML page for widget testing.
-- System allows entering a restaurant slug.
-- System renders widget with the entered slug.
+- System provides an in-app preview of the booking page.
+- System allows previewing the booking page for a restaurant slug.
+- System renders the booking page with the restaurant's configuration.
 
 ### 4.2 Restaurant Dashboard (Restaurant-Facing)
 **Description:** An Angular web app where restaurant owners manage settings and view bookings. Dashboard shows today's bookings by default with a date picker to navigate. Settings pages allow configuration of restaurant info, table groups, white-label colors, and account. Realizes UJ-2, UJ-3.
@@ -202,7 +202,7 @@ When no bookings for selected date, show "No bookings for this date" message. Re
 - System maintains date picker usability in empty state.
 
 ##### FR-15: Real-Time Updates
-Bookings appear in dashboard immediately when created via widget (no refresh required). Realizes UJ-3.
+Bookings appear in dashboard immediately when created via the public booking page (no refresh required). Realizes UJ-3.
 
 **Consequences (testable):**
 - System listens for Firestore real-time updates.
@@ -230,7 +230,7 @@ Restaurant owner can set open/close times for each day of week. Each day can be 
 - System saves hours to Firestore.
 
 ##### FR-18: Edit Address
-Restaurant owner can update address. Displayed on widget landing page. Realizes UJ-2.
+Restaurant owner can update address. Displayed on the booking page landing step. Realizes UJ-2.
 
 **Consequences (testable):**
 - System displays current address in text input.
@@ -275,23 +275,23 @@ Restaurant owner can delete a table group. Existing bookings for that capacity a
 #### Settings — White Label
 
 ##### FR-23: Set Primary Color
-Restaurant owner can set primary color (hex picker). Applied to widget accent elements. Realizes UJ-2.
+Restaurant owner can set primary color (hex picker). Applied to booking page accent elements. Realizes UJ-2.
 
 **Consequences (testable):**
 - System displays hex color picker for primary color.
-- System applies primary color to widget accent elements.
+- System applies primary color to booking page accent elements.
 - System saves color to restaurant profile.
 
 ##### FR-24: Set Secondary Color
-Restaurant owner can set secondary color (hex picker). Applied to widget secondary elements. Realizes UJ-2.
+Restaurant owner can set secondary color (hex picker). Applied to booking page secondary elements. Realizes UJ-2.
 
 **Consequences (testable):**
 - System displays hex color picker for secondary color.
-- System applies secondary color to widget secondary elements.
+- System applies secondary color to booking page secondary elements.
 - System saves color to restaurant profile.
 
 ##### FR-25: Configure Custom Field
-Restaurant owner can set: label (text), required (toggle), enabled (toggle). If disabled, field is not shown on widget. Realizes UJ-2.
+Restaurant owner can set: label (text), required (toggle), enabled (toggle). If disabled, field is not shown on the booking page. Realizes UJ-2.
 
 **Consequences (testable):**
 - System displays label input for custom field.
@@ -319,7 +319,7 @@ Sign out button in header/nav. Returns to login page. Realizes UJ-2.
 - System redirects to login page.
 
 ### 4.3 Restaurant Onboarding
-**Description:** A guided setup flow that walks restaurant owners through all configurable settings after sign up. Includes account creation (email/password or Google), onboarding wizard, and embed code deployment page. Realizes UJ-2.
+**Description:** A guided setup flow that walks restaurant owners through all configurable settings after sign up. Includes account creation (email/password or Google), onboarding wizard, and booking link deployment page. Realizes UJ-2.
 
 **Functional Requirements:**
 
@@ -432,31 +432,31 @@ After wizard completes, restaurant owner is redirected to dashboard. Realizes UJ
 **Consequences (testable):**
 - System marks onboarding as complete in restaurant profile.
 - System redirects to dashboard.
-- System makes widget live with configured slug.
+- System makes the public booking page live at `/book/{slug}`.
 
-#### FR-41: Embed Code Page
-Dashboard includes a "Deploy" page showing embed code snippet. Realizes UJ-2.
-
-**Consequences (testable):**
-- System displays embed code with script tag + custom element.
-- System includes restaurant slug in embed code.
-- System provides link to demo page for testing.
-
-#### FR-42: Copy Embed Code
-One-click copy button for embed code. Realizes UJ-2.
+#### FR-41: Booking Link Page
+Dashboard includes a "Booking Link" page showing the restaurant's booking link and QR code. Realizes UJ-2.
 
 **Consequences (testable):**
-- System provides copy button next to embed code.
-- System copies code to clipboard on click.
+- System displays the booking link for the restaurant's slug.
+- System includes the restaurant slug in the booking link.
+- System provides a link to preview the booking page.
+
+#### FR-42: Copy Booking Link
+One-click copy button for the booking link. Realizes UJ-2.
+
+**Consequences (testable):**
+- System provides copy button next to the booking link.
+- System copies the link to clipboard on click.
 - System shows confirmation message on copy.
 
-#### FR-43: Demo Page Link
-Embed code page includes link to demo page. Realizes UJ-2.
+#### FR-43: Preview Booking Page
+Booking link page includes an in-app preview of the booking page. Realizes UJ-2.
 
 **Consequences (testable):**
-- System provides link to demo page.
-- System opens demo page in new tab.
-- System shows widget rendering with restaurant's configuration.
+- System provides an in-app preview of the booking page.
+- System opens the preview within the dashboard.
+- System shows the booking page rendering with restaurant's configuration.
 
 ### 4.4 Firebase Infrastructure
 **Description:** Backend layer using Firebase services. Firestore for data storage, Firebase Auth for authentication, Security Rules for access control. Direct client-side access (no API layer). Realizes all user journeys.
@@ -568,16 +568,16 @@ System enforces unique slugs across all restaurants. Realizes UJ-2.
 ## 6. MVP Scope
 
 ### 6.1 In Scope
-- Diner-facing booking widget (Web Component, Shadow DOM)
+- Diner-facing public booking page (`/book/{slug}`)
 - Restaurant-facing dashboard (Angular)
 - Guided onboarding wizard
 - Table groups for availability
 - 15-minute time slots
 - Auto-confirm bookings
 - White-label customization (colors, custom field)
-- Slug-based widget deployment
+- Slug-based booking page deployment
 - Firebase backend (Firestore, Auth, Security Rules)
-- Responsive design (mobile widget, desktop dashboard)
+- Responsive design (mobile booking page, desktop dashboard)
 - WCAG 2.1 AA accessibility
 
 ### 6.2 Out of Scope for MVP
@@ -595,12 +595,12 @@ System enforces unique slugs across all restaurants. Realizes UJ-2.
 ## 7. Success Metrics
 
 **Primary**
-- **SM-1:** Widget load time < 2 seconds — validates FR-1 through FR-11.
+- **SM-1:** Booking page load time < 2 seconds — validates FR-1 through FR-10.
 - **SM-2:** Booking completion rate > 80% — validates FR-1 through FR-5.
 - **SM-3:** Onboarding completion time < 10 minutes — validates FR-31 through FR-40.
 
 **Secondary**
-- **SM-4:** 5 restaurants embed widget in first month — validates FR-41 through FR-43.
+- **SM-4:** 5 restaurants share their booking link in first month — validates FR-41 through FR-43.
 - **SM-5:** 50 bookings per restaurant per month (steady state) — validates FR-1 through FR-5.
 
 **Counter-metrics (do not optimize)**
@@ -620,7 +620,7 @@ System enforces unique slugs across all restaurants. Realizes UJ-2.
 - Product name: TBD — brainstorming session planned later.
 - Timeline: side project, ~30 hours to MVP, no fixed deadline.
 - Pricing: monthly subscription fee (amount TBD), no per-cover commission.
-- Tech stack: Angular 22+, Firebase, Web Components, Vite, TypeScript 7.x.
+- Tech stack: Angular 22+, Firebase, TypeScript 7.x.
 - Architecture: Serverless, direct Firebase from browser, no API layer.
 - Target market: UK, small restaurants (~50 covers), single location or small chain (1-4 locations).
 - User: Expert skill level, solo project, low budget for hosting.

@@ -4,11 +4,11 @@ type: architecture-spine
 purpose: build-substrate
 altitude: feature
 paradigm: 'serverless-event-driven'
-scope: 'MVP booking widget + dashboard'
+scope: 'MVP public booking page + dashboard'
 status: final
 created: '2026-07-12'
-updated: '2026-07-12'
-binds: ['widget', 'dashboard', 'firestore', 'firebase-auth']
+updated: '2026-08-14'
+binds: ['booking-page', 'dashboard', 'firestore', 'firebase-auth']
 sources: ['brief-osefdetalife-2026-07-12']
 companions: []
 ---
@@ -17,29 +17,29 @@ companions: []
 
 ## Design Paradigm
 
-**Serverless-event-driven** on Firebase. No servers to manage, no infrastructure to provision. The widget and dashboard are static assets; all logic runs in the browser or in Firestore Security Rules. The system scales automatically with Firebase.
+**Serverless-event-driven** on Firebase. No servers to manage, no infrastructure to provision. The booking page and dashboard are part of a single Angular app; all logic runs in the browser or in Firestore Security Rules. The system scales automatically with Firebase.
 
 **Layers:**
 
-- **Presentation:** Web Component (widget) + Angular SPA (dashboard)
+- **Presentation:** Angular SPA (public booking page + dashboard)
 - **Data:** Firestore (NoSQL document database)
 - **Auth:** Firebase Auth (email/password + Google OAuth)
-- **Deployment:** Firebase Hosting (dashboard) + CDN (widget script)
+- **Deployment:** Firebase Hosting (single app: booking page + dashboard)
 
 ## Invariants & Rules
 
-### AD-1 — Widget Deployment via Script Tag
+### AD-1 — Public Booking Route
 
-- **Binds:** widget, deployment
+- **Binds:** booking-page, deployment
 - **Prevents:** npm package or iframe approaches
-- **Rule:** Widget renders as a custom element (`<booking-widget>`) on any website. Restaurant adds `<script src="...">` and `<booking-widget restaurant="slug"></booking-widget>` to their page.
+- **Rule:** The public booking page renders at `/book/{slug}` within the Angular app. Restaurants share the booking link (and QR code) with diners; no embedding of code is required.
 
 ### AD-2 — Direct Firebase from Browser
 
-- **Binds:** all data access (widget + dashboard)
+- **Binds:** all data access (booking page + dashboard)
 - **Prevents:** API layer overhead, server-side complexity
-- **Rule:** Widget and dashboard use Firebase client SDK directly. Firestore Security Rules enforce access control. No Cloud Functions for MVP.
-- **Security rules:** Unauthenticated writes scoped to `create` only on `bookings`. Rules must validate that `restaurantId` in booking writes references an existing restaurant document. Widget and dashboard rule sets must be authored together, not independently.
+- **Rule:** Booking page and dashboard use Firebase client SDK directly. Firestore Security Rules enforce access control. No Cloud Functions for MVP.
+- **Security rules:** Unauthenticated writes scoped to `create` only on `bookings`. Rules must validate that `restaurantId` in booking writes references an existing restaurant document. Booking page and dashboard rule sets must be authored together, not independently.
 
 ### AD-3 — Firebase Auth with Email/Password + Google Sign-In
 
@@ -47,11 +47,7 @@ companions: []
 - **Prevents:** passwordless or other auth providers
 - **Rule:** Dashboard auth uses Firebase Auth. Supports email/password and Google OAuth. Restaurant owner profile stored in Firestore.
 
-### AD-4 — Web Components with Shadow DOM for Widget
-
-- **Binds:** widget rendering
-- **Prevents:** style conflicts with host page
-- **Rule:** Widget renders as custom element with Shadow DOM isolation. Host page CSS cannot affect widget styling. Widget CSS cannot affect host page.
+> **AD-4 (Web Components with Shadow DOM for Widget)** — removed by the 2026-08-14 public-booking-page pivot. White-label theming of the booking page via CSS custom properties is still required (UX-DR1, Story 2.1).
 
 ### AD-5 — Compute on Read for Availability
 
@@ -59,7 +55,7 @@ companions: []
 - **Prevents:** pre-computed slot storage
 - **Rule:** Availability calculated by querying all bookings for a date, subtracting from table groups. 15-minute time slots generated dynamically.
 - **Duration:** Each booking occupies its table for a restaurant-configurable duration (default 2 hours). The `duration` field (in minutes) is stored on the BOOKING document.
-- **Timezone:** All dates and times are in the restaurant's configured IANA timezone (stored on the RESTAURANT document as `timezone: string`). The widget converts the diner's local time to the restaurant's timezone before querying.
+- **Timezone:** All dates and times are in the restaurant's configured IANA timezone (stored on the RESTAURANT document as `timezone: string`). The booking page converts the diner's local time to the restaurant's timezone before querying.
 
 ### AD-6 — No Table Splitting
 
@@ -81,16 +77,16 @@ companions: []
 
 ### AD-9 — Restaurant Slug for Identification
 
-- **Binds:** widget deployment
+- **Binds:** booking page route
 - **Prevents:** UUID-based identification
-- **Rule:** Each restaurant has a unique slug. Used in widget embed: `<booking-widget restaurant="the-blue-bistro">`.
+- **Rule:** Each restaurant has a unique slug. Used in the public booking page route: `/book/{slug}`.
 - **Lookup:** Slug resolution uses a collection query on the `slug` field, not the document ID. Firestore rules enforce slug uniqueness via a `slugs/{slug}` lookup document.
 
-### AD-10 — Widget Flow: Party Size → Times → Date → Details → Confirmation
+### AD-10 — Booking Flow: Party Size → Date → Times → Details → Confirmation
 
-- **Binds:** widget UX
+- **Binds:** booking page UX
 - **Prevents:** date-first flow
-- **Rule:** Diner selects party size first, then sees available times for that party size. Calendar shows all operating dates.
+- **Rule:** Diner selects party size first, then picks a date, then sees available times for that party size. Calendar shows all operating dates.
 
 ### AD-11 — Dashboard: Today's Bookings + Date Picker
 
@@ -109,6 +105,13 @@ companions: []
 - **Binds:** account model
 - **Prevents:** multi-location complexity
 - **Rule:** Single restaurant per auth account. Multi-location deferred to next version.
+
+### AD-14 — Public Booking Availability Read
+
+- **Binds:** booking availability calculation, security rules
+- **Prevents:** owner-only booking reads blocking the public booking page's availability calc
+- **Rule:** Bookings are readable without authentication only when the query filters by both `date` and `partySize`, and only for the availability calculation on the public booking page. Firestore rules must validate that both fields are present in the query.
+- **Security:** Medium risk — unauthenticated booking reads are exposed; mitigated by restricting reads to filter-only queries validated by the rules.
 
 ## Consistency Conventions
 
@@ -129,30 +132,26 @@ companions: []
 
 | Name | Version | Purpose |
 | --- | --- | --- |
-| Angular | 22+ | Dashboard SPA |
-| Firebase Hosting | — | Dashboard deployment |
+| Angular | 22+ | App (public booking page + dashboard) |
+| Firebase Hosting | — | App deployment |
 | Firestore | — | Primary database |
 | Firebase Auth | — | Authentication |
-| Web Components | v1 | Widget rendering (Custom Elements + Shadow DOM) |
-| TypeScript | 7.x | Language for both widget and dashboard |
-| Vite | — | Widget build tool (lightweight, fast) |
+| TypeScript | 7.x | Language for the single Angular app |
 
 ## Structural Seed
 
 ```text
 src/
-  widget/                    # Embeddable booking widget (Web Component)
-    booking-widget.ts        # Custom element definition
-    components/              # Widget UI components
-    styles/                  # Shadow DOM styles
-    firebase.ts              # Firebase client config for widget
-  dashboard/                 # Restaurant management dashboard (Angular)
-    app/
-      components/            # Angular components
-      services/              # Angular services
-      pages/                 # Route-level components
-    environments/            # Firebase config per env
-  shared/                    # Shared types and utilities
+  booking/                   # Public booking page (unauthenticated; /book/{slug})
+    components/
+    services/
+    pages/
+  dashboard/                 # Restaurant management dashboard (authenticated)
+    components/
+    services/
+    pages/
+  environments/              # Firebase config per env
+  shared/                    # Shared between booking page and dashboard
     types/                   # TypeScript interfaces
     firebase-config.ts       # Shared Firebase initialization
 ```
@@ -201,7 +200,7 @@ erDiagram
 ```mermaid
 graph TB
     subgraph "Diner's Browser"
-        W[Booking Widget<br/>Web Component]
+        BP[Public Booking Page<br/>/book/{slug}]
     end
 
     subgraph "Restaurant Owner's Browser"
@@ -214,15 +213,10 @@ graph TB
         FH[Firebase Hosting]
     end
 
-    subgraph "Restaurant's Website"
-        HW[Host Page<br/>WordPress/etc]
-    end
-
-    HW -->|embeds| W
-    W -->|reads/writes| FS
-    W -->|auth| FA
+    BP -->|reads/writes| FS
     D -->|reads/writes| FS
     D -->|auth| FA
+    BP -->|deployed on| FH
     D -->|deployed on| FH
 ```
 
@@ -230,8 +224,8 @@ graph TB
 
 | Capability | Lives in | Governed by |
 | --- | --- | --- |
-| Diner booking flow | widget/ | AD-1, AD-4, AD-10 |
-| Availability calculation | widget/ + Firestore | AD-5, AD-6 |
+| Diner booking flow | booking page (src/booking/) | AD-1, AD-10 |
+| Availability calculation | booking page + Firestore | AD-5, AD-6, AD-14 |
 | Restaurant settings | dashboard/ | AD-3, AD-13 |
 | Booking list | dashboard/ | AD-11, AD-12 |
 | Auth (restaurant owner) | Firebase Auth + dashboard/ | AD-3 |

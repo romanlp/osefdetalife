@@ -124,9 +124,14 @@ describe('AuthService', () => {
       expect(result).toBe('An error occurred. Please try again');
     });
 
-    it('should return specific message for auth/user-not-found', () => {
+    it('should return generic message for auth/user-not-found (prevent enumeration)', () => {
       const result = service.getErrorMessage('auth/user-not-found');
-      expect(result).toBe('No account found with this email');
+      expect(result).toBe('If an account exists, a reset email has been sent');
+    });
+
+    it('should return generic message for auth/invalid-email (prevent enumeration)', () => {
+      const result = service.getErrorMessage('auth/invalid-email');
+      expect(result).toBe('If an account exists, a reset email has been sent');
     });
 
     it('should return specific message for auth/wrong-password', () => {

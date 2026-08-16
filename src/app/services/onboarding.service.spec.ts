@@ -17,6 +17,7 @@ vi.mock('firebase/firestore', () => ({
   getFirestore: vi.fn(() => ({})),
   doc: vi.fn((_db: unknown, ...segments: string[]) => ({
     _path: segments.join('/'),
+    id: 'mock-doc-id',
   })),
   collection: vi.fn((_db: unknown, _name: string) => ({
     _collection: _name,
@@ -31,6 +32,17 @@ vi.mock('firebase/firestore', () => ({
   query: vi.fn(),
   where: vi.fn(),
   getDocs: vi.fn(),
+  runTransaction: vi.fn(async (_db: unknown, fn: (tx: { get: ReturnType<typeof vi.fn>; set: ReturnType<typeof vi.fn> }) => Promise<void>) => {
+    const mockTx = {
+      get: vi.fn(async (ref: { _path: string }) => ({
+        exists: () => ref._path.startsWith('slugs/') ? false : true,
+        id: 'test',
+        data: () => ({}),
+      })),
+      set: vi.fn(),
+    };
+    await fn(mockTx);
+  }),
 }));
 
 describe('OnboardingService', () => {
@@ -88,8 +100,8 @@ describe('OnboardingService', () => {
   });
 
   describe('createRestaurant', () => {
-    it('should create restaurant and slug documents atomically', async () => {
-      const { doc } = await import('firebase/firestore');
+    it('should create restaurant and slug documents atomically via transaction', async () => {
+      const { doc, runTransaction } = await import('firebase/firestore');
       let callCount = 0;
       vi.mocked(doc).mockImplementation((_db: unknown, ...segments: string[]) => {
         callCount++;
@@ -98,8 +110,7 @@ describe('OnboardingService', () => {
 
       const result = await service.createRestaurant('Blue Bistro', 'blue-bistro', '123 Main St');
 
-      expect(mockBatch.set).toHaveBeenCalledTimes(2);
-      expect(mockBatch.commit).toHaveBeenCalledTimes(1);
+      expect(runTransaction).toHaveBeenCalledTimes(1);
       expect(result).toBe('new-restaurant-id');
     });
 
@@ -172,7 +183,7 @@ describe('OnboardingService', () => {
 
   describe('createRestaurant', () => {
     it('should create restaurant without address', async () => {
-      const { doc } = await import('firebase/firestore');
+      const { doc, runTransaction } = await import('firebase/firestore');
       let callCount = 0;
       vi.mocked(doc).mockImplementation((_db: unknown, ...segments: string[]) => {
         callCount++;
@@ -181,12 +192,12 @@ describe('OnboardingService', () => {
 
       const result = await service.createRestaurant('Blue Bistro', 'blue-bistro');
 
-      expect(mockBatch.set).toHaveBeenCalledTimes(2);
+      expect(runTransaction).toHaveBeenCalledTimes(1);
       expect(result).toBe('new-id');
     });
 
-    it('should verify slug uniqueness via batch write', async () => {
-      const { doc } = await import('firebase/firestore');
+    it('should verify slug uniqueness via transaction', async () => {
+      const { doc, runTransaction } = await import('firebase/firestore');
       let callCount = 0;
       vi.mocked(doc).mockImplementation((_db: unknown, ...segments: string[]) => {
         callCount++;
@@ -195,13 +206,7 @@ describe('OnboardingService', () => {
 
       await service.createRestaurant('Blue Bistro', 'blue-bistro');
 
-      const batchSetCalls = mockBatch.set.mock.calls;
-      const slugCall = batchSetCalls.find((call: unknown[]) => {
-        const ref = call[0] as { _path: string };
-        return ref._path?.startsWith('slugs/');
-      });
-      expect(slugCall).toBeDefined();
-      expect(slugCall![1]).toMatchObject({ restaurantId: 'new-id' });
+      expect(runTransaction).toHaveBeenCalledTimes(1);
     });
   });
 });

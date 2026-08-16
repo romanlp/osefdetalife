@@ -17,6 +17,5 @@ export const environment = {
   },
   recaptcha: '6LceYDslAAAAAIKVsZ4r0z3q96ZLnfcMB2S-mJ0W',
   appCheckToken: true,
-  useEmulators: true,
-  widgetBundleUrl: 'http://localhost:4200/widget/booking-widget.mjs'
+  useEmulators: true
 };

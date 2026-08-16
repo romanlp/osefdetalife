@@ -72,7 +72,7 @@ stepsCompleted:
 
 ## Functional Requirements Extracted
 
-FR1: Widget Landing — Shows restaurant name/address, "Book now" button
+FR1: Booking Page Landing — Shows restaurant name/address, "Book a Table" button at /book/{slug}
 FR2: Party Size Selection — Options 1-8, required before proceeding
 FR3: Date Selection — Calendar shows only open dates
 FR4: Time Selection — 15-minute slots, availability calculation
@@ -82,7 +82,7 @@ FR7: Back Navigation — All steps except landing, preserves selections
 FR8: Loading States — Spinner during transitions and data fetches
 FR9: Error Handling — Invalid slug, Firebase errors
 FR10: Responsive Design — Mobile and desktop
-FR11: Demo Page — Standalone HTML for development/testing
+FR11: In-App Preview — Dashboard preview of the booking page
 FR12: View Today's Bookings — Dashboard home shows today's bookings
 FR13: Navigate to Other Dates — Date picker with "Today" button
 FR14: Empty State — "No bookings for this date" message
@@ -112,9 +112,9 @@ FR37: Step 6 - White-Label Colors — Optional
 FR38: Step 7 - Custom Field — Optional
 FR39: Skip Optional Steps — Address, colors, custom field
 FR40: Onboarding Completion — Redirect to dashboard
-FR41: Embed Code Page — Script tag + custom element
-FR42: Copy Embed Code — One-click copy button
-FR43: Demo Page Link — Opens demo page in new tab
+FR41: Booking Link Page — Shows booking link and QR code
+FR42: Copy Booking Link — One-click copy button for booking link
+FR43: Preview Booking Page — Link to preview the booking page
 FR44: Restaurant Profile Data Model — Firestore document
 FR45: Table Groups Data Model — Subcollection
 FR46: Opening Hours Data Model — Record on restaurant document
@@ -190,7 +190,7 @@ FR50: Security rules: owner write ✓
 FR53: Slug uniqueness enforcement ✓
 **Epic 1 Total: 23 FRs**
 
-**Epic 2: Diner Booking Widget**
+**Epic 2: Public Booking Page**
 FR1: Widget landing ✓
 FR2: Party size selection ✓
 FR3: Date selection ✓
@@ -309,7 +309,7 @@ FR27: Sign out ✓
 
 | Requirement | UX Coverage | Status |
 |-------------|-------------|--------|
-| Widget landing | DESIGN.md: Widget container component | ✓ |
+| Booking page landing | DESIGN.md: Booking page container component | ✓ |
 | Party size selection | DESIGN.md: Party size grid, UX-DR2 | ✓ |
 | Date selection | DESIGN.md: Date calendar, UX-DR3 | ✓ |
 | Time selection | DESIGN.md: Time slot pills, UX-DR4 | ✓ |
@@ -318,7 +318,7 @@ FR27: Sign out ✓
 | Back navigation | EXPERIENCE.md: Back button pattern | ✓ |
 | Loading states | EXPERIENCE.md: State patterns | ✓ |
 | Error handling | EXPERIENCE.md: Error states | ✓ |
-| Responsive design | DESIGN.md: Widget container specs | ✓ |
+| Responsive design | DESIGN.md: Booking page container specs | ✓ |
 | Dashboard sidebar | DESIGN.md: Dashboard sidebar, UX-DR7 | ✓ |
 | Booking list | DESIGN.md: Booking row, UX-DR8 | ✓ |
 | Onboarding wizard | DESIGN.md: Onboarding card, UX-DR10 | ✓ |
@@ -331,13 +331,13 @@ FR27: Sign out ✓
 
 | UX Requirement | Architecture Support | Status |
 |----------------|---------------------|--------|
-| Shadow DOM isolation | AD-4: Web Components with Shadow DOM | ✓ |
+| Shadow DOM isolation | AD-4: Removed (was Web Components with Shadow DOM) | ✓ |
 | White-label colors | AD-4: CSS custom properties | ✓ |
 | Compute-on-read availability | AD-5: Query time calculation | ✓ |
 | No table splitting | AD-6: Single table per party | ✓ |
 | Auto-confirm bookings | AD-7: Status confirmed immediately | ✓ |
 | Slug-based identification | AD-9: Slug resolution | ✓ |
-| Responsive widget | AD-1: Script tag deployment | ✓ |
+| Responsive booking page | AD-1: Public booking route | ✓ |
 | Today's bookings default | AD-11: Date picker navigation | ✓ |
 | Dark mode support | DESIGN.md: Full palette inversion | ✓ |
 
@@ -377,7 +377,7 @@ FR27: Sign out ✓
 - Story 1.3: User Authentication — Firebase Auth setup
 - Story 1.4-1.7: Onboarding steps — User-facing flows
 
-### Epic 2: Diner Booking Widget
+### Epic 2: Public Booking Page
 
 **User Value Focus:** ✓
 - Epic Title: "Diner Booking Widget" — user-centric (diner can do)
@@ -558,7 +558,7 @@ This assessment identified **0 issues** across **5 categories**. All planning ar
 
 ---
 
-**Assessment Date:** 2026-07-14
+**Assessment Date:** 2026-08-14 (updated post-pivot)
 **Assessor:** BMad Implementation Readiness Check
 **Project:** osefdetalife (Restaurant Booking Platform)
 

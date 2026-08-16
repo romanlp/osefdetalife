@@ -1,6 +1,6 @@
 ---
 name: Bookable
-description: White-label restaurant booking platform. Warm minimal aesthetic — quiet confidence, earthy tones, generous whitespace. Widget is fully white-labeled; dashboard is platform-branded.
+description: White-label restaurant booking platform. Warm minimal aesthetic — quiet confidence, earthy tones, generous whitespace. Public booking page is fully white-labeled; dashboard is platform-branded.
 colors:
   # Light mode
   surface-base: '#F5F0EB'
@@ -74,7 +74,7 @@ components:
 
 Bookable is a white-label restaurant booking platform for small independent restaurants in the UK. The design language is warm minimal — quiet confidence, earthy tones, generous whitespace. No chrome for chrome's sake. Every element earns its place.
 
-The widget is fully white-labeled: restaurants override primary and secondary colors to match their own brand. The dashboard uses the platform's neutral palette. The aesthetic borrows from Airbnb's clean booking flow: minimal chrome, smooth step transitions, clear CTAs, trust signals.
+The public booking page is fully white-labeled: restaurants override primary and secondary colors to match their own brand. The dashboard uses the platform's neutral palette. The aesthetic borrows from Airbnb's clean booking flow: minimal chrome, smooth step transitions, clear CTAs, trust signals.
 
 Dark mode is supported from day one. The palette inverts cleanly — warm linen becomes deep ink, sage green brightens for contrast on dark surfaces.
 
@@ -88,7 +88,7 @@ Restrained on purpose. The platform palette is neutral and warm; restaurants bri
 - **White (`#FFFFFF`)** is the raised surface — cards, modals, inputs. Distinguished from linen by tone and a single hairline border.
 - **Ink (`#1A1A1A`)** is the primary text and the primary button fill. High contrast on linen. CTAs are black — impossible to miss.
 - **Muted (`#6B6B6B`)** is secondary text, labels, and placeholders. Never used for essential information.
-- **Sage (`#8FA67A`)** is the only chromatic color in the platform palette. Used for success states, the secondary button, active nav indicators, and tags. Restaurants override this with their own secondary color in the widget.
+- **Sage (`#8FA67A`)** is the only chromatic color in the platform palette. Used for success states, the secondary button, active nav indicators, and tags. Restaurants override this with their own secondary color in the booking page.
 - **Hairline (`#E5E0DB`)** separates surfaces at the lowest possible contrast. Anything heavier feels like UI rather than paper.
 - **Error Red (`#C44B4B`)** for destructive actions and error states. Used sparingly.
 
@@ -116,7 +116,7 @@ No display sizes. No all-caps labels. The voice is text-first, not chrome-first.
 
 Scale: 4 / 8 / 12 / 16 / 24 / 32 / 48 px. The largest gaps land between major sections; the smallest sit between tightly related elements.
 
-**Widget:** Fixed width, min 375px (phone), responsive wider. Single-column. Centered in host page container.
+**Booking page:** Full viewport width. Single-column. Responsive across mobile and desktop.
 
 **Dashboard:** Sidebar nav on left (240px), main content area fills remaining width. Single-column content within main area.
 
@@ -130,7 +130,7 @@ Modals and overlays add a backdrop dim + slightly stronger shadow. No more than 
 
 ## Shapes
 
-`rounded/sm` (8px) for inputs, small buttons, tags. `rounded/md` (12px) for cards, large buttons, the widget container. `rounded/lg` (16px) for modals and the onboarding card.
+`rounded/sm` (8px) for inputs, small buttons, tags. `rounded/md` (12px) for cards, large buttons, and inner panels on the booking page. `rounded/lg` (16px) for modals and the onboarding card.
 
 Nothing fully rounded. No pills, no perfect circles for surfaces. The aesthetic is soft-cornered paper, not iOS-button-pill.
 
@@ -138,7 +138,7 @@ Imagery follows container corners exactly.
 
 ## Components
 
-- **Widget container** — `{rounded/md}`, white-labeled with restaurant colors. Min 375px, responsive wider. Shadow-dropped from host page.
+- **Booking page container** — white-labeled with restaurant colors. Full viewport width, responsive. Cards and panels within it use `{rounded/md}`.
 - **Step header** — `{ink-primary}` heading, `{ink-secondary}` subtitle. Back button left-aligned, no title centered.
 - **Party size selector** — Grid of 8 circular buttons. Selected state: `{accent}` fill, white text.
 - **Date calendar** — Minimal month grid. Open days selectable, closed days hidden. Selected: `{accent}` fill.
@@ -154,10 +154,10 @@ Imagery follows container corners exactly.
 
 | Do | Don't |
 |---|---|
-| Black CTAs on white — high contrast, impossible to miss | Colored CTAs in the dashboard (save color for the widget) |
+| Black CTAs on white — high contrast, impossible to miss | Colored CTAs in the dashboard (save color for the booking page) |
 | Hairline dividers at lowest legible contrast | Card shadows, gradient fills, accent fills behind text |
-| Generous vertical rhythm in widget steps | Compress to fit more on screen |
+| Generous vertical rhythm in booking page steps | Compress to fit more on screen |
 | Smooth step transitions (fade or slide) | Jarring instant swaps |
-| Restaurant colors override only in widget | Change platform dashboard colors per restaurant |
+| Restaurant colors override only on the booking page | Change platform dashboard colors per restaurant |
 | Empty states with helpful guidance | Empty states with no guidance |
 | Dark mode from day one — design both surfaces | Bolt on dark mode later |

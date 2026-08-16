@@ -12,6 +12,5 @@ export const environment = {
   },
   recaptcha: '6LceYDslAAAAAIKVsZ4r0z3q96ZLnfcMB2S-mJ0W',
   appCheckToken: false,
-  useEmulators: false,
-  widgetBundleUrl: 'https://firebase-crackling-fire-4704.web.app/widget/booking-widget.mjs'
+  useEmulators: false
 };

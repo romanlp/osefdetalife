@@ -21,8 +21,6 @@ const RESTAURANT_FIXTURE: Restaurant = {
   createdAt: new Date('2026-01-01T00:00:00Z'),
 };
 
-const WIDGET_BUNDLE_URL = 'http://localhost:4200/widget/booking-widget.mjs';
-
 class AuthServiceStub {
   user = signal<User | null>(null);
 }
@@ -38,6 +36,7 @@ describe('DeployPageComponent', () => {
     getCurrentUser: ReturnType<typeof vi.fn>;
   };
   let clipboardWriteSpy: ReturnType<typeof vi.fn>;
+  let windowOpenSpy: ReturnType<typeof vi.fn>;
 
   beforeEach(async () => {
     authServiceStub = new AuthServiceStub();
@@ -56,6 +55,9 @@ describe('DeployPageComponent', () => {
       configurable: true,
     });
 
+    windowOpenSpy = vi.fn();
+    vi.stubGlobal('open', windowOpenSpy);
+
     await TestBed.configureTestingModule({
       imports: [DeployPageComponent],
       providers: [
@@ -72,25 +74,18 @@ describe('DeployPageComponent', () => {
     fixture.detectChanges();
   });
 
-  describe('Embed Code (AC: 1, 2)', () => {
+  describe('Booking Link (AC: 1, 2)', () => {
     it('[P0] should load the restaurant for the current user', () => {
       expect(onboardingServiceSpy.getRestaurantByOwner).toHaveBeenCalledWith('user-1');
     });
 
-    it('[P0] should render the restaurant slug inside the embed code block', () => {
-      const embed = fixture.nativeElement.querySelector('[data-testid="embed-code"]');
-      expect(embed?.textContent).toContain('test-restaurant');
+    it('[P0] should compute the booking link with the restaurant slug', () => {
+      expect(component.bookingLink()).toContain('/book/test-restaurant');
     });
 
-    it('[P0] should include a <script> tag pointing to the widget bundle', () => {
-      expect(component.embedSnippet()).toContain('<script');
-      expect(component.embedSnippet()).toContain(WIDGET_BUNDLE_URL);
-      expect(component.embedSnippet()).toContain('booking-widget.mjs');
-      expect(component.embedSnippet()).toContain('type="module"');
-    });
-
-    it('[P0] should include a <booking-widget restaurant="{slug}"> element', () => {
-      expect(component.embedSnippet()).toContain('<booking-widget restaurant="test-restaurant"></booking-widget>');
+    it('[P0] should compute a QR code URL from the booking link', () => {
+      expect(component.qrCodeUrl()).toContain('api.qrserver.com');
+      expect(component.qrCodeUrl()).toContain(encodeURIComponent(component.bookingLink()));
     });
 
     it('[P0] should expose a loading state that resolves after fetch', async () => {
@@ -128,10 +123,10 @@ describe('DeployPageComponent', () => {
   });
 
   describe('Copy to Clipboard (AC: 3)', () => {
-    it('[P0] should write the full snippet to the clipboard', async () => {
+    it('[P0] should write the booking link to the clipboard', async () => {
       component.copy();
       await vi.waitFor(() => expect(clipboardWriteSpy).toHaveBeenCalled());
-      expect(clipboardWriteSpy).toHaveBeenCalledWith(component.embedSnippet());
+      expect(clipboardWriteSpy).toHaveBeenCalledWith(component.bookingLink());
     });
 
     it('[P0] should show the "Copied!" confirmation after a successful copy', async () => {
@@ -173,16 +168,29 @@ describe('DeployPageComponent', () => {
     });
   });
 
-  describe('Demo Link (AC: 4)', () => {
-    it('[P0] should expose a demo URL carrying the restaurant slug', () => {
-      expect(component.demoUrl()).toContain('/assets/demo.html?slug=test-restaurant');
+  describe('QR Code (AC: 4)', () => {
+    it('[P0] should render a QR code image with the correct src', () => {
+      const qrImg = fixture.nativeElement.querySelector('img');
+      expect(qrImg).toBeTruthy();
+      expect(qrImg?.getAttribute('src')).toContain('api.qrserver.com');
+      expect(qrImg?.getAttribute('alt')).toBe('QR code for your booking link');
+    });
+  });
+
+  describe('Preview Button (AC: 5)', () => {
+    it('[P0] should render a preview button', () => {
+      const previewBtn = fixture.nativeElement.querySelector('[data-testid="preview-button"]');
+      expect(previewBtn).toBeTruthy();
+      expect(previewBtn?.textContent).toContain('Preview booking page');
     });
 
-    it('[P0] should render a demo link that opens in a new tab', () => {
-      const link = fixture.nativeElement.querySelector('[data-testid="demo-link"]');
-      expect(link?.getAttribute('href')).toContain('/assets/demo.html?slug=test-restaurant');
-      expect(link?.getAttribute('target')).toBe('_blank');
-      expect(link?.getAttribute('rel')).toBe('noopener');
+    it('[P0] should open the booking link in a new tab when preview is clicked', () => {
+      component.openPreview();
+      expect(windowOpenSpy).toHaveBeenCalledWith(
+        component.bookingLink(),
+        '_blank',
+        'noopener,noreferrer',
+      );
     });
   });
 });

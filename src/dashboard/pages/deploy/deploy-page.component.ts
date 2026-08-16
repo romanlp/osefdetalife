@@ -1,7 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { AuthService } from '../../../app/services/auth.service';
 import { OnboardingService } from '../../../app/services/onboarding.service';
-import { environment } from '../../../environments/environment';
 import type { Restaurant } from '../../../shared/types/restaurant';
 
 @Component({
@@ -13,7 +12,6 @@ import type { Restaurant } from '../../../shared/types/restaurant';
 export class DeployPageComponent {
   private authService = inject(AuthService);
   private onboardingService = inject(OnboardingService);
-  private widgetBundleUrl = environment.widgetBundleUrl;
 
   restaurant = signal<Restaurant | null>(null);
   loading = signal(true);
@@ -22,17 +20,17 @@ export class DeployPageComponent {
   copyError = signal<string | null>(null);
   private copyTimeout: number | undefined;
 
-  embedSnippet = computed(() => {
+  bookingLink = computed(() => {
     const restaurant = this.restaurant();
     if (!restaurant) return '';
-    return `<script src="${this.widgetBundleUrl}" type="module"></script>
-<booking-widget restaurant="${restaurant.slug}"></booking-widget>`;
+    return `${window.location.origin}/book/${restaurant.slug}`;
   });
 
-  demoUrl = computed(() => {
-    const restaurant = this.restaurant();
-    if (!restaurant) return '';
-    return `${window.location.origin}/assets/demo.html?slug=${restaurant.slug}`;
+  qrCodeUrl = computed(() => {
+    const link = this.bookingLink();
+    if (!link) return '';
+    const encoded = encodeURIComponent(link);
+    return `https://api.qrserver.com/v1/create-qr-code/?data=${encoded}&size=200x200&margin=2`;
   });
 
   constructor() {
@@ -51,7 +49,7 @@ export class DeployPageComponent {
         await this.onboardingService.getRestaurantByOwner(user.uid),
       );
     } catch {
-      this.error.set('Unable to load your embed code. Please refresh and try again.');
+      this.error.set('Unable to load your booking link. Please refresh and try again.');
     } finally {
       this.loading.set(false);
     }
@@ -59,14 +57,21 @@ export class DeployPageComponent {
 
   async copy(): Promise<void> {
     try {
-      await navigator.clipboard.writeText(this.embedSnippet());
+      await navigator.clipboard.writeText(this.bookingLink());
       this.copyError.set(null);
       this.copied.set(true);
       window.clearTimeout(this.copyTimeout);
       this.copyTimeout = window.setTimeout(() => this.copied.set(false), 2000);
     } catch {
       this.copied.set(false);
-      this.copyError.set('Unable to copy the embed code. Please copy it manually.');
+      this.copyError.set('Unable to copy the booking link. Please copy it manually.');
+    }
+  }
+
+  openPreview(): void {
+    const link = this.bookingLink();
+    if (link) {
+      window.open(link, '_blank', 'noopener,noreferrer');
     }
   }
 }

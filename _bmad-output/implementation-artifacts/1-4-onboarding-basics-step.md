@@ -226,11 +226,11 @@ so that my restaurant is identified on the platform.
 
 **Patches (to apply):**
 
-- [ ] [Review][Patch] JAVA_HOME hardcoded in playwright.config.ts [playwright.config.ts:41] — non-portable path; use env var or conditional
-- [ ] [Review][Patch] `/onboarding/step-2` undefined route [onboarding-page.component.ts:131] — navigate to `/onboarding` instead (step-2 doesn't exist yet)
-- [ ] [Review][Patch] Sprint status inconsistency — sprint-status.yaml says in-progress, spec says done [sprint-status.yaml]
-- [ ] [Review][Patch] Missing P0 E2E test: dashboard access after onboarding completed [onboarding-wizard.spec.ts]
-- [ ] [Review][Patch] `onboardedUser` fixture name misleading — creates new user, not onboarded [onboarding.fixture.ts:8]
+- [x] [Review][Patch] JAVA_HOME hardcoded in playwright.config.ts [playwright.config.ts:41] — non-portable path; use env var or conditional (addressed via environment variable)
+- [x] [Review][Patch] `/onboarding/step-2` undefined route [onboarding-page.component.ts:131] — navigate to `/onboarding` instead (step-2 doesn't exist yet) (fixed: navigation now uses `/onboarding/availability`)
+- [x] [Review][Patch] Sprint status inconsistency — sprint-status.yaml says in-progress, spec says done [sprint-status.yaml] (fixed: sprint-status.yaml updated)
+- [x] [Review][Patch] Missing P0 E2E test: dashboard access after onboarding completed [onboarding-wizard.spec.ts] (fixed: test exists in onboarding-wizard.spec.ts:73-81)
+- [x] [Review][Patch] `onboardedUser` fixture name misleading — creates new user, not onboarded [onboarding.fixture.ts:8] (fixed: fixture creates user and restaurant with onboardingCompleted: true)
 
 **Deferred:**
 
