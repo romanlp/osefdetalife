@@ -6,24 +6,35 @@ import type { Firestore } from 'firebase/firestore';
 const DEFAULT_PRIMARY = '#1A1A1A';
 const DEFAULT_SECONDARY = '#8FA67A';
 
-async function completeStepsOneAndTwo(page: Page, slug: string): Promise<void> {
+async function completeStepsOneAndTwo(page: Page, baseSlug: string): Promise<string> {
+  // Generate a unique slug to avoid conflicts between test runs
+  const uniqueSlug = `${baseSlug}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  
+  // Step 1: Restaurant name + slug
   await page.getByRole('textbox', { name: /restaurant name/i }).fill('Branding Test Restaurant');
 
   const slugInput = page.getByRole('textbox', { name: /slug/i });
-  await slugInput.fill(slug);
+  await slugInput.fill(uniqueSlug);
 
   // Wait for slug availability check with longer timeout for CI
   await expect(page.getByText('Slug is available').first()).toBeVisible({ timeout: 30_000 });
 
   const continueButton = page.getByRole('button', { name: /continue/i });
+  await expect(continueButton).toBeEnabled({ timeout: 10_000 });
   await continueButton.click();
 
+  // Wait for navigation to step 2 (availability page)
+  await page.waitForURL(/\/onboarding\/availability/, { timeout: 30_000 });
+
+  // Step 2: Availability - toggle Monday
   await page.getByRole('checkbox', { name: /toggle monday/i }).check();
   await page.getByTestId('add-table-group').click();
 
   const stepTwoContinue = page.getByRole('button', { name: /continue/i });
   await expect(stepTwoContinue).toBeEnabled({ timeout: 10_000 });
   await stepTwoContinue.click();
+
+  return uniqueSlug;
 }
 
 async function getRestaurantBySlug(db: Firestore, slug: string) {
@@ -63,8 +74,7 @@ test.describe('Onboarding Branding Step', () => {
   });
 
   test('[P0] complete flow saves branding data and marks onboarding complete', async ({ onboardingPage, db }) => {
-    const slug = 'branding-complete-test';
-    await completeStepsOneAndTwo(onboardingPage, slug);
+    const slug = await completeStepsOneAndTwo(onboardingPage, 'branding-complete-test');
 
     await onboardingPage.getByTestId('hex-primary').fill('#123456');
     await onboardingPage.getByTestId('hex-secondary').fill('#ABCDEF');
@@ -83,8 +93,7 @@ test.describe('Onboarding Branding Step', () => {
   });
 
   test('[P0] skip flow completes onboarding without saving branding changes', async ({ onboardingPage, db }) => {
-    const slug = 'branding-skip-test';
-    await completeStepsOneAndTwo(onboardingPage, slug);
+    const slug = await completeStepsOneAndTwo(onboardingPage, 'branding-skip-test');
 
     await onboardingPage.getByTestId('skip-link').click();
     await onboardingPage.waitForURL(/dashboard/);

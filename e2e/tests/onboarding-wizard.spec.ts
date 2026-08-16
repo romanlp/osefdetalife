@@ -38,8 +38,10 @@ test.describe('Onboarding Wizard', () => {
     const continueButton = onboardingPage.getByRole('button', { name: /continue/i });
     await continueButton.click();
 
-    await expect(onboardingPage.getByRole('button', { name: /continue/i })).toBeEnabled({ timeout: 10_000 });
-    await expect(onboardingPage.getByRole('alert')).not.toBeVisible();
+    // Wait for navigation to step 2 (availability page)
+    await onboardingPage.waitForURL(/\/onboarding\/availability/, { timeout: 10_000 });
+    // Step 2 shows an alert about opening hours - this is expected
+    await expect(onboardingPage.getByRole('alert')).toContainText('opening hours');
   });
 
   test('[P1] should show address field as optional', async ({ onboardingPage }) => {
@@ -59,8 +61,10 @@ test.describe('Onboarding Wizard', () => {
     const continueButton = onboardingPage.getByRole('button', { name: /continue/i });
     await continueButton.click();
 
-    await expect(onboardingPage.getByRole('button', { name: /continue/i })).toBeEnabled({ timeout: 10_000 });
-    await expect(onboardingPage.getByRole('alert')).not.toBeVisible();
+    // Wait for navigation to step 2 (availability page)
+    await onboardingPage.waitForURL(/\/onboarding\/availability/, { timeout: 10_000 });
+    // Step 2 shows an alert about opening hours - this is expected
+    await expect(onboardingPage.getByRole('alert')).toContainText('opening hours');
   });
 
   test('[P0] should redirect to onboarding when not completed', async ({ authenticatedPage }) => {
