@@ -1,0 +1,46 @@
+<main class="min-h-screen flex items-center justify-center px-4">
+  @if (loading()) {
+    <div
+      role="status"
+      aria-live="polite"
+      aria-busy="true"
+      data-testid="booking-page-loading"
+      class="flex items-center gap-3 text-gray-600"
+    >
+      <span class="spinner" aria-hidden="true"></span>
+      <span>Loading...</span>
+    </div>
+  } @else if (error()) {
+    <section role="alert" class="card text-center">
+      <h1 class="text-xl font-semibold mb-2">Something went wrong.</h1>
+      <p class="text-gray-600 mb-6">Please try again.</p>
+      <button
+        type="button"
+        data-testid="retry-button"
+        (click)="retry()"
+        class="button-primary"
+      >
+        Try again
+      </button>
+    </section>
+  } @else if (!restaurant()) {
+    <section role="status" class="card text-center">
+      <h1 class="text-xl font-semibold mb-2">Restaurant not found</h1>
+      <p class="text-gray-600">The restaurant you're looking for could not be found.</p>
+    </section>
+  } @else {
+    <section class="card text-center">
+      <h1 class="text-3xl font-semibold mb-3" data-testid="restaurant-name">
+        {{ restaurant()?.name }}
+      </h1>
+      @if (restaurant()?.address) {
+        <p class="text-gray-600 mb-6" data-testid="restaurant-address">
+          {{ restaurant()?.address }}
+        </p>
+      }
+      <button type="button" data-testid="book-button" class="button-primary">
+        Book a Table
+      </button>
+    </section>
+  }
+</main>

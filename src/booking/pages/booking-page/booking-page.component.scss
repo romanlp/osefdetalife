@@ -1,0 +1,52 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background-color: var(--osef-brand-surface, #f5f0eb);
+  color: var(--osef-brand-ink, #1a1a1a);
+}
+
+.card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgb(0 0 0 / 0.08);
+  max-width: 480px;
+  padding: 40px 32px;
+  width: 100%;
+}
+
+.button-primary {
+  background-color: var(--osef-brand-primary, #1a1a1a);
+  color: #f5f0eb;
+  border: none;
+  border-radius: 8px;
+  padding: 14px 32px;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--osef-brand-secondary, #8fa67a);
+    outline-offset: 2px;
+  }
+}
+
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--osef-brand-secondary, #8fa67a);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

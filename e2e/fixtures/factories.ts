@@ -9,6 +9,7 @@ export function createRestaurantData(overrides?: Partial<Restaurant>): Restauran
     slug: `test-restaurant-${id.slice(0, 8)}`,
     address: faker.location.streetAddress(),
     ownerId: faker.string.uuid(),
+    timezone: 'Europe/London',
     hours: {
       0: { open: '09:00', close: '17:00' },
       1: { open: '09:00', close: '17:00' },
@@ -16,7 +17,10 @@ export function createRestaurantData(overrides?: Partial<Restaurant>): Restauran
       3: { open: '09:00', close: '17:00' },
       4: { open: '09:00', close: '17:00' },
       5: { open: '10:00', close: '15:00' },
-      6: undefined,
+    },
+    whiteLabel: {
+      primaryColor: '#1A1A1A',
+      secondaryColor: '#8FA67A',
     },
     ...overrides,
   };

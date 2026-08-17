@@ -7,10 +7,15 @@ export interface Restaurant {
   slug: string;
   address: string;
   ownerId: string;
+  timezone: string;
   hours: Record<number, { open: string; close: string } | undefined>;
   colors?: {
     primary: string;
     secondary: string;
+  };
+  whiteLabel?: {
+    primaryColor: string;
+    secondaryColor: string;
   };
   customField?: {
     label: string;
