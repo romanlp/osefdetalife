@@ -1,5 +1,5 @@
 <main class="min-h-screen flex items-center justify-center px-4">
-  @if (loading()) {
+  @if (restaurant.isLoading()) {
     <div
       role="status"
       aria-live="polite"
@@ -10,7 +10,7 @@
       <span class="spinner" aria-hidden="true"></span>
       <span>Loading...</span>
     </div>
-  } @else if (error()) {
+  } @else if (restaurant.error()) {
     <section role="alert" class="card text-center">
       <h1 class="text-xl font-semibold mb-2">Something went wrong.</h1>
       <p class="text-gray-600 mb-6">Please try again.</p>
@@ -23,7 +23,7 @@
         Try again
       </button>
     </section>
-  } @else if (!restaurant()) {
+  } @else if (!restaurant.value()) {
     <section role="status" class="card text-center">
       <h1 class="text-xl font-semibold mb-2">Restaurant not found</h1>
       <p class="text-gray-600">The restaurant you're looking for could not be found.</p>
@@ -31,11 +31,11 @@
   } @else {
     <section class="card text-center">
       <h1 class="text-3xl font-semibold mb-3" data-testid="restaurant-name">
-        {{ restaurant()?.name }}
+        {{ restaurant.value()?.name }}
       </h1>
-      @if (restaurant()?.address) {
+      @if (restaurant.value()?.address) {
         <p class="text-gray-600 mb-6" data-testid="restaurant-address">
-          {{ restaurant()?.address }}
+          {{ restaurant.value()?.address }}
         </p>
       }
       <button type="button" data-testid="book-button" class="button-primary">

@@ -54,7 +54,7 @@ Diners can book a table through a first-party public booking page at `/book/{slu
 - Step transitions: smooth fade/slide; skipped under Reduce Motion. Focus moves to the new step heading and screen readers announce "Step N of 6: {Step Name}".
 - Voice: short complete sentences, no exclamation marks, no corporate enthusiasm (e.g., "Book a Table", not "Reserve your spot now!").
 - Tap targets ≥ 44px; all text meets WCAG 2.1 AA contrast; form inputs have real labels and errors are wired via `aria-describedby`.
-- Warm minimal aesthetic: Inter font (700 headings / 400 body / 500 meta), 4–48px spacing scale, 12px card radius, subtle card shadow, dark mode supported from day one.
+- Warm minimal aesthetic: Krub font (already loaded in styles.scss — do not add new font imports), 4–48px spacing scale, 12px card radius, subtle card shadow, dark mode supported from day one.
 
 ## Cross-Story Dependencies
 

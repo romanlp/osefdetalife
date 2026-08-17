@@ -94,6 +94,52 @@ describe('BookingService', () => {
       expect(getDoc).toHaveBeenCalledTimes(1);
     });
 
+    it('SLUG_VALIDATION: should return null without Firestore call for path-traversal slug', async () => {
+      const { getDoc } = await import('firebase/firestore');
+
+      const result = await service.getRestaurantBySlug('../etc/passwd');
+
+      expect(result).toBeNull();
+      expect(getDoc).not.toHaveBeenCalled();
+    });
+
+    it('SLUG_VALIDATION: should return null without Firestore call for oversized slug', async () => {
+      const { getDoc } = await import('firebase/firestore');
+      const longSlug = 'a'.repeat(200);
+
+      const result = await service.getRestaurantBySlug(longSlug);
+
+      expect(result).toBeNull();
+      expect(getDoc).not.toHaveBeenCalled();
+    });
+
+    it('SLUG_VALIDATION: should return null without Firestore call for slug with uppercase', async () => {
+      const { getDoc } = await import('firebase/firestore');
+
+      const result = await service.getRestaurantBySlug('The-Blue-Bistro');
+
+      expect(result).toBeNull();
+      expect(getDoc).not.toHaveBeenCalled();
+    });
+
+    it('SLUG_VALIDATION: should return null without Firestore call for slug with special characters', async () => {
+      const { getDoc } = await import('firebase/firestore');
+
+      const result = await service.getRestaurantBySlug('slug#fragment');
+
+      expect(result).toBeNull();
+      expect(getDoc).not.toHaveBeenCalled();
+    });
+
+    it('SLUG_VALIDATION: should return null without Firestore call for empty slug', async () => {
+      const { getDoc } = await import('firebase/firestore');
+
+      const result = await service.getRestaurantBySlug('');
+
+      expect(result).toBeNull();
+      expect(getDoc).not.toHaveBeenCalled();
+    });
+
     it('RESTAURANT_MISSING: should return null when the restaurant doc does not exist', async () => {
       const { getDoc } = await import('firebase/firestore');
       vi.mocked(getDoc)

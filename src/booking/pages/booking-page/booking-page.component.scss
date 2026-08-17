@@ -16,7 +16,7 @@
 
 .button-primary {
   background-color: var(--osef-brand-primary, #1a1a1a);
-  color: #f5f0eb;
+  color: contrast-color(var(--osef-brand-primary, #1a1a1a));
   border: none;
   border-radius: 8px;
   padding: 14px 32px;
@@ -48,5 +48,11 @@
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none;
   }
 }

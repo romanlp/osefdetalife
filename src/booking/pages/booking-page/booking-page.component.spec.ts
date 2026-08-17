@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute } from '@angular/router';
+import { provideRouter } from '@angular/router';
 import { BookingPageComponent } from './booking-page.component';
 import { BookingService } from '../../services/booking.service';
 import type { Restaurant } from '../../../shared/types/restaurant';
@@ -20,33 +20,25 @@ const RESTAURANT_FIXTURE: Restaurant = {
 
 describe('BookingPageComponent', () => {
   let fixture: ComponentFixture<BookingPageComponent>;
-  let currentSlug: string;
   let bookingServiceSpy: { getRestaurantBySlug: ReturnType<typeof vi.fn> };
 
   beforeEach(async () => {
-    currentSlug = 'the-blue-bistro';
     bookingServiceSpy = { getRestaurantBySlug: vi.fn() };
 
     await TestBed.configureTestingModule({
       imports: [BookingPageComponent],
       providers: [
-        {
-          provide: ActivatedRoute,
-          useValue: {
-            snapshot: {
-              paramMap: {
-                get: (key: string) => (key === 'slug' ? currentSlug : null),
-              },
-            },
-          },
-        },
+        provideRouter([]),
         { provide: BookingService, useValue: bookingServiceSpy },
       ],
     }).compileComponents();
   });
 
-  async function createComponent(): Promise<void> {
+  async function createComponent(slug?: string): Promise<void> {
     fixture = TestBed.createComponent(BookingPageComponent);
+    if (slug) {
+      fixture.componentRef.setInput('slug', slug);
+    }
     fixture.detectChanges();
     await fixture.whenStable();
     fixture.detectChanges();
@@ -60,7 +52,7 @@ describe('BookingPageComponent', () => {
           resolveLoad = resolve;
         }),
       );
-      await createComponent();
+      await createComponent('the-blue-bistro');
 
       const loadingEl = fixture.nativeElement.querySelector('[data-testid="booking-page-loading"]');
       expect(loadingEl).toBeTruthy();
@@ -78,7 +70,7 @@ describe('BookingPageComponent', () => {
 
     it('[P1] should apply white-label colors as host CSS custom properties', async () => {
       bookingServiceSpy.getRestaurantBySlug.mockResolvedValue(RESTAURANT_FIXTURE);
-      await createComponent();
+      await createComponent('the-blue-bistro');
 
       const host = fixture.nativeElement;
       expect(host.style.getPropertyValue('--osef-brand-primary')).toBe('#C0392B');
@@ -92,7 +84,7 @@ describe('BookingPageComponent', () => {
         ...RESTAURANT_FIXTURE,
         address: undefined,
       });
-      await createComponent();
+      await createComponent('the-blue-bistro');
 
       expect(fixture.nativeElement.querySelector('[data-testid="restaurant-name"]')?.textContent).toContain('The Blue Bistro');
       expect(fixture.nativeElement.querySelector('[data-testid="restaurant-address"]')).toBeFalsy();
@@ -102,9 +94,8 @@ describe('BookingPageComponent', () => {
 
   describe('INVALID_SLUG', () => {
     it('[P0] should show "Restaurant not found" when the slug doc does not exist', async () => {
-      currentSlug = 'definitely-not-a-real-slug';
       bookingServiceSpy.getRestaurantBySlug.mockResolvedValue(null);
-      await createComponent();
+      await createComponent('definitely-not-a-real-slug');
 
       expect(fixture.nativeElement.textContent).toContain('Restaurant not found');
       expect(fixture.nativeElement.querySelector('[data-testid="book-button"]')).toBeFalsy();
@@ -114,9 +105,8 @@ describe('BookingPageComponent', () => {
 
   describe('RESTAURANT_MISSING', () => {
     it('[P0] should show "Restaurant not found" when the slug exists but the restaurant doc is missing', async () => {
-      currentSlug = 'stale-slug';
       bookingServiceSpy.getRestaurantBySlug.mockResolvedValue(null);
-      await createComponent();
+      await createComponent('stale-slug');
 
       expect(fixture.nativeElement.textContent).toContain('Restaurant not found');
       expect(fixture.nativeElement.querySelector('[data-testid="book-button"]')).toBeFalsy();
@@ -126,7 +116,7 @@ describe('BookingPageComponent', () => {
   describe('FIREBASE_ERROR', () => {
     it('[P0] should show "Something went wrong. Please try again." with a retry button when getDoc rejects', async () => {
       bookingServiceSpy.getRestaurantBySlug.mockRejectedValue(new Error('network down'));
-      await createComponent();
+      await createComponent('the-blue-bistro');
 
       expect(fixture.nativeElement.textContent).toContain('Something went wrong.');
       expect(fixture.nativeElement.textContent).toContain('Please try again.');
@@ -137,7 +127,7 @@ describe('BookingPageComponent', () => {
       bookingServiceSpy.getRestaurantBySlug
         .mockRejectedValueOnce(new Error('network down'))
         .mockResolvedValue(RESTAURANT_FIXTURE);
-      await createComponent();
+      await createComponent('the-blue-bistro');
 
       expect(fixture.nativeElement.querySelector('[data-testid="retry-button"]')).toBeTruthy();
 
