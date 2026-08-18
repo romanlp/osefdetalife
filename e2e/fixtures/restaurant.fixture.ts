@@ -1,7 +1,7 @@
 import { test as base } from '@playwright/test';
 import { Firestore, collection, doc, setDoc, deleteDoc, getDoc } from 'firebase/firestore';
 import { getFirestoreInstance, getAuthInstance } from '../utils/firebase';
-import { createUserWithEmailAndPassword, signOut } from 'firebase/auth';
+import { createUserWithEmailAndPassword, deleteUser, signOut } from 'firebase/auth';
 import { createRestaurantData, createTableGroupData, createUserData } from './factories';
 import type { Restaurant, TableGroup } from './types';
 import type { FirebaseFixtures } from './firebase.fixture';
@@ -51,6 +51,7 @@ export const test = base.extend<RestaurantFixtures & FirebaseFixtures>({
     
     await deleteDoc(slugRef);
     await deleteDoc(restaurantRef);
+    await deleteUser(auth.currentUser!);
     await signOut(auth);
   },
 

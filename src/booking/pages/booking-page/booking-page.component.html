@@ -1,4 +1,5 @@
 <main class="min-h-screen flex items-center justify-center px-4">
+  <h1 class="sr-only">{{ restaurant.value()?.name ? restaurant.value()!.name + ' — Book a Table' : 'Booking' }}</h1>
   @if (restaurant.isLoading()) {
     <div
       role="status"
@@ -29,6 +30,7 @@
       <p class="text-gray-600">The restaurant you're looking for could not be found.</p>
     </section>
   } @else {
+    <span class="sr-only" role="status">{{ restaurant.value()!.name }} loaded.</span>
     <section class="card text-center">
       <h1 class="text-3xl font-semibold mb-3" data-testid="restaurant-name">
         {{ restaurant.value()?.name }}

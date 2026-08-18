@@ -5,7 +5,7 @@ export interface Restaurant {
   id: string;
   name: string;
   slug: string;
-  address: string;
+  address?: string;
   ownerId: string;
   timezone: string;
   hours: Record<number, { open: string; close: string } | undefined>;
@@ -13,7 +13,7 @@ export interface Restaurant {
     primary: string;
     secondary: string;
   };
-  whiteLabel?: {
+  whiteLabel: {
     primaryColor: string;
     secondaryColor: string;
   };

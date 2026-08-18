@@ -1,4 +1,5 @@
-import {Component, computed, inject, input, resource} from '@angular/core';
+import {Component, computed, effect, inject, input, resource} from '@angular/core';
+import {Title} from '@angular/platform-browser';
 import {BookingService} from '../../services/booking.service';
 
 const DESIGN_PRIMARY = '#1A1A1A';
@@ -17,6 +18,8 @@ const DESIGN_SECONDARY = '#8FA67A';
 export class BookingPageComponent {
   private bookingService = inject(BookingService);
 
+  private title = inject(Title);
+
   slug = input<string>();
 
   restaurant = resource({
@@ -33,6 +36,13 @@ export class BookingPageComponent {
   brandSecondary = computed(
     () => this.restaurant.value()?.whiteLabel?.secondaryColor ?? DESIGN_SECONDARY,
   );
+
+  constructor() {
+    effect(() => {
+      const restaurant = this.restaurant.value();
+      this.title.setTitle(restaurant?.name ? `${restaurant.name} — Book a Table` : 'Booking');
+    });
+  }
 
   retry(): void {
     this.restaurant.reload();

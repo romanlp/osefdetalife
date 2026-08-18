@@ -168,5 +168,21 @@ describe('BookingService', () => {
         'permission-denied',
       );
     });
+
+    it('FIREBASE_ERROR: should propagate rejection when slug lookup succeeds but restaurant lookup fails', async () => {
+      const { getDoc } = await import('firebase/firestore');
+      vi.mocked(getDoc)
+        .mockResolvedValueOnce({
+          exists: () => true,
+          id: 'the-blue-bistro',
+          data: () => ({ restaurantId: 'rest-123' }),
+        } as never)
+        .mockRejectedValueOnce(new Error('unavailable'));
+
+      await expect(service.getRestaurantBySlug('the-blue-bistro')).rejects.toThrow(
+        'unavailable',
+      );
+      expect(getDoc).toHaveBeenCalledTimes(2);
+    });
   });
 });
