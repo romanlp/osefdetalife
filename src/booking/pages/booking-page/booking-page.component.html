@@ -1,5 +1,4 @@
 <main class="min-h-screen flex items-center justify-center px-4">
-  <h1 class="sr-only">{{ restaurant.value()?.name ? restaurant.value()!.name + ' — Book a Table' : 'Booking' }}</h1>
   @if (restaurant.isLoading()) {
     <div
       role="status"
@@ -12,8 +11,9 @@
       <span>Loading...</span>
     </div>
   } @else if (restaurant.error()) {
+    <h1 class="sr-only">Booking</h1>
     <section role="alert" class="card text-center">
-      <h1 class="text-xl font-semibold mb-2">Something went wrong.</h1>
+      <h2 class="text-xl font-semibold mb-2">Something went wrong.</h2>
       <p class="text-gray-600 mb-6">Please try again.</p>
       <button
         type="button"
@@ -26,16 +26,18 @@
       </button>
     </section>
   } @else if (!restaurant.value()) {
+    <h1 class="sr-only">Booking</h1>
     <section role="status" class="card text-center">
-      <h1 class="text-xl font-semibold mb-2">Restaurant not found</h1>
+      <h2 class="text-xl font-semibold mb-2">Restaurant not found</h2>
       <p class="text-gray-600">The restaurant you're looking for could not be found.</p>
     </section>
   } @else {
+    <h1 class="sr-only">{{ restaurant.value()!.name }} — Book a Table</h1>
     <span class="sr-only" role="status">{{ restaurant.value()!.name }} loaded.</span>
     <section class="card text-center">
-      <h1 class="text-3xl font-semibold mb-3" data-testid="restaurant-name">
+      <h2 class="text-3xl font-semibold mb-3" data-testid="restaurant-name">
         {{ restaurant.value()?.name }}
-      </h1>
+      </h2>
       @if (restaurant.value()?.address) {
         <p class="text-gray-600 mb-6" data-testid="restaurant-address">
           {{ restaurant.value()?.address }}

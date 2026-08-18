@@ -30,17 +30,29 @@ export class BookingPageComponent {
     },
   });
 
-  brandPrimary = computed(
-    () => this.restaurant.value()?.whiteLabel?.primaryColor ?? DESIGN_PRIMARY,
-  );
-  brandSecondary = computed(
-    () => this.restaurant.value()?.whiteLabel?.secondaryColor ?? DESIGN_SECONDARY,
-  );
+  brandPrimary = computed(() => {
+    try {
+      return this.restaurant.value()?.whiteLabel?.primaryColor ?? DESIGN_PRIMARY;
+    } catch {
+      return DESIGN_PRIMARY;
+    }
+  });
+  brandSecondary = computed(() => {
+    try {
+      return this.restaurant.value()?.whiteLabel?.secondaryColor ?? DESIGN_SECONDARY;
+    } catch {
+      return DESIGN_SECONDARY;
+    }
+  });
 
   constructor() {
     effect(() => {
-      const restaurant = this.restaurant.value();
-      this.title.setTitle(restaurant?.name ? `${restaurant.name} — Book a Table` : 'Booking');
+      try {
+        const restaurant = this.restaurant.value();
+        this.title.setTitle(restaurant?.name ? `${restaurant.name} — Book a Table` : 'Booking');
+      } catch {
+        this.title.setTitle('Booking');
+      }
     });
   }
 

@@ -52,7 +52,10 @@ describe('BookingPageComponent', () => {
           resolveLoad = resolve;
         }),
       );
-      await createComponent('the-blue-bistro');
+      await createComponent();
+
+      fixture.componentRef.setInput('slug', 'the-blue-bistro');
+      fixture.detectChanges();
 
       const loadingEl = fixture.nativeElement.querySelector('[data-testid="booking-page-loading"]');
       expect(loadingEl).toBeTruthy();
@@ -133,7 +136,6 @@ describe('BookingPageComponent', () => {
 
       fixture.nativeElement.querySelector('[data-testid="retry-button"]')?.click();
       await fixture.whenStable();
-      fixture.detectChanges();
 
       expect(bookingServiceSpy.getRestaurantBySlug).toHaveBeenCalledTimes(2);
       expect(fixture.nativeElement.querySelector('[data-testid="restaurant-name"]')?.textContent).toContain('The Blue Bistro');
