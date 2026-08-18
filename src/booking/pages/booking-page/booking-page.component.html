@@ -20,6 +20,7 @@
         data-testid="retry-button"
         (click)="retry()"
         class="button-primary"
+        [disabled]="restaurant.isLoading()"
       >
         Try again
       </button>

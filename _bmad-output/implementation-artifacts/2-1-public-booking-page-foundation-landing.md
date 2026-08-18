@@ -155,3 +155,17 @@ White-label scoping matters: ThemingService flips `document.body.className` to d
 
 - Component spec: all states + retry re-runs load + white-label CSS vars
   [`booking-page.component.spec.ts:9`](../../src/booking/pages/booking-page/booking-page.component.spec.ts#L9)
+
+### Review Findings
+
+- [x] [Review][Patch] `contrast-color` is undefined in SCSS [`booking-page.component.scss:19`](../../src/booking/pages/booking-page/booking-page.component.scss#L19) — dismissed, native CSS function
+- [x] [Review][Patch] Retry button clickable while load in flight [`booking-page.component.html:18`](../../src/booking/pages/booking-page/booking-page.component.html#L18) — fixed, added `[disabled]="restaurant.isLoading()"`
+- [x] [Review][Patch] Fixture cleanup not exception-safe [`restaurant.fixture.ts:52`](../../e2e/fixtures/restaurant.fixture.ts#L52) — fixed, wrapped in try/finally blocks
+- [x] [Review][Defer] Eager Firestore init in BookingService [`booking.service.ts:11`](../../src/booking/services/booking.service.ts#L11) — deferred, pre-existing
+- [x] [Review][Defer] No guard on `auth.currentUser!` [`restaurant.fixture.ts:44`](../../e2e/fixtures/restaurant.fixture.ts#L44) — deferred, pre-existing
+- [x] [Review][Defer] Dead code for undefined slug [`booking-page.component.html:27`](../../src/booking/pages/booking-page/booking-page.component.html#L27) — deferred, pre-existing
+- [x] [Review][Defer] No `equal` comparator on resource [`booking-page.component.ts:25`](../../src/booking/pages/booking-page/booking-page.component.ts#L25) — deferred, pre-existing
+- [x] [Review][Defer] `styleUrl` vs `styleUrls` inconsistency [`booking-page.component.ts:16`](../../src/booking/pages/booking-page/booking-page.component.ts#L16) — deferred, pre-existing
+- [x] [Review][Defer] Address test mutates after fixture setup [`public-booking-page.spec.ts:34`](../../e2e/tests/public-booking-page.spec.ts#L34) — deferred, pre-existing
+- [x] [Review][Defer] BookingService unchecked cast [`booking.service.ts:31`](../../src/booking/services/booking.service.ts#L31) — deferred, pre-existing
+- [x] [Review][Defer] whiteLabel contrast ratio — deferred, pre-existing

@@ -41,7 +41,7 @@
 # - Retrospective appends its action items to action_items; sprint-status surfaces open ones
 
 generated: '2026-07-14'
-last_updated: 08-16-2026 21:30
+last_updated: 08-18-2026 14:00
 project: osefdetalife
 project_key: NOKEY
 tracking_system: file-system
@@ -60,7 +60,7 @@ development_status:
   epic-1-retrospective: done
 
   epic-2: in-progress
-  2-1-public-booking-page-foundation-landing: review
+  2-1-public-booking-page-foundation-landing: done
   2-2-party-size-date-selection: backlog
   2-3-time-slot-selection-availability: backlog
   2-4-details-form-booking-submission: backlog

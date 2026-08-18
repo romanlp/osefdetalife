@@ -49,10 +49,19 @@ export const test = base.extend<RestaurantFixtures & FirebaseFixtures>({
     
     await use(restaurantData);
     
-    await deleteDoc(slugRef);
-    await deleteDoc(restaurantRef);
-    await deleteUser(auth.currentUser!);
-    await signOut(auth);
+    try {
+      await deleteDoc(slugRef);
+    } finally {
+      try {
+        await deleteDoc(restaurantRef);
+      } finally {
+        try {
+          await deleteUser(auth.currentUser!);
+        } finally {
+          await signOut(auth);
+        }
+      }
+    }
   },
 
   tableGroups: async ({ db, restaurant }, use) => {

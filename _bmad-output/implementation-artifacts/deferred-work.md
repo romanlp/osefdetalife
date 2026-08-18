@@ -85,3 +85,33 @@ Items surfaced during code reviews that are pre-existing issues or out of scope 
 - source_spec: `_bmad-output/implementation-artifacts/sprint-status.yaml`
   summary: Epic 1 retro action items (epic-1-retro-item-1-verify-prod-widget-bundle-url, epic-1-retro-item-2-fix-dev-widget-port) reference widgetBundleUrl — obsolete under the pivot
   evidence: sprint-status.yaml is verify-only in this spec; retro items are historical records.
+
+## Deferred from: code review of 2-1-public-booking-page-foundation-landing (2026-08-18)
+
+- source_spec: `_bmad-output/implementation-artifacts/2-1-public-booking-page-foundation-landing.md`
+  summary: Eager Firestore init in BookingService — `getFirebaseDb()` runs at construction
+  evidence: Pre-existing pattern; acceptable for SPA, would break in SSR/prerender scenarios
+
+- source_spec: `_bmad-output/implementation-artifacts/2-1-public-booking-page-foundation-landing.md`
+  summary: No guard on `auth.currentUser!` after user creation in e2e fixture
+  evidence: Pre-existing Playwright practice; Firebase emulator propagates state synchronously
+
+- source_spec: `_bmad-output/implementation-artifacts/2-1-public-booking-page-foundation-landing.md`
+  summary: Dead code for undefined slug in template — unreachable due to Angular routing
+  evidence: Route pattern `book/:slug` requires slug param; resource loader also guards
+
+- source_spec: `_bmad-output/implementation-artifacts/2-1-public-booking-page-foundation-landing.md`
+  summary: No `equal` comparator on restaurant resource — unnecessary re-fetches possible
+  evidence: Input signal won't re-emit without value change; negligible perf impact
+
+- source_spec: `_bmad-output/implementation-artifacts/2-1-public-booking-page-foundation-landing.md`
+  summary: `styleUrl` vs `styleUrls` inconsistency with other components
+  evidence: Angular supports both; cosmetic inconsistency only
+
+- source_spec: `_bmad-output/implementation-artifacts/2-1-public-booking-page-foundation-landing.md`
+  summary: Address test mutates data after fixture setup instead of using override
+  evidence: Works in practice; race window is negligible in e2e context
+
+- source_spec: `_bmad-output/implementation-artifacts/2-1-public-booking-page-foundation-landing.md`
+  summary: BookingService casts Firestore data as Restaurant without shape validation
+  evidence: Common Firebase pattern; runtime failure would be caught by component tests
