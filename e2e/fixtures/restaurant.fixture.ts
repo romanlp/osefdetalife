@@ -1,7 +1,8 @@
 import { test as base } from '@playwright/test';
 import { Firestore, collection, doc, setDoc, deleteDoc, getDoc } from 'firebase/firestore';
-import { getFirestoreInstance } from '../utils/firebase';
-import { createRestaurantData, createTableGroupData } from './factories';
+import { getFirestoreInstance, getAuthInstance } from '../utils/firebase';
+import { createUserWithEmailAndPassword, deleteUser, signOut } from 'firebase/auth';
+import { createRestaurantData, createTableGroupData, createUserData } from './factories';
 import type { Restaurant, TableGroup } from './types';
 import type { FirebaseFixtures } from './firebase.fixture';
 
@@ -18,11 +19,15 @@ class RestaurantPage {
   ) {}
 
   async goto() {
-    await this.page.goto(`/widget/${this.slug}`);
+    await this.page.goto(`/book/${this.slug}`);
   }
 
   get name() {
     return this.page.locator('[data-testid="restaurant-name"]');
+  }
+
+  get address() {
+    return this.page.locator('[data-testid="restaurant-address"]');
   }
 
   get bookButton() {
@@ -32,13 +37,31 @@ class RestaurantPage {
 
 export const test = base.extend<RestaurantFixtures & FirebaseFixtures>({
   restaurant: async ({ db, cleanupFirestore }, use) => {
-    const restaurantData = createRestaurantData();
+    const auth = getAuthInstance();
+    const owner = createUserData();
+    await createUserWithEmailAndPassword(auth, owner.email, owner.password);
+
+    const restaurantData = createRestaurantData({ ownerId: auth.currentUser!.uid });
     const restaurantRef = doc(collection(db, 'restaurants'), restaurantData.id);
+    const slugRef = doc(collection(db, 'slugs'), restaurantData.slug);
     await setDoc(restaurantRef, restaurantData);
+    await setDoc(slugRef, { restaurantId: restaurantData.id });
     
     await use(restaurantData);
     
-    await deleteDoc(restaurantRef);
+    try {
+      await deleteDoc(slugRef);
+    } finally {
+      try {
+        await deleteDoc(restaurantRef);
+      } finally {
+        try {
+          await deleteUser(auth.currentUser!);
+        } finally {
+          await signOut(auth);
+        }
+      }
+    }
   },
 
   tableGroups: async ({ db, restaurant }, use) => {

@@ -36,6 +36,13 @@ export const routes: Routes = [
     canActivate: [isAuthenticatedGuard, isOnboardedGuard],
   },
   {
+    path: 'book/:slug',
+    loadComponent: () =>
+      import('../booking/pages/booking-page/booking-page.component').then(
+        (m) => m.BookingPageComponent,
+      ),
+  },
+  {
     path: 'onboarding',
     loadComponent: () =>
       import('./onboarding/onboarding-page/onboarding-page.component').then(

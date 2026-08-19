@@ -5,12 +5,17 @@ export interface Restaurant {
   id: string;
   name: string;
   slug: string;
-  address: string;
+  address?: string;
   ownerId: string;
+  timezone: string;
   hours: Record<number, { open: string; close: string } | undefined>;
   colors?: {
     primary: string;
     secondary: string;
+  };
+  whiteLabel: {
+    primaryColor: string;
+    secondaryColor: string;
   };
   customField?: {
     label: string;
