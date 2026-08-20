@@ -41,7 +41,7 @@
 # - Retrospective appends its action items to action_items; sprint-status surfaces open ones
 
 generated: '2026-07-14'
-last_updated: 08-18-2026 14:00
+last_updated: 08-20-2026 23:20
 project: osefdetalife
 project_key: NOKEY
 tracking_system: file-system
@@ -77,16 +77,6 @@ development_status:
   3-7-account-settings: backlog
   epic-3-retrospective: optional
 action_items:
-  - id: "epic-1-retro-item-1-verify-prod-widget-bundle-url"
-    epic: 1
-    action: "Verify prod hosting domain and set the real widgetBundleUrl in environment.prod.ts
-      (F4)"
-    owner: "Roman"
-    status: obsolete
-    status_note: "Superseded by the 2026-08-14 public-booking-page pivot — the embeddable
-      widget and widgetBundleUrl were removed from the codebase, so there is no prod
-      widget URL to verify."
-    ref: "_bmad-output/implementation-artifacts/epic-1-retro-2026-08-14.md"
   - id: "epic-1-retro-item-2-fix-dev-widget-port"
     epic: 1
     action: "Fix dev widgetBundleUrl port 4200 to 4210 or derive from location (F5)"
