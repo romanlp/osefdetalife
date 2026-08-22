@@ -63,6 +63,21 @@ describe('BookingFlowService', () => {
       service.choosePartySize(2);
       expect(service.partySize()).toBe(2);
       expect(service.step()).toBe('date');
+
+      // Pick a date, then revise the guest count via two backs — the chosen
+      // date must survive (revising party size never erases selections).
+      service.chooseDate('2026-08-21');
+      expect(service.selectedDate()).toBe('2026-08-21');
+      expect(service.step()).toBe('time');
+
+      service.back();
+      service.back();
+      expect(service.step()).toBe('party-size');
+
+      service.choosePartySize(6);
+      expect(service.partySize()).toBe(6);
+      expect(service.step()).toBe('date');
+      expect(service.selectedDate()).toBe('2026-08-21');
     });
 
     it('[P1] should be a no-op on landing', () => {

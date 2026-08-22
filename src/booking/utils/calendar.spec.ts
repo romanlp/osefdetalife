@@ -66,6 +66,25 @@ describe('zonedToday', () => {
     expect(zonedToday('Not/ARealZone', now)).toEqual({ iso: '2026-08-20', dayNumber: 4 });
     expect(zonedToday('', now)).toEqual({ iso: '2026-08-20', dayNumber: 4 });
   });
+
+  it('[P1] should coerce a missing or NaN clock to the epoch instead of throwing', () => {
+    // A broken injected clock must degrade to epoch-derived parts, never RangeError.
+    const broken = new Date('not-a-date');
+    expect(Number.isNaN(broken.getTime())).toBe(true);
+
+    expect(zonedToday('Europe/London', broken)).toEqual({ iso: '1970-01-01', dayNumber: 4 });
+    expect(zonedToday('Not/ARealZone', broken)).toEqual({ iso: '1970-01-01', dayNumber: 4 });
+    expect(zonedToday('Europe/London', undefined as unknown as Date)).toEqual({
+      iso: '1970-01-01',
+      dayNumber: 4,
+    });
+  });
+
+  it('[P1] should resolve dates across the New Year boundary', () => {
+    // 2026-12-31T23:59Z is still Dec 31 in London; one minute later it is Jan 1, 2027.
+    expect(zonedToday('Europe/London', new Date('2026-12-31T23:59:00Z')).iso).toBe('2026-12-31');
+    expect(zonedToday('Europe/London', new Date('2027-01-01T00:01:00Z')).iso).toBe('2027-01-01');
+  });
 });
 
 describe('isOpenOn', () => {
@@ -119,6 +138,18 @@ describe('buildMonthGrid', () => {
     const cells = buildMonthGrid(2026, 2, {}, '2026-01-01');
 
     expect(cells).toEqual([]);
+  });
+
+  it('[P1] MONTH_NAV: should handle the December-to-January year boundary', () => {
+    // December tail from the pinned clock, then the full January grid.
+    const december = buildMonthGrid(2026, 12, HOURS_ALL_WEEK, '2026-12-28');
+    expect(december.map((c) => c.iso)).toEqual(['2026-12-28', '2026-12-29', '2026-12-30', '2026-12-31']);
+
+    const january = buildMonthGrid(2027, 1, HOURS_ALL_WEEK, '2026-12-28');
+    expect(january[0]?.iso).toBe('2027-01-01');
+    expect(january[0]?.dayNumber).toBe(5); // Jan 1 2027 is a Friday
+    expect(january.at(-1)?.iso).toBe('2027-01-31');
+    expect(january.every((c) => c.iso.startsWith('2027-01-'))).toBe(true);
   });
 
   it('[P1] should compute the correct number of days for 31-day months and February', () => {

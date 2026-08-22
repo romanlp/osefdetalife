@@ -36,6 +36,17 @@ const RESTAURANT_OPEN_ALL_WEEK: Restaurant = {
 /** Thursday 2026-08-20 at 23:30 UTC — already Friday Aug 21 in Europe/London. */
 const FIXED_NOW = () => new Date('2026-08-20T23:30:00Z');
 
+/**
+ * Simulates a Firestore doc missing hours/timezone at runtime (both fields are
+ * required by the Restaurant type, so they are stripped post-construction).
+ */
+const BROKEN_RESTAURANT: Restaurant = (() => {
+  const partial = { ...RESTAURANT_OPEN_ALL_WEEK } as Record<string, unknown>;
+  delete partial['hours'];
+  delete partial['timezone'];
+  return partial as unknown as Restaurant;
+})();
+
 describe('BookingPageComponent', () => {
   let fixture: ComponentFixture<BookingPageComponent>;
   let bookingServiceSpy: { getRestaurantBySlug: ReturnType<typeof vi.fn> };
@@ -340,6 +351,21 @@ describe('BookingPageComponent', () => {
       expect(selected.classList.contains('selected')).toBe(true);
       expect(selected.getAttribute('aria-pressed')).toBe('true');
     });
+
+    it('[P0] should render an empty calendar instead of throwing when hours/timezone are missing', async () => {
+      await createLoadedComponent(BROKEN_RESTAURANT);
+
+      bookButton().click();
+      fixture.detectChanges();
+      queryEl().querySelector<HTMLButtonElement>('[data-testid="party-size-option-4"]')!.click();
+      fixture.detectChanges();
+
+      expect(queryEl().querySelector('[data-testid="calendar-step"]')).toBeTruthy();
+      expect(queryEl().querySelectorAll('.date-btn')).toHaveLength(0);
+      expect(
+        queryEl().querySelector('[data-testid="calendar-empty"]')?.textContent?.trim(),
+      ).toBe('No available dates in this month.');
+    });
   });
 
   describe('BACK_PRESERVES', () => {
@@ -388,6 +414,38 @@ describe('BookingPageComponent', () => {
       expect(bookButton()).toBeTruthy();
       expect(fixture.nativeElement.querySelector('[data-testid="party-size-step"]')).toBeFalsy();
       expect(fixture.componentInstance.flow.partySize()).toBeNull();
+    });
+
+    it('[P0] should reset the root-singleton flow when the page is destroyed mid-flow', async () => {
+      await createLoadedComponent(RESTAURANT_OPEN_ALL_WEEK);
+
+      bookButton().click();
+      fixture.detectChanges();
+      queryEl().querySelector<HTMLButtonElement>('[data-testid="party-size-option-4"]')!.click();
+      fixture.detectChanges();
+
+      const flow = fixture.componentInstance.flow;
+      expect(flow.step()).toBe('date');
+      expect(flow.partySize()).toBe(4);
+
+      fixture.destroy();
+
+      expect(flow.step()).toBe('landing');
+      expect(flow.partySize()).toBeNull();
+      expect(flow.selectedDate()).toBeNull();
+
+      // Recreating on the same TestBed shares the root-singleton service —
+      // the revisit must start at landing with no stale selections.
+      bookingServiceSpy.getRestaurantBySlug.mockResolvedValue(RESTAURANT_OPEN_ALL_WEEK);
+      fixture = TestBed.createComponent(BookingPageComponent);
+      fixture.componentRef.setInput('slug', 'the-blue-bistro');
+      fixture.detectChanges();
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      expect(bookButton()).toBeTruthy();
+      expect(fixture.componentInstance.flow.partySize()).toBeNull();
+      expect(fixture.componentInstance.flow.selectedDate()).toBeNull();
     });
   });
 });

@@ -6,6 +6,21 @@ process.env.GCLOUD_PROJECT = 'firebase-crackling-fire-4704';
 
 const appBaseUrl = process.env['PLAYWRIGHT_TEST_BASE_URL'] ?? 'http://localhost:4210';
 
+const emulatorServer = {
+  command:
+    'npx firebase emulators:start --only=auth,firestore --project firebase-crackling-fire-4704',
+  port: 9099,
+  reuseExistingServer: true,
+  timeout: 30_000,
+};
+
+const appServer = {
+  command: 'ng serve --configuration e2e',
+  url: appBaseUrl,
+  reuseExistingServer: !process.env['CI'],
+  timeout: 120_000,
+};
+
 export default defineConfig({
   testDir: './e2e/tests',
   globalTeardown: './e2e/global-teardown.ts',
@@ -39,19 +54,10 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
   ],
-  webServer: [
-    {
-      command: 'npx firebase emulators:start --only=auth,firestore --project firebase-crackling-fire-4704',
-      port: 9099,
-      reuseExistingServer: true,
-      timeout: 30_000,
-    },
-    {
-      command: 'ng serve --configuration e2e',
-      url: appBaseUrl,
-      reuseExistingServer: !process.env['CI'],
-      timeout: 120_000,
-    },
-  ],
+  // When PLAYWRIGHT_TEST_BASE_URL points at an already-running app, spawning
+  // `ng serve` would hang readiness polling on a URL it will never serve.
+  webServer: process.env['PLAYWRIGHT_TEST_BASE_URL']
+    ? [emulatorServer]
+    : [emulatorServer, appServer],
   outputDir: 'e2e/results',
 });

@@ -1,5 +1,6 @@
 import {
   Component,
+  DestroyRef,
   ElementRef,
   computed,
   effect,
@@ -10,12 +11,15 @@ import {
 } from '@angular/core';
 import {Title} from '@angular/platform-browser';
 import {BookingService} from '../../services/booking.service';
-import {BookingFlowService} from '../../services/booking-flow.service';
+import {BookingFlowService, type BookingFlowStep} from '../../services/booking-flow.service';
 import {CalendarStepComponent} from '../../steps/calendar-step/calendar-step.component';
 import {PartySizeStepComponent} from '../../steps/party-size-step/party-size-step.component';
 
 const DESIGN_PRIMARY = '#1A1A1A';
 const DESIGN_SECONDARY = '#8FA67A';
+
+/** Steps in the funnel including landing and the future submit step. */
+const TOTAL_STEPS = 6;
 
 @Component({
   selector: 'osef-booking-page',
@@ -61,12 +65,13 @@ export class BookingPageComponent {
 
   /** Polite announcement for screen readers on every step transition. */
   stepAnnouncement = computed<string>(() => {
-    const announcements: Record<string, string> = {
-      'party-size': 'Step 2 of 6: Party Size',
-      date: 'Step 3 of 6: Date',
-      time: 'Step 4 of 6: Time',
+    const announcements: Record<Exclude<BookingFlowStep, 'landing'>, string> = {
+      'party-size': `Step 2 of ${TOTAL_STEPS}: Party Size`,
+      date: `Step 3 of ${TOTAL_STEPS}: Date`,
+      time: `Step 4 of ${TOTAL_STEPS}: Time`,
     };
-    return announcements[this.flow.step()] ?? '';
+    const step = this.flow.step();
+    return step === 'landing' ? '' : announcements[step];
   });
 
   /** Human-readable selected date for the time-slot stub summary. */
@@ -88,6 +93,10 @@ export class BookingPageComponent {
   private readonly bookButton = viewChild<ElementRef<HTMLButtonElement>>('bookButton');
 
   constructor() {
+    // The flow service is a root singleton that outlives this page — clear any
+    // half-finished funnel when the user leaves, so a same-slug revisit starts fresh.
+    inject(DestroyRef).onDestroy(() => this.flow.reset());
+
     effect(() => {
       try {
         const restaurant = this.restaurant.value();

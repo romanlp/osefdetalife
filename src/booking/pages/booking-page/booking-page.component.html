@@ -74,8 +74,8 @@
           <osef-calendar-step
             class="card step-card"
             data-testid="calendar-step"
-            [hours]="restaurant.value()!.hours"
-            [timezone]="restaurant.value()!.timezone"
+            [hours]="restaurant.value()?.hours ?? {}"
+            [timezone]="restaurant.value()?.timezone || 'UTC'"
             [selected]="flow.selectedDate()"
             (dateSelect)="onDate($event)"
             (back)="flow.back()"

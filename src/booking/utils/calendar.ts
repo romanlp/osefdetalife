@@ -1,5 +1,8 @@
 import type { DayNumber, OpeningHours } from '../../shared/types/restaurant';
 
+/** Angular dev-mode flag — defined globally by the framework, absent in production builds. */
+declare const ngDevMode: boolean | object | undefined;
+
 export interface ZonedToday {
   /** Calendar date in the target timezone, formatted as YYYY-MM-DD. */
   iso: string;
@@ -32,19 +35,24 @@ export function isoDayNumberOf(iso: string): DayNumber {
 /**
  * Resolves "today" in the restaurant's IANA timezone (never device-local getters).
  * `now` must be injected by the caller. An invalid/unsupported timezone falls
- * back to UTC-derived date parts instead of throwing on corrupt restaurant data.
+ * back to UTC-derived date parts instead of throwing on corrupt restaurant data
+ * (with a dev-mode warning); a missing/NaN clock falls back to the epoch.
  */
 export function zonedToday(timezone: string, now: Date): ZonedToday {
+  const safeNow = now instanceof Date && !Number.isNaN(now.getTime()) ? now : new Date(0);
   try {
     const iso = new Intl.DateTimeFormat('en-CA', {
       timeZone: timezone,
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
-    }).format(now);
+    }).format(safeNow);
     return { iso, dayNumber: isoDayNumberOf(iso) };
   } catch {
-    const iso = now.toISOString().slice(0, 10);
+    if (typeof ngDevMode === 'undefined' || ngDevMode) {
+      console.warn(`[osef] zonedToday: invalid timezone "${timezone}" — falling back to UTC.`);
+    }
+    const iso = safeNow.toISOString().slice(0, 10);
     return { iso, dayNumber: isoDayNumberOf(iso) };
   }
 }

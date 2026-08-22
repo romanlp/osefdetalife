@@ -28,11 +28,12 @@ describe('CalendarStepComponent', () => {
       selected?: string | null;
       timezone?: string;
       hours?: OpeningHours;
+      now?: () => Date;
     } = {},
   ): Promise<void> {
     await TestBed.configureTestingModule({
       imports: [CalendarStepComponent],
-      providers: [{ provide: NOW, useValue: FIXED_NOW }],
+      providers: [{ provide: NOW, useValue: overrides.now ?? FIXED_NOW }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(CalendarStepComponent);
@@ -142,6 +143,31 @@ describe('CalendarStepComponent', () => {
       expect(rendered[0]).toBe('date-option-2026-09-01');
       expect(rendered).not.toContain('date-option-2026-09-07');
       expect(rendered.at(-1)).toBe('date-option-2026-09-30');
+    });
+
+    it('[P0] YEAR_BOUNDARY: should roll navigation from December 2026 into January 2027', async () => {
+      await createComponent({ now: () => new Date('2026-12-28T12:00:00Z') });
+
+      expect(queryEl().textContent).toContain('December 2026');
+
+      queryEl().querySelector<HTMLButtonElement>('[data-testid="calendar-next"]')!.click();
+      fixture.detectChanges();
+
+      expect(queryEl().textContent).toContain('January 2027');
+
+      const rendered = [
+        ...queryEl().querySelectorAll<HTMLButtonElement>('.date-btn'),
+      ].map((b) => b.getAttribute('data-testid'));
+
+      // Jan 1 2027 is a Friday — first cell, correctly placed in the week.
+      expect(rendered[0]).toBe('date-option-2027-01-01');
+      // Mondays (4, 11, 18, 25) hidden as closed across the new year.
+      expect(rendered).not.toContain('date-option-2027-01-04');
+      expect(rendered).not.toContain('date-option-2027-01-11');
+      expect(rendered).not.toContain('date-option-2027-01-18');
+      expect(rendered).not.toContain('date-option-2027-01-25');
+      // Jan 31 2027 is a Sunday (open) — the grid reaches the true end of month.
+      expect(rendered.at(-1)).toBe('date-option-2027-01-31');
     });
   });
 
