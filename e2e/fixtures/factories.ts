@@ -11,12 +11,14 @@ export function createRestaurantData(overrides?: Partial<Restaurant>): Restauran
     ownerId: faker.string.uuid(),
     timezone: 'Europe/London',
     hours: {
-      0: { open: '09:00', close: '17:00' },
+      // ISO day numbers: 1=Monday .. 7=Sunday (matches the app's OpeningHours type).
+      // Saturday (6) is intentionally closed so calendar e2e can assert hidden days.
       1: { open: '09:00', close: '17:00' },
       2: { open: '09:00', close: '17:00' },
       3: { open: '09:00', close: '17:00' },
       4: { open: '09:00', close: '17:00' },
       5: { open: '10:00', close: '15:00' },
+      7: { open: '09:00', close: '17:00' },
     },
     whiteLabel: {
       primaryColor: '#1A1A1A',

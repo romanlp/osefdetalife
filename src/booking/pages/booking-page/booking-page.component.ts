@@ -1,6 +1,18 @@
-import {Component, computed, effect, inject, input, resource} from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  computed,
+  effect,
+  inject,
+  input,
+  resource,
+  viewChild,
+} from '@angular/core';
 import {Title} from '@angular/platform-browser';
 import {BookingService} from '../../services/booking.service';
+import {BookingFlowService} from '../../services/booking-flow.service';
+import {CalendarStepComponent} from '../../steps/calendar-step/calendar-step.component';
+import {PartySizeStepComponent} from '../../steps/party-size-step/party-size-step.component';
 
 const DESIGN_PRIMARY = '#1A1A1A';
 const DESIGN_SECONDARY = '#8FA67A';
@@ -11,7 +23,7 @@ const DESIGN_SECONDARY = '#8FA67A';
     '[style.--osef-brand-primary]': 'brandPrimary()',
     '[style.--osef-brand-secondary]': 'brandSecondary()',
   },
-  imports: [],
+  imports: [PartySizeStepComponent, CalendarStepComponent],
   templateUrl: './booking-page.component.html',
   styleUrl: './booking-page.component.scss',
 })
@@ -19,6 +31,8 @@ export class BookingPageComponent {
   private bookingService = inject(BookingService);
 
   private title = inject(Title);
+
+  readonly flow = inject(BookingFlowService);
 
   slug = input<string>();
 
@@ -45,6 +59,34 @@ export class BookingPageComponent {
     }
   });
 
+  /** Polite announcement for screen readers on every step transition. */
+  stepAnnouncement = computed<string>(() => {
+    const announcements: Record<string, string> = {
+      'party-size': 'Step 2 of 6: Party Size',
+      date: 'Step 3 of 6: Date',
+      time: 'Step 4 of 6: Time',
+    };
+    return announcements[this.flow.step()] ?? '';
+  });
+
+  /** Human-readable selected date for the time-slot stub summary. */
+  selectedDateLabel = computed<string>(() => {
+    const iso = this.flow.selectedDate();
+    if (!iso) return '';
+    const [year, month, day] = iso.split('-').map(Number);
+    return new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'UTC',
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    }).format(new Date(Date.UTC(year, month - 1, day)));
+  });
+
+  private readonly timeHeading = viewChild<ElementRef<HTMLHeadingElement>>('timeHeading');
+
+  private readonly bookButton = viewChild<ElementRef<HTMLButtonElement>>('bookButton');
+
   constructor() {
     effect(() => {
       try {
@@ -54,6 +96,50 @@ export class BookingPageComponent {
         this.title.setTitle('Booking');
       }
     });
+
+    // A fresh restaurant (initial load, retry, or slug change) resets the flow.
+    effect(() => {
+      try {
+        this.restaurant.value();
+      } catch {
+        // Error state — nothing to reset against; the error UI takes over.
+      }
+      this.flow.reset();
+    });
+
+    // Focus the time-slot stub heading whenever that step mounts.
+    effect(() => {
+      const heading = this.timeHeading();
+      if (heading && this.flow.step() === 'time') {
+        heading.nativeElement.focus();
+      }
+    });
+
+    // Returning to landing from a later step moves focus to the primary CTA.
+    // Latched so initial page load never steals focus, and so the focus retries
+    // until the button actually exists (the switch renders one tick later).
+    let hasEnteredFlow = false;
+    let landingFocusApplied = false;
+    effect(() => {
+      const step = this.flow.step();
+      if (step !== 'landing') {
+        hasEnteredFlow = true;
+        landingFocusApplied = false;
+      }
+      const button = this.bookButton();
+      if (step === 'landing' && hasEnteredFlow && !landingFocusApplied && button) {
+        button.nativeElement.focus();
+        landingFocusApplied = true;
+      }
+    });
+  }
+
+  onPartySize(size: number): void {
+    this.flow.choosePartySize(size);
+  }
+
+  onDate(iso: string): void {
+    this.flow.chooseDate(iso);
   }
 
   retry(): void {

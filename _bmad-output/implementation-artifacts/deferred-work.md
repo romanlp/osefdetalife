@@ -115,3 +115,9 @@ Items surfaced during code reviews that are pre-existing issues or out of scope 
 - source_spec: `_bmad-output/implementation-artifacts/2-1-public-booking-page-foundation-landing.md`
   summary: BookingService casts Firestore data as Restaurant without shape validation
   evidence: Common Firebase pattern; runtime failure would be caught by component tests
+
+## Deferred from: review of spec-2-2-party-size-date-selection (2026-08-21)
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-2-2-party-size-date-selection.md`
+  summary: Today remains selectable on the booking calendar after the restaurant's closing time has passed (old e2e helper had a closeHour guard that was dropped; app never had one)
+  evidence: Spec-compliant (matrix row says today+future selectable) and gracefully handled once Story 2.3 computes real slot availability ("No available times for this date") — revisit when planning 2-3 so availability excludes today after close

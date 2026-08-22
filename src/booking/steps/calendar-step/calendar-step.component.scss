@@ -1,0 +1,138 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  text-align: left;
+}
+
+.back-button {
+  align-self: flex-start;
+  width: 44px;
+  height: 44px;
+  margin: -8px 0 8px -12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font-size: 1.25rem;
+  cursor: pointer;
+
+  &:hover {
+    background: #f5f0eb;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--osef-brand-secondary, #8fa67a);
+    outline-offset: 2px;
+  }
+}
+
+.heading {
+  margin: 0 0 16px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  outline: none;
+}
+
+.month-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.month-label {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.nav-button {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #e5e0db;
+  border-radius: 8px;
+  background: #ffffff;
+  color: inherit;
+  font-size: 1.25rem;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    border-color: #6b6b6b;
+  }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--osef-brand-secondary, #8fa67a);
+    outline-offset: 2px;
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  margin-bottom: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #6b6b6b;
+  text-align: center;
+
+  span {
+    padding: 4px 0;
+  }
+}
+
+.empty-month {
+  margin: 16px 0;
+  font-size: 0.9375rem;
+  color: #6b6b6b;
+}
+
+.date-btn {
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: 8px;
+  border: 2px solid #e5e0db;
+  background: #ffffff;
+  color: inherit;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover:not(.selected) {
+    border-color: #6b6b6b;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--osef-brand-secondary, #8fa67a);
+    outline-offset: 2px;
+  }
+
+  &.selected {
+    background: var(--osef-brand-primary, #1a1a1a);
+    border-color: var(--osef-brand-primary, #1a1a1a);
+    color: #ffffff;
+  }
+}

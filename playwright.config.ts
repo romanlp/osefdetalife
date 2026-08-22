@@ -4,6 +4,8 @@ process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8081';
 process.env.FIREBASE_AUTH_EMULATOR_HOST = 'localhost:9099';
 process.env.GCLOUD_PROJECT = 'firebase-crackling-fire-4704';
 
+const appBaseUrl = process.env['PLAYWRIGHT_TEST_BASE_URL'] ?? 'http://localhost:4210';
+
 export default defineConfig({
   testDir: './e2e/tests',
   globalTeardown: './e2e/global-teardown.ts',
@@ -19,7 +21,7 @@ export default defineConfig({
     ['list'],
   ],
   use: {
-    baseURL: process.env['PLAYWRIGHT_TEST_BASE_URL'] ?? 'http://localhost:4210',
+    baseURL: appBaseUrl,
     actionTimeout: 15_000,
     navigationTimeout: 30_000,
     trace: 'retain-on-failure-and-retries',
@@ -46,7 +48,7 @@ export default defineConfig({
     },
     {
       command: 'ng serve --configuration e2e',
-      url: 'http://localhost:4210',
+      url: appBaseUrl,
       reuseExistingServer: !process.env['CI'],
       timeout: 120_000,
     },

@@ -1,0 +1,61 @@
+<div class="step">
+  <button
+    type="button"
+    class="back-button"
+    data-testid="calendar-back"
+    aria-label="Back to party size"
+    (click)="back.emit()"
+  >
+    <span aria-hidden="true">&larr;</span>
+  </button>
+
+  <h2 #heading tabindex="-1" class="heading">Pick a date</h2>
+
+  <div class="month-nav">
+    <button
+      type="button"
+      class="nav-button"
+      data-testid="calendar-prev"
+      aria-label="Previous month"
+      [disabled]="monthOffset() === 0"
+      (click)="prev()"
+    >
+      <span aria-hidden="true">&lsaquo;</span>
+    </button>
+    <span class="month-label">{{ monthLabel() }}</span>
+    <button
+      type="button"
+      class="nav-button"
+      data-testid="calendar-next"
+      aria-label="Next month"
+      (click)="next()"
+    >
+      <span aria-hidden="true">&rsaquo;</span>
+    </button>
+  </div>
+
+  @if (cells().length > 0) {
+    <div class="weekdays" aria-hidden="true">
+      @for (day of weekdays; track day) {
+        <span>{{ day }}</span>
+      }
+    </div>
+    <div class="grid" role="group" aria-label="Available dates">
+      @for (cell of cells(); track cell.iso) {
+        <button
+          type="button"
+          class="date-btn"
+          [class.selected]="selected() === cell.iso"
+          [attr.aria-pressed]="selected() === cell.iso"
+          [attr.aria-label]="dateLabel(cell.iso)"
+          [attr.data-testid]="'date-option-' + cell.iso"
+          (click)="choose(cell.iso)"
+        >
+          {{ dayOfMonth(cell.iso) }}
+        </button>
+      }
+    </div>
+  } @else {
+    <p class="empty-month" data-testid="calendar-empty">No available dates in this month.</p>
+  }
+</div>
