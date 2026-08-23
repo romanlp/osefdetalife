@@ -34,18 +34,73 @@
   } @else {
     <h1 class="sr-only">{{ restaurant.value()!.name }} — Book a Table</h1>
     <span class="sr-only" role="status">{{ restaurant.value()!.name }} loaded.</span>
-    <section class="card text-center">
-      <h2 class="text-3xl font-semibold mb-3" data-testid="restaurant-name">
-        {{ restaurant.value()?.name }}
-      </h2>
-      @if (restaurant.value()?.address) {
-        <p class="text-gray-600 mb-6" data-testid="restaurant-address">
-          {{ restaurant.value()?.address }}
-        </p>
+    <p class="sr-only" role="status" aria-live="polite" data-testid="step-announcement">
+      {{ stepAnnouncement() }}
+    </p>
+
+    <div class="step-host">
+      @switch (flow.step()) {
+        @case ('landing') {
+          <section class="card text-center">
+            <h2 class="text-3xl font-semibold mb-3" data-testid="restaurant-name">
+              {{ restaurant.value()?.name }}
+            </h2>
+            @if (restaurant.value()?.address) {
+              <p class="text-gray-600 mb-6" data-testid="restaurant-address">
+                {{ restaurant.value()?.address }}
+              </p>
+            }
+            <button
+              type="button"
+              #bookButton
+              data-testid="book-button"
+              class="button-primary"
+              (click)="flow.start()"
+            >
+              Book a Table
+            </button>
+          </section>
+        }
+        @case ('party-size') {
+          <osef-party-size-step
+            class="card step-card"
+            data-testid="party-size-step"
+            [selected]="flow.partySize()"
+            (partySizeSelect)="onPartySize($event)"
+            (back)="flow.back()"
+          />
+        }
+        @case ('date') {
+          <osef-calendar-step
+            class="card step-card"
+            data-testid="calendar-step"
+            [hours]="restaurant.value()?.hours ?? {}"
+            [timezone]="restaurant.value()?.timezone || 'UTC'"
+            [selected]="flow.selectedDate()"
+            (dateSelect)="onDate($event)"
+            (back)="flow.back()"
+          />
+        }
+        @case ('time') {
+          <section class="card step-card" data-testid="time-slot-stub">
+            <button
+              type="button"
+              class="back-button"
+              data-testid="time-back"
+              aria-label="Back to date selection"
+              (click)="flow.back()"
+            >
+              <span aria-hidden="true">&larr;</span>
+            </button>
+            <h2 #timeHeading tabindex="-1" class="heading">Available times</h2>
+            <p class="summary" data-testid="booking-summary">
+              Party size: {{ flow.partySize() }}<br />
+              <time [attr.datetime]="flow.selectedDate()">{{ selectedDateLabel() }}</time>
+            </p>
+            <p class="muted">Time slots are coming soon — your selections are saved for this visit.</p>
+          </section>
+        }
       }
-      <button type="button" data-testid="book-button" class="button-primary">
-        Book a Table
-      </button>
-    </section>
+    </div>
   }
 </main>

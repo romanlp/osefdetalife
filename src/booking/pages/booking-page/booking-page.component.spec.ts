@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { BookingPageComponent } from './booking-page.component';
 import { BookingService } from '../../services/booking.service';
+import { NOW } from '../../utils/clock';
 import type { Restaurant } from '../../../shared/types/restaurant';
 
 const RESTAURANT_FIXTURE: Restaurant = {
@@ -18,9 +19,41 @@ const RESTAURANT_FIXTURE: Restaurant = {
   createdAt: new Date('2026-01-01T00:00:00Z'),
 };
 
+/** Open every day — combined with the fixed clock (Thu 2026-08-20) the calendar is deterministic. */
+const RESTAURANT_OPEN_ALL_WEEK: Restaurant = {
+  ...RESTAURANT_FIXTURE,
+  hours: {
+    1: { open: '09:00', close: '17:00' },
+    2: { open: '09:00', close: '17:00' },
+    3: { open: '09:00', close: '17:00' },
+    4: { open: '09:00', close: '17:00' },
+    5: { open: '09:00', close: '17:00' },
+    6: { open: '09:00', close: '17:00' },
+    7: { open: '09:00', close: '17:00' },
+  },
+};
+
+/** Thursday 2026-08-20 at 23:30 UTC — already Friday Aug 21 in Europe/London. */
+const FIXED_NOW = () => new Date('2026-08-20T23:30:00Z');
+
+/**
+ * Simulates a Firestore doc missing hours/timezone at runtime (both fields are
+ * required by the Restaurant type, so they are stripped post-construction).
+ */
+const BROKEN_RESTAURANT: Restaurant = (() => {
+  const partial = { ...RESTAURANT_OPEN_ALL_WEEK } as Record<string, unknown>;
+  delete partial['hours'];
+  delete partial['timezone'];
+  return partial as unknown as Restaurant;
+})();
+
 describe('BookingPageComponent', () => {
   let fixture: ComponentFixture<BookingPageComponent>;
   let bookingServiceSpy: { getRestaurantBySlug: ReturnType<typeof vi.fn> };
+
+  function queryEl(): HTMLElement {
+    return fixture.nativeElement as HTMLElement;
+  }
 
   beforeEach(async () => {
     bookingServiceSpy = { getRestaurantBySlug: vi.fn() };
@@ -30,6 +63,7 @@ describe('BookingPageComponent', () => {
       providers: [
         provideRouter([]),
         { provide: BookingService, useValue: bookingServiceSpy },
+        { provide: NOW, useValue: FIXED_NOW },
       ],
     }).compileComponents();
   });
@@ -42,6 +76,16 @@ describe('BookingPageComponent', () => {
     fixture.detectChanges();
     await fixture.whenStable();
     fixture.detectChanges();
+  }
+
+  /** Loads the page with a successfully resolved restaurant, ready for flow interactions. */
+  async function createLoadedComponent(restaurant: Restaurant = RESTAURANT_FIXTURE): Promise<void> {
+    bookingServiceSpy.getRestaurantBySlug.mockResolvedValue(restaurant);
+    await createComponent('the-blue-bistro');
+  }
+
+  function bookButton(): HTMLButtonElement {
+    return fixture.nativeElement.querySelector('[data-testid="book-button"]');
   }
 
   describe('HAPPY_PATH', () => {
@@ -68,7 +112,7 @@ describe('BookingPageComponent', () => {
       expect(fixture.nativeElement.querySelector('[data-testid="booking-page-loading"]')).toBeFalsy();
       expect(fixture.nativeElement.querySelector('[data-testid="restaurant-name"]')?.textContent).toContain('The Blue Bistro');
       expect(fixture.nativeElement.querySelector('[data-testid="restaurant-address"]')?.textContent).toContain('42 Rue de Rivoli');
-      expect(fixture.nativeElement.querySelector('[data-testid="book-button"]')?.textContent).toContain('Book a Table');
+      expect(bookButton()?.textContent).toContain('Book a Table');
     });
 
     it('[P1] should apply white-label colors as host CSS custom properties', async () => {
@@ -91,7 +135,7 @@ describe('BookingPageComponent', () => {
 
       expect(fixture.nativeElement.querySelector('[data-testid="restaurant-name"]')?.textContent).toContain('The Blue Bistro');
       expect(fixture.nativeElement.querySelector('[data-testid="restaurant-address"]')).toBeFalsy();
-      expect(fixture.nativeElement.querySelector('[data-testid="book-button"]')).toBeTruthy();
+      expect(bookButton()).toBeTruthy();
     });
   });
 
@@ -101,7 +145,7 @@ describe('BookingPageComponent', () => {
       await createComponent('definitely-not-a-real-slug');
 
       expect(fixture.nativeElement.textContent).toContain('Restaurant not found');
-      expect(fixture.nativeElement.querySelector('[data-testid="book-button"]')).toBeFalsy();
+      expect(bookButton()).toBeFalsy();
       expect(fixture.nativeElement.querySelector('[data-testid="retry-button"]')).toBeFalsy();
     });
   });
@@ -112,7 +156,7 @@ describe('BookingPageComponent', () => {
       await createComponent('stale-slug');
 
       expect(fixture.nativeElement.textContent).toContain('Restaurant not found');
-      expect(fixture.nativeElement.querySelector('[data-testid="book-button"]')).toBeFalsy();
+      expect(bookButton()).toBeFalsy();
     });
   });
 
@@ -139,6 +183,317 @@ describe('BookingPageComponent', () => {
 
       expect(bookingServiceSpy.getRestaurantBySlug).toHaveBeenCalledTimes(2);
       expect(fixture.nativeElement.querySelector('[data-testid="restaurant-name"]')?.textContent).toContain('The Blue Bistro');
+    });
+  });
+
+  describe('FLOW_PARTY_SIZE', () => {
+    it('[P0] should show the party-size grid when Book a Table is tapped', async () => {
+      await createLoadedComponent();
+
+      bookButton().click();
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.querySelector('[data-testid="party-size-step"]')).toBeTruthy();
+      expect(fixture.nativeElement.textContent).toContain('How many guests?');
+      for (const size of [1, 2, 3, 4, 5, 6, 7, 8]) {
+        expect(
+          fixture.nativeElement.querySelector(`[data-testid="party-size-option-${size}"]`),
+        ).toBeTruthy();
+      }
+    });
+
+    it('[P0] should return to landing via the party-size back button', async () => {
+      await createLoadedComponent();
+
+      bookButton().click();
+      fixture.detectChanges();
+      queryEl().querySelector<HTMLButtonElement>('[data-testid="party-size-back"]')!.click();
+      fixture.detectChanges();
+
+      expect(bookButton()).toBeTruthy();
+      expect(fixture.nativeElement.querySelector('[data-testid="party-size-step"]')).toBeFalsy();
+    });
+
+    it('[P1] should move focus to the Book a Table button when returning to landing', async () => {
+      await createLoadedComponent();
+
+      bookButton().click();
+      fixture.detectChanges();
+      expect(document.activeElement).not.toBe(bookButton());
+
+      queryEl().querySelector<HTMLButtonElement>('[data-testid="party-size-back"]')!.click();
+      fixture.detectChanges();
+
+      expect(document.activeElement).toBe(bookButton());
+    });
+
+    it('[P1] should move focus to the party-size heading on transition', async () => {
+      await createLoadedComponent();
+
+      bookButton().click();
+      fixture.detectChanges();
+
+      const heading = queryEl().querySelector<HTMLHeadingElement>(
+        '[data-testid="party-size-step"] h2',
+      )!;
+      expect(document.activeElement).toBe(heading);
+    });
+
+    it('[P1] should announce "Step 2 of 6: Party Size" in the live region', async () => {
+      await createLoadedComponent();
+
+      bookButton().click();
+      fixture.detectChanges();
+
+      expect(
+        fixture.nativeElement.querySelector('[data-testid="step-announcement"]')?.textContent?.trim(),
+      ).toBe('Step 2 of 6: Party Size');
+    });
+
+    it('[P0] should announce "Step 1 of 6: Start" on landing and again when returning to it', async () => {
+      await createLoadedComponent();
+
+      const announcement = () =>
+        fixture.nativeElement.querySelector('[data-testid="step-announcement"]')?.textContent?.trim();
+      expect(announcement()).toBe('Step 1 of 6: Start');
+
+      bookButton().click();
+      fixture.detectChanges();
+      expect(announcement()).toBe('Step 2 of 6: Party Size');
+
+      queryEl().querySelector<HTMLButtonElement>('[data-testid="party-size-back"]')!.click();
+      fixture.detectChanges();
+      expect(announcement()).toBe('Step 1 of 6: Start');
+    });
+  });
+
+  describe('FLOW_DATE', () => {
+    async function reachCalendar(): Promise<void> {
+      await createLoadedComponent(RESTAURANT_OPEN_ALL_WEEK);
+      bookButton().click();
+      fixture.detectChanges();
+      queryEl().querySelector<HTMLButtonElement>('[data-testid="party-size-option-4"]')!.click();
+      fixture.detectChanges();
+    }
+
+    it('[P0] should auto-advance to the calendar after choosing a party size', async () => {
+      await reachCalendar();
+
+      expect(fixture.nativeElement.querySelector('[data-testid="calendar-step"]')).toBeTruthy();
+      // Fixed clock: "today" is Fri 2026-08-21 in Europe/London; open-all-week renders today onward.
+      expect(
+        queryEl().querySelector('[data-testid="date-option-2026-08-21"]'),
+      ).toBeTruthy();
+      expect(
+        queryEl().querySelector('[data-testid="date-option-2026-08-20"]'),
+      ).toBeFalsy();
+    });
+
+    it('[P0] should announce "Step 3 of 6: Date" in the live region', async () => {
+      await reachCalendar();
+
+      expect(
+        fixture.nativeElement.querySelector('[data-testid="step-announcement"]')?.textContent?.trim(),
+      ).toBe('Step 3 of 6: Date');
+    });
+
+    it('[P0] should auto-advance to the time-slot stub showing the selections after picking a date', async () => {
+      await reachCalendar();
+
+      queryEl()
+        .querySelector<HTMLButtonElement>('[data-testid="date-option-2026-08-21"]')!
+        .click();
+      fixture.detectChanges();
+
+      const stub = fixture.nativeElement.querySelector('[data-testid="time-slot-stub"]');
+      expect(stub).toBeTruthy();
+      expect(stub?.textContent).toContain('Party size: 4');
+      expect(stub?.textContent).toContain('21 August 2026');
+    });
+
+    it('[P0] should expose the chosen ISO date on the summary time element', async () => {
+      await reachCalendar();
+
+      queryEl()
+        .querySelector<HTMLButtonElement>('[data-testid="date-option-2026-08-21"]')!
+        .click();
+      fixture.detectChanges();
+
+      const time = queryEl().querySelector<HTMLElement>('[data-testid="booking-summary"] time');
+      expect(time?.getAttribute('datetime')).toBe('2026-08-21');
+    });
+
+    it('[P0] should announce "Step 4 of 6: Time" after picking a date', async () => {
+      await reachCalendar();
+
+      queryEl()
+        .querySelector<HTMLButtonElement>('[data-testid="date-option-2026-08-21"]')!
+        .click();
+      fixture.detectChanges();
+
+      expect(
+        fixture.nativeElement.querySelector('[data-testid="step-announcement"]')?.textContent?.trim(),
+      ).toBe('Step 4 of 6: Time');
+    });
+
+    it('[P1] should move focus to the time-slot heading after picking a date', async () => {
+      await reachCalendar();
+
+      queryEl()
+        .querySelector<HTMLButtonElement>('[data-testid="date-option-2026-08-21"]')!
+        .click();
+      fixture.detectChanges();
+
+      const heading = queryEl().querySelector<HTMLHeadingElement>(
+        '[data-testid="time-slot-stub"] h2',
+      )!;
+      expect(document.activeElement).toBe(heading);
+    });
+
+    it('[P1] should return to the calendar with the chosen date still highlighted when tapping back on the stub', async () => {
+      await reachCalendar();
+
+      queryEl()
+        .querySelector<HTMLButtonElement>('[data-testid="date-option-2026-08-21"]')!
+        .click();
+      fixture.detectChanges();
+      queryEl().querySelector<HTMLButtonElement>('[data-testid="time-back"]')!.click();
+      fixture.detectChanges();
+
+      expect(queryEl().querySelector('[data-testid="calendar-step"]')).toBeTruthy();
+      const selected = queryEl().querySelector<HTMLButtonElement>(
+        '[data-testid="date-option-2026-08-21"]',
+      )!;
+      expect(selected.classList.contains('selected')).toBe(true);
+      expect(selected.getAttribute('aria-pressed')).toBe('true');
+    });
+
+    it('[P0] should render an empty calendar instead of throwing when hours/timezone are missing', async () => {
+      await createLoadedComponent(BROKEN_RESTAURANT);
+
+      bookButton().click();
+      fixture.detectChanges();
+      queryEl().querySelector<HTMLButtonElement>('[data-testid="party-size-option-4"]')!.click();
+      fixture.detectChanges();
+
+      expect(queryEl().querySelector('[data-testid="calendar-step"]')).toBeTruthy();
+      expect(queryEl().querySelectorAll('.date-btn')).toHaveLength(0);
+      expect(
+        queryEl().querySelector('[data-testid="calendar-empty"]')?.textContent?.trim(),
+      ).toBe('No available dates in this month.');
+    });
+  });
+
+  describe('BACK_PRESERVES', () => {
+    it('[P0] should preserve the date returning from the stub and the party size returning from the calendar', async () => {
+      await createLoadedComponent(RESTAURANT_OPEN_ALL_WEEK);
+      bookButton().click();
+      fixture.detectChanges();
+      queryEl().querySelector<HTMLButtonElement>('[data-testid="party-size-option-4"]')!.click();
+      fixture.detectChanges();
+      queryEl()
+        .querySelector<HTMLButtonElement>('[data-testid="date-option-2026-08-21"]')!
+        .click();
+      fixture.detectChanges();
+
+      // Stub → calendar: date still highlighted.
+      queryEl().querySelector<HTMLButtonElement>('[data-testid="time-back"]')!.click();
+      fixture.detectChanges();
+      const selectedDate = queryEl().querySelector<HTMLButtonElement>(
+        '[data-testid="date-option-2026-08-21"]',
+      )!;
+      expect(selectedDate.classList.contains('selected')).toBe(true);
+
+      // Calendar → party size: number still highlighted.
+      queryEl().querySelector<HTMLButtonElement>('[data-testid="calendar-back"]')!.click();
+      fixture.detectChanges();
+      const selectedSize = queryEl().querySelector<HTMLButtonElement>(
+        '[data-testid="party-size-option-4"]',
+      )!;
+      expect(selectedSize.classList.contains('selected')).toBe(true);
+    });
+
+    it('[P1] should reopen the calendar on a future-month selection with its highlight after tapping back on the stub', async () => {
+      await createLoadedComponent(RESTAURANT_OPEN_ALL_WEEK);
+      bookButton().click();
+      fixture.detectChanges();
+      queryEl().querySelector<HTMLButtonElement>('[data-testid="party-size-option-4"]')!.click();
+      fixture.detectChanges();
+
+      // Forward two months: August → October, then pick Fri 2026-10-02.
+      queryEl().querySelector<HTMLButtonElement>('[data-testid="calendar-next"]')!.click();
+      fixture.detectChanges();
+      queryEl().querySelector<HTMLButtonElement>('[data-testid="calendar-next"]')!.click();
+      fixture.detectChanges();
+      expect(queryEl().textContent).toContain('October 2026');
+      queryEl()
+        .querySelector<HTMLButtonElement>('[data-testid="date-option-2026-10-02"]')!
+        .click();
+      fixture.detectChanges();
+
+      queryEl().querySelector<HTMLButtonElement>('[data-testid="time-back"]')!.click();
+      fixture.detectChanges();
+
+      // The calendar must remount on the selected month — not snap back to August,
+      // where the highlighted date does not exist in the DOM at all.
+      expect(queryEl().textContent).toContain('October 2026');
+      const selected = queryEl().querySelector<HTMLButtonElement>(
+        '[data-testid="date-option-2026-10-02"]',
+      )!;
+      expect(selected).toBeTruthy();
+      expect(selected.classList.contains('selected')).toBe(true);
+      expect(selected.getAttribute('aria-pressed')).toBe('true');
+    });
+  });
+
+  describe('FLOW_RESET', () => {
+    it('[P1] should reset the flow to landing when the restaurant reloads (slug change)', async () => {
+      await createLoadedComponent(RESTAURANT_OPEN_ALL_WEEK);
+
+      bookButton().click();
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('[data-testid="party-size-step"]')).toBeTruthy();
+
+      fixture.componentRef.setInput('slug', 'another-bistro');
+      fixture.detectChanges();
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      expect(bookButton()).toBeTruthy();
+      expect(fixture.nativeElement.querySelector('[data-testid="party-size-step"]')).toBeFalsy();
+      expect(fixture.componentInstance.flow.partySize()).toBeNull();
+    });
+
+    it('[P0] should reset the root-singleton flow when the page is destroyed mid-flow', async () => {
+      await createLoadedComponent(RESTAURANT_OPEN_ALL_WEEK);
+
+      bookButton().click();
+      fixture.detectChanges();
+      queryEl().querySelector<HTMLButtonElement>('[data-testid="party-size-option-4"]')!.click();
+      fixture.detectChanges();
+
+      const flow = fixture.componentInstance.flow;
+      expect(flow.step()).toBe('date');
+      expect(flow.partySize()).toBe(4);
+
+      fixture.destroy();
+
+      expect(flow.step()).toBe('landing');
+      expect(flow.partySize()).toBeNull();
+      expect(flow.selectedDate()).toBeNull();
+
+      // Recreating on the same TestBed shares the root-singleton service —
+      // the revisit must start at landing with no stale selections.
+      bookingServiceSpy.getRestaurantBySlug.mockResolvedValue(RESTAURANT_OPEN_ALL_WEEK);
+      fixture = TestBed.createComponent(BookingPageComponent);
+      fixture.componentRef.setInput('slug', 'the-blue-bistro');
+      fixture.detectChanges();
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      expect(bookButton()).toBeTruthy();
+      expect(fixture.componentInstance.flow.partySize()).toBeNull();
+      expect(fixture.componentInstance.flow.selectedDate()).toBeNull();
     });
   });
 });

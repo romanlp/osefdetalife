@@ -1,0 +1,29 @@
+<div class="step">
+  <button
+    type="button"
+    class="back-button"
+    data-testid="party-size-back"
+    aria-label="Back to start"
+    (click)="back.emit()"
+  >
+    <span aria-hidden="true">&larr;</span>
+  </button>
+
+  <h2 #heading tabindex="-1" class="heading">How many guests?</h2>
+  <p class="subheading">Select your party size</p>
+
+  <div class="grid" role="group" aria-label="Party size">
+    @for (size of sizes; track size) {
+      <button
+        type="button"
+        class="size-btn"
+        [class.selected]="selected() === size"
+        [attr.aria-pressed]="selected() === size"
+        [attr.data-testid]="'party-size-option-' + size"
+        (click)="choose(size)"
+      >
+        {{ size }}
+      </button>
+    }
+  </div>
+</div>
