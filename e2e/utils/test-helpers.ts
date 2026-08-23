@@ -39,11 +39,12 @@ export function formatTime(hours: number, minutes: number = 0): string {
 
 /**
  * First open date (per ISO day numbers 1=Mon..7=Sun) on or after "today" in `timezone`,
- * mirroring the app's calendar logic. Returns YYYY-MM-DD.
+ * mirroring the app's calendar logic. Returns YYYY-MM-DD. The timezone is required —
+ * always pass the seeded restaurant's timezone so the helper can never drift from it.
  */
 export function getNextAvailableDate(
   hours: Record<number, { open: string; close: string } | undefined>,
-  timezone: string = 'Europe/London',
+  timezone: string,
 ): string {
   const now = new Date();
   const todayIso = new Intl.DateTimeFormat('en-CA', {

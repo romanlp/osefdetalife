@@ -121,3 +121,21 @@ Items surfaced during code reviews that are pre-existing issues or out of scope 
 - source_spec: `_bmad-output/implementation-artifacts/spec-2-2-party-size-date-selection.md`
   summary: Today remains selectable on the booking calendar after the restaurant's closing time has passed (old e2e helper had a closeHour guard that was dropped; app never had one)
   evidence: Spec-compliant (matrix row says today+future selectable) and gracefully handled once Story 2.3 computes real slot availability ("No available times for this date") — revisit when planning 2-3 so availability excludes today after close
+
+## Deferred from: code review of spec-2-2-party-size-date-selection (2026-08-23)
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-2-2-party-size-date-selection.md`
+  summary: Zoned-day math implemented three times — calendar.ts (app), getNextAvailableDate and nextClosedDayIso (e2e helpers)
+  evidence: Test-infra duplication mirrors app logic per spec intent; extracting a shared helper crosses the src/e2e boundary
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-2-2-party-size-date-selection.md`
+  summary: .back-button/.heading styles copy-pasted verbatim across booking-page, calendar-step and party-size-step stylesheets
+  evidence: Component-scoped styles are Angular-idiomatic here; sharing would need global styles or SCSS mixins
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-2-2-party-size-date-selection.md`
+  summary: Hardcoded hex colors (#f5f0eb/#6b6b6b/#e5e0db/#ffffff) although DESIGN.md defines named tokens (surface/muted/hairline)
+  evidence: Only --osef-brand-primary/secondary exist as CSS custom properties; other tokens have no var infrastructure yet, values match DESIGN.md exactly
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-2-2-party-size-date-selection.md`
+  summary: BookingFlowService actions unguarded against out-of-order invocation (chooseDate before start reaches states no @switch case renders well)
+  evidence: All current call sites wire correctly; worth transition guards as Stories 2.3–2.5 add consumers

@@ -3,7 +3,7 @@ title: 'Story 2.2: Party Size & Date Selection'
 type: 'feature'
 created: '2026-08-21'
 status: 'done'
-review_loop_iteration: 0
+review_loop_iteration: 2
 context: []
 baseline_commit: 0b4b4334aeb077d183660fd203ef583ee5f6c3bf
 ---
@@ -83,7 +83,7 @@ baseline_commit: 0b4b4334aeb077d183660fd203ef583ee5f6c3bf
 
 ## Spec Change Log
 
-- Implementation-time infra addition: `playwright.config.ts` webServer URL now honors `PLAYWRIGHT_TEST_BASE_URL` (same env var `baseURL` already used) — a local Colima/Lima tunnel occupied port 4210 with a 404, permanently failing Playwright's readiness check. Default behavior unchanged; no app code affected.
+- Implementation-time infra addition: `playwright.config.ts` now honors `PLAYWRIGHT_TEST_BASE_URL` in two places — the `webServer.url`/`baseURL` value AND the `webServer` array, which skips spawning the local `ng serve` entirely when that env var is set (only emulators spawn; an already-running app would hang readiness polling). Same env var `baseURL` already used. A local Colima/Lima tunnel occupied port 4210 with a 404, permanently failing Playwright's readiness check. Default behavior unchanged; no app code affected. Disclosure completed during review round 2 — the round-1 entry originally mentioned only the URL half.
 - Review round 1 — human resolved the frozen *Ask First*: calendar gets an empty-month message ("No available dates in this month."); forward navigation stays unbounded by explicit human decision. KEEP: signal-based flow state machine, pure `(hours, timezone, now)` calendar utils with UTC-derived weekdays, hidden-not-grayed non-selectable days, existing testids.
 - Review round 1 — patch batch applied: e2e asserts chosen date in stub summary; unit tests added for time-back preserving date, "Step 4 of 6: Time" announcement, time-heading focus, party-size reselect-after-back; a11y fixes (destination-specific back labels, single month-label announcement, focus target on return to landing, weekday header row); invalid-timezone Intl fallback to UTC parts (never device-local); dead `formatDate` helper removed.
 
@@ -178,3 +178,23 @@ Accent mapping follows 2-1: selected fills use `var(--osef-brand-primary)` (same
 
 - e2e base URL env override (local port-squat workaround, default unchanged)
   [`playwright.config.ts:7`](../../playwright.config.ts#L7)
+
+### Review Findings
+
+_Review round 2 — 2026-08-23 — adversarial review (blind-hunter, edge-case-hunter, verification-gap, acceptance-auditor) against baseline 0b4b433._
+
+- [x] [Review][Decision] Landing transition announces nothing (AC5 ambiguity) — `stepAnnouncement` returns `''` when step is landing ([booking-page.component.ts:74](../../src/booking/pages/booking-page/booking-page.component.ts#L74)); return-to-landing moves focus to the CTA but no live-region announcement fires, while frozen AC5 says every step transition announces "Step N of 6" and `TOTAL_STEPS = 6` implies landing is Step 1. Also unpinned by tests either way — no test asserts the landing value of the live region. **Resolved: announce `Step 1 of 6: Start` on landing (initial + return), pinned by [P0] test.**
+- [x] [Review][Decision] No visual "today" marker in the calendar — today renders as a normal selectable cell; DESIGN.md:144 is the only calendar visual spec and no mockup exists, so adding a today treatment needs design intent first. **Resolved: brand-secondary outline + bold number on today's non-selected cell, `aria-current="date"`, pinned by [P1] tests.**
+- [x] [Review][Patch] Calendar cells misalign with weekday headers — grid omits closed/past days without leading spacers, so buttons pack flush-left and every subsequent cell drifts under the wrong weekday label whenever any day mid-month is closed (e.g. closed Saturdays shift all later cells one column left) [src/booking/steps/calendar-step/calendar-step.component.html:43] **Fixed: leadingSpacers rendered before cells; GRID_ALIGNMENT tests.**
+- [x] [Review][Patch] Back from time stub loses future-month date highlight — `monthOffset` resets to `0` on remount, so after picking a date beyond the current month, time-back re-renders the current month where the selected date doesn't exist; violates AC4 "back returns to the calendar with the date highlighted". No test combines forward-month navigation with selection + back [src/booking/steps/calendar-step/calendar-step.component.ts:33] **Fixed: monthOffset derived from selected date via userMonthOffset override; future-month back test added.**
+- [x] [Review][Patch] P0 e2e fails deterministically near month end — next open date can fall in the month after the displayed one, which is never rendered; test must navigate months before asserting/clicking [e2e/tests/public-booking-page.spec.ts:86] **Fixed: showMonth() helper navigates to the target month first.**
+- [x] [Review][Patch] Vacuous closed-Saturday e2e assertion — when the next Saturday falls outside the displayed month, `toHaveCount(0)` passes regardless of hiding behavior; pick/navigate to a guaranteed-rendered closed day [e2e/tests/public-booking-page.spec.ts:124] **Fixed: showMonth(closedDay) then assert absence within its own rendered month; stale prev-disabled assertion replaced with month-label check.**
+- [x] [Review][Patch] Stale "today" across midnight — `today` is computed once per mount over the non-reactive clock; a long-lived tab keeps yesterday selectable and prev-disabled anchored to a stale month [src/booking/steps/calendar-step/calendar-step.component.ts:38] **Fixed: navTick signal re-evaluates today() on every prev/next; TZ_BOUNDARY midnight-refresh test.**
+- [x] [Review][Patch] e2e helpers hardcode Europe/London instead of taking restaurant.timezone from the fixture [e2e/utils/test-helpers.ts:41] **Fixed: getNextAvailableDate timezone now required; call sites pass restaurant.timezone; nextClosedDayIso takes timezone param.**
+- [x] [Review][Patch] calendar.spec.ts convention gaps — five tests missing `[P0]`/`[P1]` prefixes (TZ_BOUNDARY ×2, DAY_HIDDEN ×2, MONTH_NAV ×1); describes organized by function rather than per scenario [src/booking/utils/calendar.spec.ts:53] **Fixed: scenario describes (HAPPY_PATH/TZ_BOUNDARY/EDGE_CASE/DAY_HIDDEN/MONTH_NAV); all tests prefixed.**
+- [x] [Review][Patch] Spec change log understates playwright.config.ts change — webServer array also skips spawning `ng serve` entirely when the env var is set; disclosure incomplete [_bmad-output/implementation-artifacts/spec-2-2-party-size-date-selection.md:86] **Fixed: change-log entry amended above.**
+- [x] [Review][Patch] Status metadata conflict — spec frontmatter says status 'done'/review_loop_iteration 0 while sprint-status tracks 'review' and round-1 patches are documented; reconcile during completion bookkeeping [_bmad-output/implementation-artifacts/spec-2-2-party-size-date-selection.md:5] **Fixed: review_loop_iteration set to 2; sprint-status reconciled.**
+- [x] [Review][Defer] Zoned-day math triplicated (calendar.ts / getNextAvailableDate / nextClosedDayIso) — deferred, extraction crosses src/e2e boundary [e2e/utils/test-helpers.ts:41]
+- [x] [Review][Defer] .back-button/.heading styles duplicated verbatim across three stylesheets — deferred, component-scoped styles are idiomatic here [src/booking/steps/calendar-step/calendar-step.component.scss:13]
+- [x] [Review][Defer] Hardcoded hex colors (#f5f0eb/#6b6b6b/#e5e0db/#ffffff) where DESIGN.md names tokens but only brand vars exist as CSS custom properties — deferred, needs token infrastructure decision [src/booking/steps/calendar-step/calendar-step.component.scss:63]
+- [x] [Review][Defer] BookingFlowService actions unguarded against out-of-order invocation — deferred, no current caller misuse; revisit as Stories 2.3–2.5 add consumers [src/booking/services/booking-flow.service.ts:16]

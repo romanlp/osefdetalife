@@ -249,6 +249,22 @@ describe('BookingPageComponent', () => {
         fixture.nativeElement.querySelector('[data-testid="step-announcement"]')?.textContent?.trim(),
       ).toBe('Step 2 of 6: Party Size');
     });
+
+    it('[P0] should announce "Step 1 of 6: Start" on landing and again when returning to it', async () => {
+      await createLoadedComponent();
+
+      const announcement = () =>
+        fixture.nativeElement.querySelector('[data-testid="step-announcement"]')?.textContent?.trim();
+      expect(announcement()).toBe('Step 1 of 6: Start');
+
+      bookButton().click();
+      fixture.detectChanges();
+      expect(announcement()).toBe('Step 2 of 6: Party Size');
+
+      queryEl().querySelector<HTMLButtonElement>('[data-testid="party-size-back"]')!.click();
+      fixture.detectChanges();
+      expect(announcement()).toBe('Step 1 of 6: Start');
+    });
   });
 
   describe('FLOW_DATE', () => {
@@ -395,6 +411,38 @@ describe('BookingPageComponent', () => {
         '[data-testid="party-size-option-4"]',
       )!;
       expect(selectedSize.classList.contains('selected')).toBe(true);
+    });
+
+    it('[P1] should reopen the calendar on a future-month selection with its highlight after tapping back on the stub', async () => {
+      await createLoadedComponent(RESTAURANT_OPEN_ALL_WEEK);
+      bookButton().click();
+      fixture.detectChanges();
+      queryEl().querySelector<HTMLButtonElement>('[data-testid="party-size-option-4"]')!.click();
+      fixture.detectChanges();
+
+      // Forward two months: August → October, then pick Fri 2026-10-02.
+      queryEl().querySelector<HTMLButtonElement>('[data-testid="calendar-next"]')!.click();
+      fixture.detectChanges();
+      queryEl().querySelector<HTMLButtonElement>('[data-testid="calendar-next"]')!.click();
+      fixture.detectChanges();
+      expect(queryEl().textContent).toContain('October 2026');
+      queryEl()
+        .querySelector<HTMLButtonElement>('[data-testid="date-option-2026-10-02"]')!
+        .click();
+      fixture.detectChanges();
+
+      queryEl().querySelector<HTMLButtonElement>('[data-testid="time-back"]')!.click();
+      fixture.detectChanges();
+
+      // The calendar must remount on the selected month — not snap back to August,
+      // where the highlighted date does not exist in the DOM at all.
+      expect(queryEl().textContent).toContain('October 2026');
+      const selected = queryEl().querySelector<HTMLButtonElement>(
+        '[data-testid="date-option-2026-10-02"]',
+      )!;
+      expect(selected).toBeTruthy();
+      expect(selected.classList.contains('selected')).toBe(true);
+      expect(selected.getAttribute('aria-pressed')).toBe('true');
     });
   });
 

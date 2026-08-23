@@ -41,12 +41,17 @@
       }
     </div>
     <div class="grid" role="group" aria-label="Available dates">
+      @for (spacer of leadingSpacers(); track $index) {
+        <span aria-hidden="true" class="spacer"></span>
+      }
       @for (cell of cells(); track cell.iso) {
         <button
           type="button"
           class="date-btn"
           [class.selected]="selected() === cell.iso"
+          [class.today]="cell.iso === today().iso"
           [attr.aria-pressed]="selected() === cell.iso"
+          [attr.aria-current]="cell.iso === today().iso ? 'date' : null"
           [attr.aria-label]="dateLabel(cell.iso)"
           [attr.data-testid]="'date-option-' + cell.iso"
           (click)="choose(cell.iso)"

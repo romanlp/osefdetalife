@@ -63,15 +63,15 @@ export class BookingPageComponent {
     }
   });
 
-  /** Polite announcement for screen readers on every step transition. */
+  /** Polite announcement for screen readers on every step transition, landing included. */
   stepAnnouncement = computed<string>(() => {
-    const announcements: Record<Exclude<BookingFlowStep, 'landing'>, string> = {
+    const announcements: Record<BookingFlowStep, string> = {
+      landing: `Step 1 of ${TOTAL_STEPS}: Start`,
       'party-size': `Step 2 of ${TOTAL_STEPS}: Party Size`,
       date: `Step 3 of ${TOTAL_STEPS}: Date`,
       time: `Step 4 of ${TOTAL_STEPS}: Time`,
     };
-    const step = this.flow.step();
-    return step === 'landing' ? '' : announcements[step];
+    return announcements[this.flow.step()];
   });
 
   /** Human-readable selected date for the time-slot stub summary. */

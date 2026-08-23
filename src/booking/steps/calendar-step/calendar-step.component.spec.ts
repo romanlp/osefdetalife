@@ -83,6 +83,28 @@ describe('CalendarStepComponent', () => {
     });
   });
 
+  describe('GRID_ALIGNMENT', () => {
+    it('[P0] should place the first selectable date under its weekday header via leading spacers', async () => {
+      await createComponent();
+
+      // First open day is Fri 2026-08-21 (ISO day 5) → four placeholder columns before it.
+      expect(queryEl().querySelectorAll('.grid .spacer')).toHaveLength(4);
+    });
+
+    it('[P1] should realign spacers when navigating to a month starting midweek', async () => {
+      await createComponent();
+
+      // September 2026 starts on a Tuesday (ISO day 2) → one spacer.
+      queryEl().querySelector<HTMLButtonElement>('[data-testid="calendar-next"]')!.click();
+      fixture.detectChanges();
+
+      expect(queryEl().querySelectorAll('.grid .spacer')).toHaveLength(1);
+      expect(
+        queryEl().querySelector('.grid .date-btn')?.getAttribute('data-testid'),
+      ).toBe('date-option-2026-09-01');
+    });
+  });
+
   describe('DAY_HIDDEN', () => {
     it('[P0] should omit past-but-open days entirely', async () => {
       await createComponent();
@@ -213,6 +235,37 @@ describe('CalendarStepComponent', () => {
       expect(selected.getAttribute('aria-pressed')).toBe('true');
       expect(unselected.classList.contains('selected')).toBe(false);
     });
+
+    it('[P0] should open on the selected month when the selection lies beyond the current month', async () => {
+      // Returning from a later step remounts this component; the view must anchor
+      // to October (the selection's month), not snap back to August.
+      await createComponent({ selected: '2026-10-02' });
+
+      expect(queryEl().textContent).toContain('October 2026');
+      const selected = queryEl().querySelector<HTMLButtonElement>(
+        '[data-testid="date-option-2026-10-02"]',
+      )!;
+      expect(selected.classList.contains('selected')).toBe(true);
+      expect(selected.getAttribute('aria-pressed')).toBe('true');
+    });
+  });
+
+  describe('TODAY_MARKER', () => {
+    it('[P1] should mark today with a visual treatment and aria-current="date"', async () => {
+      await createComponent();
+
+      const todayCell = queryEl().querySelector<HTMLButtonElement>(
+        '[data-testid="date-option-2026-08-21"]',
+      )!;
+      const otherCell = queryEl().querySelector<HTMLButtonElement>(
+        '[data-testid="date-option-2026-08-25"]',
+      )!;
+
+      expect(todayCell.classList.contains('today')).toBe(true);
+      expect(todayCell.getAttribute('aria-current')).toBe('date');
+      expect(otherCell.classList.contains('today')).toBe(false);
+      expect(otherCell.getAttribute('aria-current')).toBeNull();
+    });
   });
 
   describe('BACK_NAVIGATION', () => {
@@ -256,6 +309,30 @@ describe('CalendarStepComponent', () => {
       ).toBeFalsy();
       expect(
         fixture.nativeElement.querySelector('[data-testid="date-option-2026-08-21"]'),
+      ).toBeTruthy();
+    });
+
+    it('[P1] should refresh "today" when navigating months after midnight passes', async () => {
+      let instant = new Date('2026-08-20T23:30:00Z');
+      await createComponent({ now: () => instant });
+
+      // Fri Aug 21 is selectable before London midnight passes.
+      expect(
+        queryEl().querySelector('[data-testid="date-option-2026-08-21"]'),
+      ).toBeTruthy();
+
+      instant = new Date('2026-08-21T23:30:00Z'); // already Sat Aug 22 in Europe/London
+      queryEl().querySelector<HTMLButtonElement>('[data-testid="calendar-next"]')!.click();
+      fixture.detectChanges();
+      queryEl().querySelector<HTMLButtonElement>('[data-testid="calendar-prev"]')!.click();
+      fixture.detectChanges();
+
+      // Today is now Sat Aug 22 — Aug 21 dropped as a past day.
+      expect(
+        queryEl().querySelector('[data-testid="date-option-2026-08-21"]'),
+      ).toBeFalsy();
+      expect(
+        queryEl().querySelector('[data-testid="date-option-2026-08-22"]'),
       ).toBeTruthy();
     });
   });

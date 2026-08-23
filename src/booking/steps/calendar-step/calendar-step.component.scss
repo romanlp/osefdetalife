@@ -130,6 +130,11 @@
     outline-offset: 2px;
   }
 
+  &.today:not(.selected) {
+    border-color: var(--osef-brand-secondary, #8fa67a);
+    font-weight: 700;
+  }
+
   &.selected {
     background: var(--osef-brand-primary, #1a1a1a);
     border-color: var(--osef-brand-primary, #1a1a1a);
