@@ -127,3 +127,12 @@ Constant duration: the public projection deliberately excludes `duration` (AD-14
 
 - Step wiring, empty/error-retry, details focus, back preserves
   [`booking-page.component.spec.ts:1`](../../src/booking/pages/booking-page/booking-page.component.spec.ts#L1)
+
+### Review Findings
+
+- [x] [Review][Patch] P1: corrupt projection crashes slot math [src/booking/utils/availability.ts:93] — Fixed: seated pipeline drops non-string `time` / non-integer or <1 `partySize` before seating; pinned by EDGE_CASE `[P1] should ignore projections with missing time or non-positive partySize`.
+- [x] [Review][Patch] P1: midnight-boundary now() double-read [src/booking/steps/time-slot-step/time-slot-step.component.ts:63] — Fixed: single `const now = this.now()` feeds both `zonedToday` and `zonedMinutesOfDay`.
+- [x] [Review][Patch] P1: NaN nowMinutes disables today filter [src/booking/utils/availability.ts:127] — Fixed: `Number.isFinite` guard degrades NaN to `null` (no filter); pinned by EDGE_CASE `[P1] should treat a NaN now-filter as no filter`.
+- [x] [Review][Patch] P2: close endpoint in raw grid unbookable [src/booking/utils/availability.ts:34] — Clarified: `slotsForDay` intentionally includes the close endpoint; `availableSlots` drops starts that cannot fit the 120-min window, so the endpoint is never bookable; documented in the helper comment.
+- [x] [Review][Patch] P2: stale time-step pills while parked past boundary [src/booking/steps/time-slot-step/time-slot-step.component.ts:48] — Deferred to calendar parity: time step has no month-nav-style tick and the calendar precedent only re-derives `today` on navigation; no auto-refresh in either step, so parked-across-boundary staleness is consistent pre-existing behavior, not a 2-3 regression. Retry re-derives via `refreshTick`.
+- [x] [Review][Patch] P2: malformed slot label breaks render [src/booking/steps/time-slot-step/time-slot-step.component.ts:89] — Fixed: `displayLabel` returns the raw slot on NaN and normalizes negative minutes before formatting.

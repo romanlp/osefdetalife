@@ -24,7 +24,10 @@ export function minutesToClock(minutes: number): string {
 /**
  * Every 15-minute slot start within open→close for that day's hours.
  * Closed days yield no slots. Raw grid only — capacity/occupancy/past
- * filtering happens in `availableSlots`.
+ * filtering happens in `availableSlots`. The grid intentionally includes the
+ * close endpoint (e.g. `17:00` for 09:00–17:00); a start that cannot fit a
+ * full `BOOKING_DURATION_MINUTES` window is dropped later by `availableSlots`,
+ * never offered as bookable.
  */
 export function slotsForDay(hours: OpeningHours, iso: string): string[] {
   const dayHours = hours[isoDayNumberOf(iso)];
@@ -92,6 +95,10 @@ export function availableSlots({
 
   const seated: SeatedBooking[] = bookings
     .filter((booking) => booking.status === 'confirmed')
+    .filter(
+      (booking): booking is PublicBookingProjection & { time: string } =>
+        typeof booking.time === 'string' && Number.isInteger(booking.partySize) && booking.partySize >= 1,
+    )
     .map((booking) => ({ partySize: booking.partySize, startMinutes: clockMinutes(booking.time) }))
     .filter((booking) => Number.isFinite(booking.startMinutes))
     .sort((a, b) => a.startMinutes - b.startMinutes);
@@ -123,8 +130,9 @@ export function availableSlots({
   const fitsParty = (tableIndex: number): boolean => tables[tableIndex] >= partySize;
 
   const slots: string[] = [];
+  const effectiveNow = Number.isFinite(nowMinutes) ? (nowMinutes as number) : null;
   for (let m = openMinutes; m <= closeMinutes; m += 15) {
-    if (nowMinutes !== null && m <= nowMinutes) continue;
+    if (effectiveNow !== null && m <= effectiveNow) continue;
     if (m + BOOKING_DURATION_MINUTES > closeMinutes) continue;
     if (
       tables.some((_, i) => fitsParty(i) && tableFreeFor(i, m))

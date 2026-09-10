@@ -281,6 +281,29 @@ describe('EDGE_CASE', () => {
     expect(minutesToClock(1439)).toBe('23:59');
     expect(minutesToClock(540)).toBe('09:00');
   });
+
+  it('[P1] should ignore projections with missing time or non-positive partySize', () => {
+    const result = slots({
+      hours: HOURS_9_TO_23,
+      tableGroups: [CAP4_X1],
+      bookings: [
+        booking({ time: '10:00', partySize: 0 }),
+        booking({ time: '11:00', partySize: -2 }),
+        { ...booking({ time: '12:00', partySize: 4 }), time: undefined as unknown as string },
+      ],
+      partySize: 4,
+    });
+
+    // None of the corrupt projections occupies a table — the whole grid stays bookable.
+    expect(result[0]).toBe('09:00');
+    expect(result.at(-1)).toBe('21:00');
+  });
+
+  it('[P1] should treat a NaN now-filter as no filter instead of leaking past slots', () => {
+    const result = slots({ nowMinutes: NaN });
+
+    expect(result[0]).toBe('09:00');
+  });
 });
 
 describe('WEEKDAY_KEYING', () => {

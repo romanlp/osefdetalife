@@ -60,14 +60,15 @@ export class TimeSlotStepComponent implements AfterViewInit {
         params.restaurantId,
         params.date,
       );
-      const todayIso = zonedToday(params.timezone, this.now()).iso;
+      const now = this.now();
+      const todayIso = zonedToday(params.timezone, now).iso;
       return availableSlots({
         hours: params.hours,
         iso: params.date,
         bookings,
         partySize: params.partySize,
         tableGroups: params.tableGroups,
-        nowMinutes: params.date === todayIso ? zonedMinutesOfDay(params.timezone, this.now()) : null,
+        nowMinutes: params.date === todayIso ? zonedMinutesOfDay(params.timezone, now) : null,
       });
     },
   });
@@ -88,11 +89,14 @@ export class TimeSlotStepComponent implements AfterViewInit {
   /** 12-hour display label for an "HH:mm" value — the stored value stays 24-hour. */
   displayLabel(slot: string): string {
     const minutes = clockMinutes(slot);
+    if (!Number.isFinite(minutes)) return slot;
+    const hours = Math.floor(minutes / 60);
+    const mins = ((minutes % 60) + 60) % 60;
     return new Intl.DateTimeFormat('en-GB', {
       timeZone: 'UTC',
       hour: 'numeric',
       minute: '2-digit',
       hour12: true,
-    }).format(new Date(Date.UTC(2000, 0, 1, Math.floor(minutes / 60), minutes % 60)));
+    }).format(new Date(Date.UTC(2000, 0, 1, hours, mins)));
   }
 }
