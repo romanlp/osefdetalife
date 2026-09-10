@@ -1,6 +1,3 @@
-import { Firestore, collection, doc, setDoc, deleteDoc, getDocs, query, where } from 'firebase/firestore';
-import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
-
 export interface Restaurant {
   id: string;
   name: string;
@@ -17,6 +14,8 @@ export interface Restaurant {
     primaryColor: string;
     secondaryColor: string;
   };
+  /** Embedded table groups — source of truth for public availability math. */
+  tableGroups?: { capacity: number; count: number }[];
   customField?: {
     label: string;
     required: boolean;
@@ -36,6 +35,7 @@ export interface Booking {
   restaurantId: string;
   date: string;
   time: string;
+  duration: number;
   partySize: number;
   name: string;
   email: string;

@@ -1,6 +1,7 @@
 import { Service } from '@angular/core';
-import { doc, getDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
 import { getFirebaseDb } from '../../shared/firebase-config';
+import type { PublicBookingProjection } from '../../shared/types/booking';
 import type { Restaurant } from '../../shared/types/restaurant';
 
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -29,5 +30,25 @@ export class BookingService {
     if (!restaurantDoc.exists()) return null;
 
     return { id: restaurantDoc.id, ...restaurantDoc.data() } as Restaurant;
+  }
+
+  /**
+   * Confirmed non-PII projections for one restaurant+day, read from the
+   * `restaurants/{restaurantId}/bookings-public` public projection subcollection.
+   * Equality-only clauses (date, status) below the restaurant — no composite index.
+   */
+  async getPublicBookings(
+    restaurantId: string,
+    dateIso: string,
+  ): Promise<PublicBookingProjection[]> {
+    const projectionsRef = collection(this.db, 'restaurants', restaurantId, 'bookings-public');
+    const q = query(
+      projectionsRef,
+      where('date', '==', dateIso),
+      where('status', '==', 'confirmed'),
+    );
+    const snapshot = await getDocs(q);
+
+    return snapshot.docs.map((projectionDoc) => projectionDoc.data() as PublicBookingProjection);
   }
 }

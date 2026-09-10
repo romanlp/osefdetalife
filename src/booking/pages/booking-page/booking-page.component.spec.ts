@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { BookingPageComponent } from './booking-page.component';
 import { BookingService } from '../../services/booking.service';
+import { BookingFlowService } from '../../services/booking-flow.service';
 import { NOW } from '../../utils/clock';
 import type { Restaurant } from '../../../shared/types/restaurant';
 
@@ -31,6 +32,11 @@ const RESTAURANT_OPEN_ALL_WEEK: Restaurant = {
     6: { open: '09:00', close: '17:00' },
     7: { open: '09:00', close: '17:00' },
   },
+  tableGroups: [
+    { capacity: 2, count: 2 },
+    { capacity: 4, count: 3 },
+    { capacity: 6, count: 1 },
+  ],
 };
 
 /** Thursday 2026-08-20 at 23:30 UTC — already Friday Aug 21 in Europe/London. */
@@ -49,14 +55,21 @@ const BROKEN_RESTAURANT: Restaurant = (() => {
 
 describe('BookingPageComponent', () => {
   let fixture: ComponentFixture<BookingPageComponent>;
-  let bookingServiceSpy: { getRestaurantBySlug: ReturnType<typeof vi.fn> };
+  let bookingServiceSpy: {
+    getRestaurantBySlug: ReturnType<typeof vi.fn>;
+    getPublicBookings: ReturnType<typeof vi.fn>;
+  };
 
   function queryEl(): HTMLElement {
     return fixture.nativeElement as HTMLElement;
   }
 
   beforeEach(async () => {
-    bookingServiceSpy = { getRestaurantBySlug: vi.fn() };
+    bookingServiceSpy = {
+      getRestaurantBySlug: vi.fn(),
+      // Availability reads succeed by default; cases override per scenario.
+      getPublicBookings: vi.fn().mockResolvedValue([]),
+    };
 
     await TestBed.configureTestingModule({
       imports: [BookingPageComponent],
@@ -297,30 +310,28 @@ describe('BookingPageComponent', () => {
       ).toBe('Step 3 of 6: Date');
     });
 
-    it('[P0] should auto-advance to the time-slot stub showing the selections after picking a date', async () => {
+    it('[P0] should auto-advance to the time-slot step rendering availability pills after picking a date', async () => {
       await reachCalendar();
 
       queryEl()
         .querySelector<HTMLButtonElement>('[data-testid="date-option-2026-08-21"]')!
         .click();
       fixture.detectChanges();
-
-      const stub = fixture.nativeElement.querySelector('[data-testid="time-slot-stub"]');
-      expect(stub).toBeTruthy();
-      expect(stub?.textContent).toContain('Party size: 4');
-      expect(stub?.textContent).toContain('21 August 2026');
-    });
-
-    it('[P0] should expose the chosen ISO date on the summary time element', async () => {
-      await reachCalendar();
-
-      queryEl()
-        .querySelector<HTMLButtonElement>('[data-testid="date-option-2026-08-21"]')!
-        .click();
+      await fixture.whenStable();
       fixture.detectChanges();
 
-      const time = queryEl().querySelector<HTMLElement>('[data-testid="booking-summary"] time');
-      expect(time?.getAttribute('datetime')).toBe('2026-08-21');
+      expect(queryEl().querySelector('[data-testid="time-slot-step"]')).toBeTruthy();
+      // Fixed clock is 00:30 London on Fri 2026-08-21 — the whole 09:00–15:00
+      // window-fitting range (120-min window ends ≤ 17:00 close) stays bookable.
+      expect(
+        queryEl().querySelector('[data-testid="time-option-09-00"]'),
+      ).toBeTruthy();
+      expect(
+        queryEl().querySelector('[data-testid="time-option-15-00"]'),
+      ).toBeTruthy();
+      expect(
+        queryEl().querySelector('[data-testid="time-option-15-15"]'),
+      ).toBeFalsy();
     });
 
     it('[P0] should announce "Step 4 of 6: Time" after picking a date', async () => {
@@ -329,6 +340,8 @@ describe('BookingPageComponent', () => {
       queryEl()
         .querySelector<HTMLButtonElement>('[data-testid="date-option-2026-08-21"]')!
         .click();
+      fixture.detectChanges();
+      await fixture.whenStable();
       fixture.detectChanges();
 
       expect(
@@ -343,19 +356,23 @@ describe('BookingPageComponent', () => {
         .querySelector<HTMLButtonElement>('[data-testid="date-option-2026-08-21"]')!
         .click();
       fixture.detectChanges();
+      await fixture.whenStable();
+      fixture.detectChanges();
 
       const heading = queryEl().querySelector<HTMLHeadingElement>(
-        '[data-testid="time-slot-stub"] h2',
+        '[data-testid="time-slot-step"] h2',
       )!;
       expect(document.activeElement).toBe(heading);
     });
 
-    it('[P1] should return to the calendar with the chosen date still highlighted when tapping back on the stub', async () => {
+    it('[P1] should return to the calendar with the chosen date still highlighted when tapping back on the time step', async () => {
       await reachCalendar();
 
       queryEl()
         .querySelector<HTMLButtonElement>('[data-testid="date-option-2026-08-21"]')!
         .click();
+      fixture.detectChanges();
+      await fixture.whenStable();
       fixture.detectChanges();
       queryEl().querySelector<HTMLButtonElement>('[data-testid="time-back"]')!.click();
       fixture.detectChanges();
@@ -366,6 +383,53 @@ describe('BookingPageComponent', () => {
       )!;
       expect(selected.classList.contains('selected')).toBe(true);
       expect(selected.getAttribute('aria-pressed')).toBe('true');
+    });
+
+    it('[P1] should show the in-step empty state instead of pills when no slot qualifies', async () => {
+      // No table group reaches a party of 8 → nothing can ever qualify.
+      bookingServiceSpy.getPublicBookings.mockResolvedValue([]);
+      await createLoadedComponent({...RESTAURANT_OPEN_ALL_WEEK, tableGroups: []});
+      bookButton().click();
+      fixture.detectChanges();
+      queryEl().querySelector<HTMLButtonElement>('[data-testid="party-size-option-8"]')!.click();
+      fixture.detectChanges();
+      queryEl()
+        .querySelector<HTMLButtonElement>('[data-testid="date-option-2026-08-21"]')!
+        .click();
+      fixture.detectChanges();
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      expect(
+        queryEl().querySelector('[data-testid="time-empty"]')?.textContent?.trim(),
+      ).toBe('No available times for this date.');
+    });
+
+    it('[P0] should show an in-step error with retry when the projections fetch fails, and retry refetches', async () => {
+      bookingServiceSpy.getPublicBookings.mockRejectedValue(new Error('offline'));
+      await reachCalendar();
+
+      queryEl()
+        .querySelector<HTMLButtonElement>('[data-testid="date-option-2026-08-21"]')!
+        .click();
+      fixture.detectChanges();
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      const step = queryEl().querySelector('[data-testid="time-slot-step"]')!;
+      expect(step.textContent).toContain('Something went wrong.');
+      expect(step.textContent).toContain('Please try again.');
+
+      bookingServiceSpy.getPublicBookings.mockResolvedValue([]);
+      queryEl().querySelector<HTMLButtonElement>('[data-testid="time-retry"]')!.click();
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      expect(bookingServiceSpy.getPublicBookings).toHaveBeenCalledTimes(2);
+      expect(queryEl().querySelector('[data-testid="time-retry"]')).toBeFalsy();
+      expect(
+        queryEl().querySelector('[data-testid="time-option-09-00"]'),
+      ).toBeTruthy();
     });
 
     it('[P0] should render an empty calendar instead of throwing when hours/timezone are missing', async () => {
@@ -382,6 +446,89 @@ describe('BookingPageComponent', () => {
         queryEl().querySelector('[data-testid="calendar-empty"]')?.textContent?.trim(),
       ).toBe('No available dates in this month.');
     });
+  });
+
+  describe('FLOW_DETAILS', () => {
+    /** Reaches the calendar for Fri 2026-08-21 with party of 4. */
+    async function reachCalendar(): Promise<void> {
+      await createLoadedComponent(RESTAURANT_OPEN_ALL_WEEK);
+      bookButton().click();
+      fixture.detectChanges();
+      queryEl().querySelector<HTMLButtonElement>('[data-testid="party-size-option-4"]')!.click();
+      fixture.detectChanges();
+    }
+
+    /** Reaches the time step with pills rendered for Fri 2026-08-21, party of 4. */
+    async function reachTimeStep(): Promise<void> {
+      await reachCalendar();
+      queryEl()
+        .querySelector<HTMLButtonElement>('[data-testid="date-option-2026-08-21"]')!
+        .click();
+      fixture.detectChanges();
+      await fixture.whenStable();
+      fixture.detectChanges();
+    }
+
+    it('[P0] should record the slot and auto-advance to the details placeholder', async () => {
+      await reachTimeStep();
+
+      queryEl()
+        .querySelector<HTMLButtonElement>('[data-testid="time-option-10-00"]')!
+        .click();
+      fixture.detectChanges();
+
+      expect(fixture.componentInstance.flow.selectedSlot()).toBe('10:00');
+      expect(queryEl().querySelector('[data-testid="details-placeholder"]')).toBeTruthy();
+      expect(
+        queryEl().querySelector('[data-testid="step-announcement"]')?.textContent?.trim(),
+      ).toBe('Step 5 of 6: Details');
+    });
+
+    it('[P1] should move focus to the details heading on transition', async () => {
+      await reachTimeStep();
+
+      queryEl()
+        .querySelector<HTMLButtonElement>('[data-testid="time-option-10-00"]')!
+        .click();
+      fixture.detectChanges();
+
+      const heading = queryEl().querySelector<HTMLHeadingElement>(
+        '[data-testid="details-placeholder"] h2',
+      )!;
+      expect(document.activeElement).toBe(heading);
+    });
+
+    it('[P0] should return from details to time with the chosen slot highlighted and all selections intact', async () => {
+      await reachTimeStep();
+
+      queryEl()
+        .querySelector<HTMLButtonElement>('[data-testid="time-option-10-00"]')!
+        .click();
+      fixture.detectChanges();
+      queryEl().querySelector<HTMLButtonElement>('[data-testid="details-back"]')!.click();
+      fixture.detectChanges();
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      expect(flow().step()).toBe('time');
+      const selectedSlot = queryEl().querySelector<HTMLButtonElement>(
+        '[data-testid="time-option-10-00"]',
+      )!;
+      expect(selectedSlot.classList.contains('selected')).toBe(true);
+      expect(selectedSlot.getAttribute('aria-pressed')).toBe('true');
+
+      // Time → date: the date selection survives the round trip too.
+      queryEl().querySelector<HTMLButtonElement>('[data-testid="time-back"]')!.click();
+      fixture.detectChanges();
+      const selectedDate = queryEl().querySelector<HTMLButtonElement>(
+        '[data-testid="date-option-2026-08-21"]',
+      )!;
+      expect(selectedDate.classList.contains('selected')).toBe(true);
+    });
+
+    function flow(): BookingFlowService {
+      return fixture.componentInstance.flow;
+    }
   });
 
   describe('BACK_PRESERVES', () => {
@@ -471,16 +618,29 @@ describe('BookingPageComponent', () => {
       fixture.detectChanges();
       queryEl().querySelector<HTMLButtonElement>('[data-testid="party-size-option-4"]')!.click();
       fixture.detectChanges();
+      queryEl()
+        .querySelector<HTMLButtonElement>('[data-testid="date-option-2026-08-21"]')!
+        .click();
+      fixture.detectChanges();
+      await fixture.whenStable();
+      fixture.detectChanges();
+      queryEl()
+        .querySelector<HTMLButtonElement>('[data-testid="time-option-10-00"]')!
+        .click();
+      fixture.detectChanges();
 
       const flow = fixture.componentInstance.flow;
-      expect(flow.step()).toBe('date');
+      expect(flow.step()).toBe('details');
       expect(flow.partySize()).toBe(4);
+      expect(flow.selectedDate()).toBe('2026-08-21');
+      expect(flow.selectedSlot()).toBe('10:00');
 
       fixture.destroy();
 
       expect(flow.step()).toBe('landing');
       expect(flow.partySize()).toBeNull();
       expect(flow.selectedDate()).toBeNull();
+      expect(flow.selectedSlot()).toBeNull();
 
       // Recreating on the same TestBed shares the root-singleton service —
       // the revisit must start at landing with no stale selections.
@@ -494,6 +654,7 @@ describe('BookingPageComponent', () => {
       expect(bookButton()).toBeTruthy();
       expect(fixture.componentInstance.flow.partySize()).toBeNull();
       expect(fixture.componentInstance.flow.selectedDate()).toBeNull();
+      expect(fixture.componentInstance.flow.selectedSlot()).toBeNull();
     });
   });
 });

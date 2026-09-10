@@ -14,6 +14,7 @@ import {BookingService} from '../../services/booking.service';
 import {BookingFlowService, type BookingFlowStep} from '../../services/booking-flow.service';
 import {CalendarStepComponent} from '../../steps/calendar-step/calendar-step.component';
 import {PartySizeStepComponent} from '../../steps/party-size-step/party-size-step.component';
+import {TimeSlotStepComponent} from '../../steps/time-slot-step/time-slot-step.component';
 
 const DESIGN_PRIMARY = '#1A1A1A';
 const DESIGN_SECONDARY = '#8FA67A';
@@ -27,7 +28,7 @@ const TOTAL_STEPS = 6;
     '[style.--osef-brand-primary]': 'brandPrimary()',
     '[style.--osef-brand-secondary]': 'brandSecondary()',
   },
-  imports: [PartySizeStepComponent, CalendarStepComponent],
+  imports: [PartySizeStepComponent, CalendarStepComponent, TimeSlotStepComponent],
   templateUrl: './booking-page.component.html',
   styleUrl: './booking-page.component.scss',
 })
@@ -70,25 +71,12 @@ export class BookingPageComponent {
       'party-size': `Step 2 of ${TOTAL_STEPS}: Party Size`,
       date: `Step 3 of ${TOTAL_STEPS}: Date`,
       time: `Step 4 of ${TOTAL_STEPS}: Time`,
+      details: `Step 5 of ${TOTAL_STEPS}: Details`,
     };
     return announcements[this.flow.step()];
   });
 
-  /** Human-readable selected date for the time-slot stub summary. */
-  selectedDateLabel = computed<string>(() => {
-    const iso = this.flow.selectedDate();
-    if (!iso) return '';
-    const [year, month, day] = iso.split('-').map(Number);
-    return new Intl.DateTimeFormat('en-GB', {
-      timeZone: 'UTC',
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    }).format(new Date(Date.UTC(year, month - 1, day)));
-  });
-
-  private readonly timeHeading = viewChild<ElementRef<HTMLHeadingElement>>('timeHeading');
+  private readonly detailsHeading = viewChild<ElementRef<HTMLHeadingElement>>('detailsHeading');
 
   private readonly bookButton = viewChild<ElementRef<HTMLButtonElement>>('bookButton');
 
@@ -116,10 +104,10 @@ export class BookingPageComponent {
       this.flow.reset();
     });
 
-    // Focus the time-slot stub heading whenever that step mounts.
+    // Focus the details placeholder heading whenever that step mounts.
     effect(() => {
-      const heading = this.timeHeading();
-      if (heading && this.flow.step() === 'time') {
+      const heading = this.detailsHeading();
+      if (heading && this.flow.step() === 'details') {
         heading.nativeElement.focus();
       }
     });
@@ -149,6 +137,10 @@ export class BookingPageComponent {
 
   onDate(iso: string): void {
     this.flow.chooseDate(iso);
+  }
+
+  onSlot(slot: string): void {
+    this.flow.chooseSlot(slot);
   }
 
   retry(): void {

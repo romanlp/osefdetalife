@@ -9,6 +9,10 @@ vi.mock('firebase/firestore', () => ({
     id: segments[segments.length - 1],
   })),
   getDoc: vi.fn(),
+  collection: vi.fn((_db: unknown, path: string) => ({ _path: path })),
+  query: vi.fn((ref: unknown, ...clauses: unknown[]) => ({ ref, clauses })),
+  where: vi.fn((field: string, op: string, value: unknown) => ({ field, op, value })),
+  getDocs: vi.fn(),
 }));
 
 describe('BookingService', () => {
@@ -183,6 +187,62 @@ describe('BookingService', () => {
         'unavailable',
       );
       expect(getDoc).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('getPublicBookings', () => {
+    it('HAPPY_PATH: should return the confirmed projections for one restaurant+day', async () => {
+      const { getDocs } = await import('firebase/firestore');
+      vi.mocked(getDocs).mockResolvedValueOnce({
+        docs: [
+          { id: 'b1', data: () => ({ restaurantId: 'rest-123', date: '2026-08-21', time: '19:00', partySize: 4, status: 'confirmed' }) },
+          { id: 'b2', data: () => ({ restaurantId: 'rest-123', date: '2026-08-21', time: '20:30', partySize: 2, status: 'confirmed' }) },
+        ],
+      } as never);
+
+      const result = await service.getPublicBookings('rest-123', '2026-08-21');
+
+      expect(result).toEqual([
+        { restaurantId: 'rest-123', date: '2026-08-21', time: '19:00', partySize: 4, status: 'confirmed' },
+        { restaurantId: 'rest-123', date: '2026-08-21', time: '20:30', partySize: 2, status: 'confirmed' },
+      ]);
+    });
+
+    it('QUERY_SHAPE: should read the restaurant subcollection filtered by date and confirmed status', async () => {
+      const { collection, query, where, getDocs } = await import('firebase/firestore');
+      vi.mocked(getDocs).mockResolvedValueOnce({ docs: [] } as never);
+
+      await service.getPublicBookings('rest-123', '2026-08-21');
+
+      // Projection subcollection is scoped under the restaurant (per rules + spec).
+      expect(collection).toHaveBeenCalledWith(
+        expect.anything(),
+        'restaurants',
+        'rest-123',
+        'bookings-public',
+      );
+      expect(where).toHaveBeenCalledWith('date', '==', '2026-08-21');
+      expect(where).toHaveBeenCalledWith('status', '==', 'confirmed');
+      // Equality-only clauses — no composite index required.
+      expect(query).toHaveBeenCalledTimes(1);
+    });
+
+    it('EMPTY_DAY: should return an empty list when no projections exist', async () => {
+      const { getDocs } = await import('firebase/firestore');
+      vi.mocked(getDocs).mockResolvedValueOnce({ docs: [] } as never);
+
+      const result = await service.getPublicBookings('rest-123', '2026-01-01');
+
+      expect(result).toEqual([]);
+    });
+
+    it('FIREBASE_ERROR: should propagate getDocs rejection to the caller', async () => {
+      const { getDocs } = await import('firebase/firestore');
+      vi.mocked(getDocs).mockRejectedValueOnce(new Error('permission-denied'));
+
+      await expect(service.getPublicBookings('rest-123', '2026-08-21')).rejects.toThrow(
+        'permission-denied',
+      );
     });
   });
 });
