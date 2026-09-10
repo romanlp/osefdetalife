@@ -139,3 +139,13 @@ Items surfaced during code reviews that are pre-existing issues or out of scope 
 - source_spec: `_bmad-output/implementation-artifacts/spec-2-2-party-size-date-selection.md`
   summary: BookingFlowService actions unguarded against out-of-order invocation (chooseDate before start reaches states no @switch case renders well)
   evidence: All current call sites wire correctly; worth transition guards as Stories 2.3–2.5 add consumers
+
+## Deferred from: planning split of spec-2-3-time-slot-selection-availability (2026-08-23)
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-2-3-time-slot-selection-availability.md`
+  summary: BookingFlowService transition guards — origin-check each action so out-of-order invocation no-ops instead of corrupting step state
+  evidence: Carved during the story's token-gate split; a robustness chore independent of slot availability itself, natural to fold into Stories 2.4–2.5 as consumers grow
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-2-3-time-slot-selection-availability.md`
+  summary: Stop seeding the unused restaurants/{id}/tables subcollection in e2e restaurant.fixture.ts (app reads only the embedded tableGroups array)
+  evidence: Carved during the story's token-gate split; test-fixture housekeeping with zero product impact

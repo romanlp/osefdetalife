@@ -11,7 +11,7 @@ describe('BookingFlowService', () => {
   });
 
   describe('HAPPY_PATH', () => {
-    it('[P0] should walk landing → party-size → date → time via the actions', () => {
+    it('[P0] should walk landing → party-size → date → time → details via the actions', () => {
       expect(service.step()).toBe('landing');
 
       service.start();
@@ -24,6 +24,10 @@ describe('BookingFlowService', () => {
       service.chooseDate('2026-08-21');
       expect(service.selectedDate()).toBe('2026-08-21');
       expect(service.step()).toBe('time');
+
+      service.chooseSlot('19:00');
+      expect(service.selectedSlot()).toBe('19:00');
+      expect(service.step()).toBe('details');
     });
   });
 
@@ -50,6 +54,51 @@ describe('BookingFlowService', () => {
       service.back();
 
       expect(service.step()).toBe('landing');
+    });
+
+    it('[P0] should return from details to time keeping slot, date, and party intact', () => {
+      service.start();
+      service.choosePartySize(4);
+      service.chooseDate('2026-08-21');
+      service.chooseSlot('19:00');
+      service.back();
+
+      expect(service.step()).toBe('time');
+      expect(service.selectedSlot()).toBe('19:00');
+      expect(service.selectedDate()).toBe('2026-08-21');
+      expect(service.partySize()).toBe(4);
+    });
+
+    it('[P1] should record a revised slot when a different one is chosen after back', () => {
+      service.chooseSlot('19:00');
+      service.back();
+
+      service.chooseSlot('20:30');
+
+      expect(service.selectedSlot()).toBe('20:30');
+      expect(service.step()).toBe('details');
+    });
+
+    it('[P1] should clear a stale slot when party size or date is revised', () => {
+      service.start();
+      service.choosePartySize(4);
+      service.chooseDate('2026-08-21');
+      service.chooseSlot('19:00');
+      expect(service.selectedSlot()).toBe('19:00');
+
+      service.back();
+      service.back();
+      service.chooseDate('2026-08-22');
+      expect(service.selectedSlot()).toBeNull();
+      expect(service.step()).toBe('time');
+
+      service.chooseSlot('20:30');
+      service.back();
+      service.back();
+      service.back();
+      service.choosePartySize(2);
+      expect(service.selectedSlot()).toBeNull();
+      expect(service.step()).toBe('date');
     });
 
     it('[P1] should update the size and re-advance to the date step when choosing a different size after back', () => {
@@ -92,12 +141,14 @@ describe('BookingFlowService', () => {
       service.start();
       service.choosePartySize(4);
       service.chooseDate('2026-08-21');
+      service.chooseSlot('19:00');
 
       service.reset();
 
       expect(service.step()).toBe('landing');
       expect(service.partySize()).toBeNull();
       expect(service.selectedDate()).toBeNull();
+      expect(service.selectedSlot()).toBeNull();
     });
   });
 });

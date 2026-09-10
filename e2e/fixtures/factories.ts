@@ -45,6 +45,8 @@ export function createBookingData(restaurantId: string, overrides?: Partial<Book
     restaurantId,
     date: date.toISOString().split('T')[0],
     time: `${faker.number.int({ min: 9, max: 17 })}:00`,
+    // Constant dining window assumed by the public projection (no duration field there).
+    duration: 120,
     partySize: faker.number.int({ min: 1, max: 8 }),
     name: faker.person.fullName(),
     email: faker.internet.email(),

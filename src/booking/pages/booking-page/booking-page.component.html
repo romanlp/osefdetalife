@@ -82,22 +82,35 @@
           />
         }
         @case ('time') {
-          <section class="card step-card" data-testid="time-slot-stub">
+          <osef-time-slot-step
+            class="card step-card"
+            data-testid="time-slot-step"
+            [restaurantId]="restaurant.value()!.id"
+            [hours]="restaurant.value()?.hours ?? {}"
+            [timezone]="restaurant.value()?.timezone || 'UTC'"
+            [tableGroups]="restaurant.value()?.tableGroups ?? []"
+            [date]="flow.selectedDate() ?? ''"
+            [partySize]="flow.partySize() ?? 0"
+            [selected]="flow.selectedSlot()"
+            (slotSelect)="onSlot($event)"
+            (back)="flow.back()"
+          />
+        }
+        @case ('details') {
+          <section class="card step-card" data-testid="details-placeholder">
             <button
               type="button"
               class="back-button"
-              data-testid="time-back"
-              aria-label="Back to date selection"
+              data-testid="details-back"
+              aria-label="Back to time selection"
               (click)="flow.back()"
             >
               <span aria-hidden="true">&larr;</span>
             </button>
-            <h2 #timeHeading tabindex="-1" class="heading">Available times</h2>
-            <p class="summary" data-testid="booking-summary">
-              Party size: {{ flow.partySize() }}<br />
-              <time [attr.datetime]="flow.selectedDate()">{{ selectedDateLabel() }}</time>
+            <h2 #detailsHeading tabindex="-1" class="heading">Your details</h2>
+            <p class="muted">
+              Details form is coming soon — your selections are saved for this visit.
             </p>
-            <p class="muted">Time slots are coming soon — your selections are saved for this visit.</p>
           </section>
         }
       }

@@ -1,0 +1,46 @@
+<div class="step">
+  <button
+    type="button"
+    class="back-button"
+    data-testid="time-back"
+    aria-label="Back to date selection"
+    (click)="back.emit()"
+  >
+    <span aria-hidden="true">&larr;</span>
+  </button>
+
+  <h2 #heading tabindex="-1" class="heading">Available times</h2>
+
+  @if (slots.isLoading()) {
+    <div role="status" aria-live="polite" aria-busy="true" data-testid="time-loading" class="loading">
+      <span class="spinner" aria-hidden="true"></span>
+      <span>Checking availability...</span>
+    </div>
+  } @else if (slots.error()) {
+    <section role="alert" class="error">
+      <p class="error-message">Something went wrong. Please try again.</p>
+      <button type="button" class="retry-button" data-testid="time-retry" (click)="retry()">
+        Try again
+      </button>
+    </section>
+  } @else if (slots.value(); as availableSlots) {
+    @if (availableSlots.length > 0) {
+      <div class="pills" role="group" aria-label="Available times">
+        @for (slot of availableSlots; track slot) {
+          <button
+            type="button"
+            class="pill"
+            [class.selected]="selected() === slot"
+            [attr.aria-pressed]="selected() === slot"
+            [attr.data-testid]="slotTestId(slot)"
+            (click)="choose(slot)"
+          >
+            {{ displayLabel(slot) }}
+          </button>
+        }
+      </div>
+    } @else {
+      <p class="empty" data-testid="time-empty">No available times for this date.</p>
+    }
+  }
+</div>

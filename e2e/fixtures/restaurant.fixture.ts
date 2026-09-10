@@ -1,6 +1,6 @@
 import { test as base } from '@playwright/test';
-import { Firestore, collection, doc, setDoc, deleteDoc, getDoc } from 'firebase/firestore';
-import { getFirestoreInstance, getAuthInstance } from '../utils/firebase';
+import { collection, doc, setDoc, deleteDoc } from 'firebase/firestore';
+import { getAuthInstance } from '../utils/firebase';
 import { createUserWithEmailAndPassword, deleteUser, signOut } from 'firebase/auth';
 import { createRestaurantData, createTableGroupData, createUserData } from './factories';
 import type { Restaurant, TableGroup } from './types';
@@ -36,12 +36,22 @@ class RestaurantPage {
 }
 
 export const test = base.extend<RestaurantFixtures & FirebaseFixtures>({
-  restaurant: async ({ db, cleanupFirestore }, use) => {
+  restaurant: async ({ db }, use) => {
     const auth = getAuthInstance();
     const owner = createUserData();
     await createUserWithEmailAndPassword(auth, owner.email, owner.password);
 
-    const restaurantData = createRestaurantData({ ownerId: auth.currentUser!.uid });
+    // Embedded table groups (cap-2 ×2 / cap-4 ×3 / cap-6 ×1) are the public
+    // availability source of truth — seeded on the restaurant doc itself.
+    const tableGroups = [
+      { capacity: 2, count: 2 },
+      { capacity: 4, count: 3 },
+      { capacity: 6, count: 1 },
+    ];
+    const restaurantData = createRestaurantData({
+      ownerId: auth.currentUser!.uid,
+      tableGroups,
+    });
     const restaurantRef = doc(collection(db, 'restaurants'), restaurantData.id);
     const slugRef = doc(collection(db, 'slugs'), restaurantData.slug);
     await setDoc(restaurantRef, restaurantData);
