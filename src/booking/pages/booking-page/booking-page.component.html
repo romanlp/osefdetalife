@@ -97,19 +97,26 @@
           />
         }
         @case ('details') {
-          <section class="card step-card" data-testid="details-placeholder">
-            <button
-              type="button"
-              class="back-button"
-              data-testid="details-back"
-              aria-label="Back to time selection"
-              (click)="flow.back()"
-            >
-              <span aria-hidden="true">&larr;</span>
-            </button>
-            <h2 #detailsHeading tabindex="-1" class="heading">Your details</h2>
-            <p class="muted">
-              Details form is coming soon — your selections are saved for this visit.
+          <osef-details-step
+            class="card step-card"
+            data-testid="details-step"
+            [restaurantId]="restaurant.value()!.id"
+            [date]="flow.selectedDate() ?? ''"
+            [time]="flow.selectedSlot() ?? ''"
+            [partySize]="flow.partySize() ?? 0"
+            [customField]="restaurant.value()?.customField"
+            (submitted)="onDetailsSubmitted()"
+            (back)="flow.back()"
+          />
+        }
+        @case ('confirmation') {
+          <section class="card step-card text-center" data-testid="confirmation">
+            <span class="confirmation-check" aria-hidden="true">&#10003;</span>
+            <h2 #confirmationHeading tabindex="-1" class="heading">Booking confirmed</h2>
+            <p class="muted">You're all set.</p>
+            <p class="summary" data-testid="confirmation-summary">
+              {{ flow.selectedDate() }} at {{ flow.selectedSlot() }} for {{ flow.partySize() }}
+              {{ flow.partySize() === 1 ? 'guest' : 'guests' }}
             </p>
           </section>
         }

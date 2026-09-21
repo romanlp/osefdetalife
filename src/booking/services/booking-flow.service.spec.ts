@@ -151,4 +151,35 @@ describe('BookingFlowService', () => {
       expect(service.selectedSlot()).toBeNull();
     });
   });
+
+  describe('CONFIRM', () => {
+    it('[P0] should advance from details to confirmation', () => {
+      service.start();
+      service.choosePartySize(4);
+      service.chooseDate('2026-08-21');
+      service.chooseSlot('19:00');
+      service.confirm();
+
+      expect(service.step()).toBe('confirmation');
+      expect(service.selectedSlot()).toBe('19:00');
+      expect(service.selectedDate()).toBe('2026-08-21');
+      expect(service.partySize()).toBe(4);
+    });
+
+    it('[P1] should be a no-op outside details and ignore back from confirmation', () => {
+      service.confirm();
+      expect(service.step()).toBe('landing');
+
+      service.start();
+      service.confirm();
+      expect(service.step()).toBe('party-size');
+
+      service.choosePartySize(4);
+      service.chooseDate('2026-08-21');
+      service.chooseSlot('19:00');
+      service.confirm();
+      service.back();
+      expect(service.step()).toBe('confirmation');
+    });
+  });
 });

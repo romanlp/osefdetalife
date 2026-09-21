@@ -1,5 +1,15 @@
 import { test, expect } from '../fixtures';
-import { collection, doc, getDoc, updateDoc, deleteField, setDoc } from 'firebase/firestore';
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  updateDoc,
+  deleteField,
+  setDoc,
+  where,
+} from 'firebase/firestore';
 import type { Firestore } from 'firebase/firestore';
 import type { Restaurant } from '../fixtures/types';
 
@@ -178,7 +188,7 @@ test.describe('Public Booking Page', () => {
       throw new Error(`Month "${target}" never rendered within 24 forward navigations`);
     }
 
-    test('[P0] book → party size → date → pick a slot → details placeholder', async ({
+    test('[P0] book → party size → date → pick a slot → live details step', async ({
       page,
       restaurant,
     }) => {
@@ -205,9 +215,10 @@ test.describe('Public Booking Page', () => {
       const firstSlotId = freeSlots[0];
       await page.getByTestId(firstSlotId).click();
 
-      // Slot pick auto-advances to the placeholder details step.
-      await expect(page.getByTestId('details-placeholder')).toBeVisible();
+      // Slot pick auto-advances to the live details step.
+      await expect(page.getByTestId('details-step')).toBeVisible();
       await expect(page.getByTestId('step-announcement')).toHaveText('Step 5 of 6: Details');
+      await expect(page.getByTestId('details-submit')).toHaveText('Confirm Booking');
 
       // Back restores time with the slot highlighted and selections intact.
       await page.getByTestId('details-back').click();
@@ -334,5 +345,145 @@ test.describe('Public Booking Page', () => {
       await page.getByTestId('calendar-back').click();
       await expect(page.getByTestId('party-size-option-2')).toHaveClass(/selected/);
     });
+
+    test('[P0] happy-path submit writes booking + projection, lands on confirmation', async ({
+      page,
+      db,
+      restaurant,
+    }) => {
+      await startBooking(page, restaurant.slug);
+      await page.getByTestId('party-size-option-3').click();
+
+      const nextOpenDate = nextFutureOpenDate(restaurant);
+      await showMonth(page, nextOpenDate);
+      await page.getByTestId(`date-option-${nextOpenDate}`).click();
+
+      const freeSlots = expectedFreeSlots(restaurant, nextOpenDate);
+      expect(freeSlots.length).toBeGreaterThan(0);
+      const firstSlotId = freeSlots[0];
+      const firstSlotTime = firstSlotId.replace('time-option-', '').replace('-', ':');
+      await page.getByTestId(firstSlotId).click();
+
+      await page.getByTestId('details-name').fill('Jane Doe');
+      await page.getByTestId('details-email').fill('jane@example.com');
+      await expect(page.getByTestId('details-custom')).toHaveCount(0);
+
+      await page.getByTestId('details-submit').click();
+
+      await expect(page.getByTestId('confirmation')).toBeVisible();
+      await expect(page.getByTestId('step-announcement')).toHaveText('Step 6 of 6: Confirmation');
+      await expect(page.getByText("You're all set.")).toBeVisible();
+      const summary = await page.getByTestId('confirmation-summary').textContent();
+      expect(summary).toContain(nextOpenDate);
+      expect(summary).toContain(firstSlotTime);
+      await expect(page.getByTestId('details-submit')).toHaveCount(0);
+      await expect(page.getByTestId('details-back')).toHaveCount(0);
+
+      const bookingsSnap = await getDocs(
+        query(
+          collection(db, 'restaurants', restaurant.id, 'bookings'),
+          where('email', '==', 'jane@example.com'),
+        ),
+      );
+      expect(bookingsSnap.docs).toHaveLength(1);
+      const booking = bookingsSnap.docs[0].data();
+      expect(booking).toMatchObject({
+        restaurantId: restaurant.id,
+        date: nextOpenDate,
+        time: firstSlotTime,
+        partySize: 3,
+        name: 'Jane Doe',
+        status: 'confirmed',
+        duration: 120,
+      });
+      expect(booking).not.toHaveProperty('customFieldValue');
+
+      const projectionSnap = await getDoc(
+        doc(db, 'restaurants', restaurant.id, 'bookings-public', bookingsSnap.docs[0].id),
+      );
+      expect(projectionSnap.exists()).toBe(true);
+      expect(projectionSnap.data()).toEqual({
+        restaurantId: restaurant.id,
+        date: nextOpenDate,
+        time: firstSlotTime,
+        partySize: 3,
+        status: 'confirmed',
+      });
+
+      const projectId = 'firebase-crackling-fire-4704';
+      for (const coll of ['bookings', 'bookings-public']) {
+        await fetch(
+          `http://localhost:8081/emulator/v1/projects/${projectId}/databases/(default)/documents/restaurants/${restaurant.id}/${coll}/${bookingsSnap.docs[0].id}`,
+          { method: 'DELETE' },
+        );
+      }
+    });
+
+    test('[P1] required custom field blocks submit until filled', async ({
+      page,
+      db,
+      restaurant,
+    }) => {
+      await updateDoc(doc(db, 'restaurants', restaurant.id), {
+        customField: { label: 'Allergies', required: true, enabled: true },
+      });
+
+      try {
+        await startBooking(page, restaurant.slug);
+        await page.getByTestId('party-size-option-2').click();
+
+        const nextOpenDate = nextFutureOpenDate(restaurant);
+        await showMonth(page, nextOpenDate);
+        await page.getByTestId(`date-option-${nextOpenDate}`).click();
+
+        const freeSlots = expectedFreeSlots(restaurant, nextOpenDate);
+        await page.getByTestId(freeSlots[0]).click();
+
+        await expect(page.getByTestId('details-custom')).toBeVisible();
+        await page.getByTestId('details-name').fill('Jane Doe');
+        await page.getByTestId('details-email').fill('jane@example.com');
+        await page.getByTestId('details-submit').click();
+
+        await expect(page.getByText('This field is required.')).toBeVisible();
+
+        await page.getByTestId('details-custom').fill('Peanuts');
+        await page.getByTestId('details-submit').click();
+        await expect(page.getByTestId('confirmation')).toBeVisible();
+      } finally {
+        await updateDoc(doc(db, 'restaurants', restaurant.id), {
+          customField: deleteField(),
+        });
+      }
+    });
+
+    test('[P1] optional custom field submits empty', async ({ page, db, restaurant }) => {
+      await updateDoc(doc(db, 'restaurants', restaurant.id), {
+        customField: { label: 'Occasion', required: false, enabled: true },
+      });
+
+      try {
+        await startBooking(page, restaurant.slug);
+        await page.getByTestId('party-size-option-2').click();
+
+        const nextOpenDate = nextFutureOpenDate(restaurant);
+        await showMonth(page, nextOpenDate);
+        await page.getByTestId(`date-option-${nextOpenDate}`).click();
+
+        const freeSlots = expectedFreeSlots(restaurant, nextOpenDate);
+        await page.getByTestId(freeSlots[0]).click();
+
+        await page.getByTestId('details-name').fill('Jane Doe');
+        await page.getByTestId('details-email').fill('jane@example.com');
+        await page.getByTestId('details-submit').click();
+
+        await expect(page.getByTestId('confirmation')).toBeVisible();
+      } finally {
+        await updateDoc(doc(db, 'restaurants', restaurant.id), {
+          customField: deleteField(),
+        });
+      }
+    });
+
+
   });
 });

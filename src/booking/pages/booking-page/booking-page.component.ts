@@ -13,6 +13,7 @@ import {Title} from '@angular/platform-browser';
 import {BookingService} from '../../services/booking.service';
 import {BookingFlowService, type BookingFlowStep} from '../../services/booking-flow.service';
 import {CalendarStepComponent} from '../../steps/calendar-step/calendar-step.component';
+import {DetailsStepComponent} from '../../steps/details-step/details-step.component';
 import {PartySizeStepComponent} from '../../steps/party-size-step/party-size-step.component';
 import {TimeSlotStepComponent} from '../../steps/time-slot-step/time-slot-step.component';
 
@@ -28,7 +29,7 @@ const TOTAL_STEPS = 6;
     '[style.--osef-brand-primary]': 'brandPrimary()',
     '[style.--osef-brand-secondary]': 'brandSecondary()',
   },
-  imports: [PartySizeStepComponent, CalendarStepComponent, TimeSlotStepComponent],
+  imports: [PartySizeStepComponent, CalendarStepComponent, TimeSlotStepComponent, DetailsStepComponent],
   templateUrl: './booking-page.component.html',
   styleUrl: './booking-page.component.scss',
 })
@@ -72,11 +73,12 @@ export class BookingPageComponent {
       date: `Step 3 of ${TOTAL_STEPS}: Date`,
       time: `Step 4 of ${TOTAL_STEPS}: Time`,
       details: `Step 5 of ${TOTAL_STEPS}: Details`,
+      confirmation: `Step 6 of ${TOTAL_STEPS}: Confirmation`,
     };
     return announcements[this.flow.step()];
   });
 
-  private readonly detailsHeading = viewChild<ElementRef<HTMLHeadingElement>>('detailsHeading');
+  private readonly confirmationHeading = viewChild<ElementRef<HTMLHeadingElement>>('confirmationHeading');
 
   private readonly bookButton = viewChild<ElementRef<HTMLButtonElement>>('bookButton');
 
@@ -104,10 +106,10 @@ export class BookingPageComponent {
       this.flow.reset();
     });
 
-    // Focus the details placeholder heading whenever that step mounts.
+    // Focus the confirmation heading whenever that step mounts.
     effect(() => {
-      const heading = this.detailsHeading();
-      if (heading && this.flow.step() === 'details') {
+      const heading = this.confirmationHeading();
+      if (heading && this.flow.step() === 'confirmation') {
         heading.nativeElement.focus();
       }
     });
@@ -141,6 +143,10 @@ export class BookingPageComponent {
 
   onSlot(slot: string): void {
     this.flow.chooseSlot(slot);
+  }
+
+  onDetailsSubmitted(): void {
+    this.flow.confirm();
   }
 
   retry(): void {
