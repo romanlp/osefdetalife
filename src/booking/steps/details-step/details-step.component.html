@@ -1,0 +1,89 @@
+<div class="step">
+  <button
+    type="button"
+    class="back-button"
+    data-testid="details-back"
+    aria-label="Back to time selection"
+    (click)="back.emit()"
+  >
+    <span aria-hidden="true">&larr;</span>
+  </button>
+
+  <h2 #heading tabindex="-1" class="heading">Your details</h2>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <div class="field">
+      <label for="details-name-input">Name</label>
+      <input
+        id="details-name-input"
+        type="text"
+        autocomplete="name"
+        data-testid="details-name"
+        formControlName="name"
+        [attr.aria-invalid]="nameError() ? 'true' : null"
+        [attr.aria-describedby]="nameError() ? 'details-name-error' : null"
+      />
+      @if (nameError()) {
+        <p id="details-name-error" class="field-error" role="alert">{{ nameError() }}</p>
+      }
+    </div>
+
+    <div class="field">
+      <label for="details-email-input">Email</label>
+      <input
+        id="details-email-input"
+        type="email"
+        autocomplete="email"
+        data-testid="details-email"
+        formControlName="email"
+        [attr.aria-invalid]="emailError() ? 'true' : null"
+        [attr.aria-describedby]="emailError() ? 'details-email-error' : null"
+      />
+      @if (emailError()) {
+        <p id="details-email-error" class="field-error" role="alert">{{ emailError() }}</p>
+      }
+    </div>
+
+    @if (showCustom()) {
+      <div class="field">
+        <label for="details-custom-input">{{ customLabel() }}</label>
+        <input
+          id="details-custom-input"
+          type="text"
+          autocomplete="off"
+          data-testid="details-custom"
+          formControlName="custom"
+          [attr.aria-invalid]="customError() ? 'true' : null"
+          [attr.aria-describedby]="customError() ? 'details-custom-error' : null"
+          [attr.required]="customRequired() ? 'true' : null"
+        />
+        @if (customError()) {
+          <p id="details-custom-error" class="field-error" role="alert">{{ customError() }}</p>
+        }
+      </div>
+    }
+
+    @if (submitError()) {
+      <section role="alert" class="error" data-testid="details-error">
+        <p class="error-message">Something went wrong. Please try again.</p>
+        <button type="button" class="retry-button" data-testid="details-retry" (click)="retry()">
+          Try again
+        </button>
+      </section>
+    }
+
+    <button
+      type="submit"
+      class="submit-button"
+      data-testid="details-submit"
+      [disabled]="pending()"
+    >
+      @if (pending()) {
+        <span class="spinner" aria-hidden="true"></span>
+        <span>Confirming...</span>
+      } @else {
+        <span>Confirm Booking</span>
+      }
+    </button>
+  </form>
+</div>

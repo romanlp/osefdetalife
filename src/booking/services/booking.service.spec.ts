@@ -4,15 +4,24 @@ import { BookingService } from './booking.service';
 
 vi.mock('firebase/firestore', () => ({
   getFirestore: vi.fn(() => ({})),
-  doc: vi.fn((_db: unknown, ...segments: string[]) => ({
-    _path: segments.join('/'),
-    id: segments[segments.length - 1],
-  })),
+  doc: vi.fn((...args: unknown[]) => {
+    // Auto-id form: doc(collectionRef) — single non-string arg.
+    if (args.length === 1 || typeof args[1] !== 'string') {
+      return { _path: 'auto', id: 'auto-id-1' };
+    }
+    const segments = args.slice(1) as string[];
+    return {
+      _path: segments.join('/'),
+      id: segments[segments.length - 1],
+    };
+  }),
   getDoc: vi.fn(),
-  collection: vi.fn((_db: unknown, path: string) => ({ _path: path })),
+  collection: vi.fn((_db: unknown, ...segments: string[]) => ({ _path: segments.join('/') })),
   query: vi.fn((ref: unknown, ...clauses: unknown[]) => ({ ref, clauses })),
   where: vi.fn((field: string, op: string, value: unknown) => ({ field, op, value })),
   getDocs: vi.fn(),
+  serverTimestamp: vi.fn(() => 'server-timestamp'),
+  writeBatch: vi.fn(),
 }));
 
 describe('BookingService', () => {
@@ -243,6 +252,108 @@ describe('BookingService', () => {
       await expect(service.getPublicBookings('rest-123', '2026-08-21')).rejects.toThrow(
         'permission-denied',
       );
+    });
+  });
+
+  describe('createBooking', () => {
+    it('HAPPY_PATH_SUBMIT: should write the booking and its projection in one batch under the same ID', async () => {
+      const { writeBatch, doc, collection } = await import('firebase/firestore');
+      const commit = vi.fn().mockResolvedValue(undefined);
+      const batchSet = vi.fn();
+      vi.mocked(writeBatch).mockReturnValueOnce({ commit, set: batchSet } as never);
+
+      const id = await service.createBooking({
+        restaurantId: 'rest-123',
+        date: '2026-08-21',
+        time: '19:00',
+        partySize: 4,
+        name: 'Jane Doe',
+        email: 'jane@example.com',
+      });
+
+      expect(id).toBe('auto-id-1');
+      expect(writeBatch).toHaveBeenCalledTimes(1);
+      expect(collection).toHaveBeenCalledWith(
+        expect.anything(),
+        'restaurants',
+        'rest-123',
+        'bookings',
+      );
+      expect(batchSet).toHaveBeenCalledTimes(2);
+      expect(commit).toHaveBeenCalledTimes(1);
+
+      // Both docs share the auto-generated booking ID.
+      expect(vi.mocked(doc)).toHaveBeenCalledWith(
+        expect.anything(),
+        'restaurants',
+        'rest-123',
+        'bookings-public',
+        'auto-id-1',
+      );
+
+      const bookingPayload = batchSet.mock.calls[0][1] as Record<string, unknown>;
+      expect(bookingPayload).toEqual({
+        restaurantId: 'rest-123',
+        date: '2026-08-21',
+        time: '19:00',
+        partySize: 4,
+        name: 'Jane Doe',
+        email: 'jane@example.com',
+        status: 'confirmed',
+        duration: 120,
+        createdAt: 'server-timestamp',
+      });
+      expect(bookingPayload).not.toHaveProperty('customFieldValue');
+
+      const projectionPayload = batchSet.mock.calls[1][1] as Record<string, unknown>;
+      expect(projectionPayload).toEqual({
+        restaurantId: 'rest-123',
+        date: '2026-08-21',
+        time: '19:00',
+        partySize: 4,
+        status: 'confirmed',
+      });
+      expect(projectionPayload).not.toHaveProperty('name');
+      expect(projectionPayload).not.toHaveProperty('email');
+    });
+
+    it('CUSTOM_OPTIONAL: should persist the custom value when provided', async () => {
+      const { writeBatch } = await import('firebase/firestore');
+      const commit = vi.fn().mockResolvedValue(undefined);
+      const batchSet = vi.fn();
+      vi.mocked(writeBatch).mockReturnValueOnce({ commit, set: batchSet } as never);
+
+      await service.createBooking({
+        restaurantId: 'rest-123',
+        date: '2026-08-21',
+        time: '19:00',
+        partySize: 2,
+        name: 'Jane Doe',
+        email: 'jane@example.com',
+        customFieldValue: 'Window seat',
+      });
+
+      const bookingPayload = batchSet.mock.calls[0][1] as Record<string, unknown>;
+      expect(bookingPayload['customFieldValue']).toBe('Window seat');
+      const projectionPayload = batchSet.mock.calls[1][1] as Record<string, unknown>;
+      expect(projectionPayload).not.toHaveProperty('customFieldValue');
+    });
+
+    it('SUBMIT_FAILURE: should propagate the batch rejection to the caller', async () => {
+      const { writeBatch } = await import('firebase/firestore');
+      const commit = vi.fn().mockRejectedValueOnce(new Error('unavailable'));
+      vi.mocked(writeBatch).mockReturnValueOnce({ commit, set: vi.fn() } as never);
+
+      await expect(
+        service.createBooking({
+          restaurantId: 'rest-123',
+          date: '2026-08-21',
+          time: '19:00',
+          partySize: 2,
+          name: 'Jane Doe',
+          email: 'jane@example.com',
+        }),
+      ).rejects.toThrow('unavailable');
     });
   });
 });

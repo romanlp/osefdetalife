@@ -1,0 +1,149 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  text-align: left;
+}
+
+.back-button {
+  align-self: flex-start;
+  width: 44px;
+  height: 44px;
+  margin: -8px 0 8px -12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font-size: 1.25rem;
+  cursor: pointer;
+
+  &:hover {
+    background: #f5f0eb;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--osef-brand-secondary, #8fa67a);
+    outline-offset: 2px;
+  }
+}
+
+.heading {
+  margin: 0 0 16px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  outline: none;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  label {
+    font-size: 0.9375rem;
+    font-weight: 600;
+  }
+
+  input {
+    min-height: 44px;
+    padding: 10px 14px;
+    border: 2px solid #e5e0db;
+    border-radius: 8px;
+    background: #ffffff;
+    color: inherit;
+    font-family: inherit;
+    font-size: 1rem;
+
+    &:focus-visible {
+      outline: 2px solid var(--osef-brand-secondary, #8fa67a);
+      outline-offset: 2px;
+    }
+
+    &[aria-invalid='true'] {
+      border-color: #b3261e;
+    }
+  }
+}
+
+.field-error {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #b3261e;
+}
+
+.error-message {
+  margin: 0 0 16px;
+  font-size: 0.9375rem;
+}
+
+.retry-button,
+.submit-button {
+  min-height: 44px;
+  border: none;
+  border-radius: 8px;
+  background: var(--osef-brand-primary, #1a1a1a);
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid var(--osef-brand-secondary, #8fa67a);
+    outline-offset: 2px;
+  }
+}
+
+.retry-button {
+  min-width: 44px;
+  padding: 10px 24px;
+}
+
+.submit-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 8px;
+  padding: 14px 32px;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid #ffffff;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none;
+  }
+}

@@ -1,6 +1,6 @@
 import { Service, signal } from '@angular/core';
 
-export type BookingFlowStep = 'landing' | 'party-size' | 'date' | 'time' | 'details';
+export type BookingFlowStep = 'landing' | 'party-size' | 'date' | 'time' | 'details' | 'confirmation';
 
 /**
  * Signal-driven state machine for the booking flow (Stories 2.2–2.5).
@@ -38,9 +38,16 @@ export class BookingFlowService {
     this.step.set('details');
   }
 
+  /** Details submitted → confirmation. Only valid from details; flow complete. */
+  confirm(): void {
+    if (this.step() === 'details') {
+      this.step.set('confirmation');
+    }
+  }
+
   /**
    * One step back, preserving all selections (BACK_PRESERVES).
-   * No-op on landing.
+   * No-op on landing and confirmation (flow complete).
    */
   back(): void {
     const previous: Partial<Record<BookingFlowStep, BookingFlowStep>> = {

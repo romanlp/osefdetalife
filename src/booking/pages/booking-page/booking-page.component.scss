@@ -91,6 +91,24 @@
   line-height: 1.6;
 }
 
+.confirmation-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  margin-bottom: 16px;
+  border-radius: 50%;
+  background: var(--osef-brand-secondary, #8fa67a);
+  color: #ffffff;
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.text-center {
+  text-align: center;
+}
+
 .muted {
   margin: 0;
   font-size: 0.875rem;

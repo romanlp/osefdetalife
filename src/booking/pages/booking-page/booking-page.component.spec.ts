@@ -58,6 +58,7 @@ describe('BookingPageComponent', () => {
   let bookingServiceSpy: {
     getRestaurantBySlug: ReturnType<typeof vi.fn>;
     getPublicBookings: ReturnType<typeof vi.fn>;
+    createBooking: ReturnType<typeof vi.fn>;
   };
 
   function queryEl(): HTMLElement {
@@ -69,6 +70,7 @@ describe('BookingPageComponent', () => {
       getRestaurantBySlug: vi.fn(),
       // Availability reads succeed by default; cases override per scenario.
       getPublicBookings: vi.fn().mockResolvedValue([]),
+      createBooking: vi.fn().mockResolvedValue('booking-1'),
     };
 
     await TestBed.configureTestingModule({
@@ -469,7 +471,7 @@ describe('BookingPageComponent', () => {
       fixture.detectChanges();
     }
 
-    it('[P0] should record the slot and auto-advance to the details placeholder', async () => {
+    it('[P0] should record the slot and auto-advance to the details step', async () => {
       await reachTimeStep();
 
       queryEl()
@@ -478,7 +480,7 @@ describe('BookingPageComponent', () => {
       fixture.detectChanges();
 
       expect(fixture.componentInstance.flow.selectedSlot()).toBe('10:00');
-      expect(queryEl().querySelector('[data-testid="details-placeholder"]')).toBeTruthy();
+      expect(queryEl().querySelector('[data-testid="details-step"]')).toBeTruthy();
       expect(
         queryEl().querySelector('[data-testid="step-announcement"]')?.textContent?.trim(),
       ).toBe('Step 5 of 6: Details');
@@ -493,7 +495,7 @@ describe('BookingPageComponent', () => {
       fixture.detectChanges();
 
       const heading = queryEl().querySelector<HTMLHeadingElement>(
-        '[data-testid="details-placeholder"] h2',
+        '[data-testid="details-step"] h2',
       )!;
       expect(document.activeElement).toBe(heading);
     });
@@ -529,6 +531,78 @@ describe('BookingPageComponent', () => {
     function flow(): BookingFlowService {
       return fixture.componentInstance.flow;
     }
+
+    it('[P0] should submit the details form and land on confirmation with the summary', async () => {
+      await reachTimeStep();
+
+      queryEl()
+        .querySelector<HTMLButtonElement>('[data-testid="time-option-10-00"]')!
+        .click();
+      fixture.detectChanges();
+
+      const name = queryEl().querySelector<HTMLInputElement>('[data-testid="details-name"]')!;
+      name.value = 'Jane Doe';
+      name.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
+      const email = queryEl().querySelector<HTMLInputElement>('[data-testid="details-email"]')!;
+      email.value = 'jane@example.com';
+      email.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
+
+      queryEl().querySelector<HTMLButtonElement>('[data-testid="details-submit"]')!.click();
+      fixture.detectChanges();
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      expect(bookingServiceSpy.createBooking).toHaveBeenCalledWith({
+        restaurantId: 'rest-123',
+        date: '2026-08-21',
+        time: '10:00',
+        partySize: 4,
+        name: 'Jane Doe',
+        email: 'jane@example.com',
+      });
+      expect(flow().step()).toBe('confirmation');
+      expect(queryEl().querySelector('[data-testid="confirmation"]')).toBeTruthy();
+      expect(queryEl().querySelector('[data-testid="confirmation-summary"]')?.textContent).toContain(
+        '2026-08-21',
+      );
+      expect(queryEl().querySelector('[data-testid="confirmation-summary"]')?.textContent).toContain(
+        '10:00',
+      );
+      expect(queryEl().textContent).toContain("You're all set.");
+      expect(
+        queryEl().querySelector('[data-testid="step-announcement"]')?.textContent?.trim(),
+      ).toBe('Step 6 of 6: Confirmation');
+    });
+
+    it('[P1] should move focus to the confirmation heading after submit', async () => {
+      await reachTimeStep();
+
+      queryEl()
+        .querySelector<HTMLButtonElement>('[data-testid="time-option-10-00"]')!
+        .click();
+      fixture.detectChanges();
+
+      const name = queryEl().querySelector<HTMLInputElement>('[data-testid="details-name"]')!;
+      name.value = 'Jane Doe';
+      name.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
+      const email = queryEl().querySelector<HTMLInputElement>('[data-testid="details-email"]')!;
+      email.value = 'jane@example.com';
+      email.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
+
+      queryEl().querySelector<HTMLButtonElement>('[data-testid="details-submit"]')!.click();
+      fixture.detectChanges();
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      const heading = queryEl().querySelector<HTMLHeadingElement>(
+        '[data-testid="confirmation"] h2',
+      )!;
+      expect(document.activeElement).toBe(heading);
+    });
   });
 
   describe('BACK_PRESERVES', () => {
