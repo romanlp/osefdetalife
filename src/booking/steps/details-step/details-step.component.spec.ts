@@ -34,6 +34,9 @@ describe('DetailsStepComponent', () => {
       customField?: CustomField | undefined;
       createBooking?: (input: unknown) => Promise<string>;
       date?: string;
+      time?: string;
+      partySize?: number;
+      restaurantId?: string;
     } = {},
   ): Promise<void> {
     bookingServiceSpy = {
@@ -46,10 +49,10 @@ describe('DetailsStepComponent', () => {
     }).compileComponents();
 
     fixture = TestBed.createComponent(DetailsStepComponent);
-    fixture.componentRef.setInput('restaurantId', 'rest-123');
+    fixture.componentRef.setInput('restaurantId', overrides.restaurantId ?? 'rest-123');
     fixture.componentRef.setInput('date', overrides.date ?? '2026-08-21');
-    fixture.componentRef.setInput('time', '19:00');
-    fixture.componentRef.setInput('partySize', 4);
+    fixture.componentRef.setInput('time', overrides.time ?? '19:00');
+    fixture.componentRef.setInput('partySize', overrides.partySize ?? 4);
     fixture.componentRef.setInput('customField', overrides.customField);
     fixture.detectChanges();
     await fixture.whenStable();
@@ -172,6 +175,17 @@ describe('DetailsStepComponent', () => {
 
       expect(customInput()).toBeFalsy();
     });
+
+    it('[P1] should fall back to an accessible label when the enabled custom label is blank', async () => {
+      await createComponent({
+        customField: { label: '   ', required: false, enabled: true },
+      });
+
+      expect(customInput()).toBeTruthy();
+      const label = queryEl().querySelector('label[for="details-custom-input"]')!;
+      expect(label.textContent).toContain('Additional details');
+      expect(label.textContent?.trim().length).toBeGreaterThan(0);
+    });
   });
 
   describe('VALIDATION_EMPTY', () => {
@@ -256,6 +270,20 @@ describe('DetailsStepComponent', () => {
 
       expect(bookingServiceSpy.createBooking).not.toHaveBeenCalled();
     });
+
+    it.each([
+      ['empty restaurantId', { restaurantId: '' }],
+      ['empty time', { time: '' }],
+      ['zero partySize', { partySize: 0 }],
+    ])('[P0] should never attempt a write when %s', async (_label, selections) => {
+      await createComponent(selections);
+
+      setInputValue(nameInput(), 'Jane Doe');
+      setInputValue(emailInput(), 'jane@example.com');
+      await submitForm();
+
+      expect(bookingServiceSpy.createBooking).not.toHaveBeenCalled();
+    });
   });
 
   describe('DOUBLE_SUBMIT', () => {
@@ -287,6 +315,33 @@ describe('DetailsStepComponent', () => {
       expect(bookingServiceSpy.createBooking).toHaveBeenCalledTimes(1);
       expect(submitBtn().disabled).toBe(false);
     });
+
+    it('[P0] should not issue a second write when submit is invoked programmatically while pending', async () => {
+      let release!: (value: string) => void;
+      await createComponent({
+        createBooking: () =>
+          new Promise<string>((resolve) => {
+            release = resolve;
+          }),
+      });
+
+      setInputValue(nameInput(), 'Jane Doe');
+      setInputValue(emailInput(), 'jane@example.com');
+
+      const first = fixture.componentInstance.submit();
+      fixture.detectChanges();
+      // Bypass the disabled-button DOM block: second invocation must hit the pending() guard.
+      await fixture.componentInstance.submit();
+      await fixture.componentInstance.retry();
+      fixture.detectChanges();
+
+      release('booking-1');
+      await first;
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      expect(bookingServiceSpy.createBooking).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('BACK_NAVIGATION', () => {
@@ -300,6 +355,42 @@ describe('DetailsStepComponent', () => {
       fixture.detectChanges();
 
       expect(backCount).toBe(1);
+    });
+
+    it('[P1] should disable back and retry while a submit is pending', async () => {
+      let release!: (value: string) => void;
+      await createComponent({
+        createBooking: () =>
+          new Promise<string>((resolve) => {
+            release = resolve;
+          }),
+      });
+      // Force the retry path visible: fail once so details-error renders.
+      bookingServiceSpy.createBooking.mockRejectedValueOnce(new Error('unavailable'));
+
+      setInputValue(nameInput(), 'Jane Doe');
+      setInputValue(emailInput(), 'jane@example.com');
+      await submitForm();
+      expect(queryEl().querySelector('[data-testid="details-error"]')).toBeTruthy();
+
+      const retryBtn = (): HTMLButtonElement =>
+        queryEl().querySelector<HTMLButtonElement>('[data-testid="details-retry"]')!;
+      const pending = fixture.componentInstance.submit();
+      fixture.detectChanges();
+
+      expect(queryEl().querySelector<HTMLButtonElement>('[data-testid="details-back"]')!.disabled).toBe(
+        true,
+      );
+      expect(retryBtn().disabled).toBe(true);
+
+      release('booking-1');
+      await pending;
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      expect(queryEl().querySelector<HTMLButtonElement>('[data-testid="details-back"]')!.disabled).toBe(
+        false,
+      );
     });
   });
 });

@@ -570,6 +570,9 @@ describe('BookingPageComponent', () => {
       expect(queryEl().querySelector('[data-testid="confirmation-summary"]')?.textContent).toContain(
         '10:00',
       );
+      expect(queryEl().querySelector('[data-testid="confirmation-summary"]')?.textContent).toContain(
+        'for 4 guests',
+      );
       expect(queryEl().textContent).toContain("You're all set.");
       expect(
         queryEl().querySelector('[data-testid="step-announcement"]')?.textContent?.trim(),
@@ -602,6 +605,46 @@ describe('BookingPageComponent', () => {
         '[data-testid="confirmation"] h2',
       )!;
       expect(document.activeElement).toBe(heading);
+    });
+
+    it('[P1] should render singular guest copy for a party of one', async () => {
+      bookingServiceSpy.getPublicBookings.mockResolvedValue([]);
+      await createLoadedComponent(RESTAURANT_OPEN_ALL_WEEK);
+      bookButton().click();
+      fixture.detectChanges();
+      queryEl().querySelector<HTMLButtonElement>('[data-testid="party-size-option-1"]')!.click();
+      fixture.detectChanges();
+      queryEl()
+        .querySelector<HTMLButtonElement>('[data-testid="date-option-2026-08-21"]')!
+        .click();
+      fixture.detectChanges();
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      const slot = queryEl().querySelector<HTMLButtonElement>('[data-testid^="time-option-"]')!;
+      expect(slot).toBeTruthy();
+      slot.click();
+      fixture.detectChanges();
+
+      const name = queryEl().querySelector<HTMLInputElement>('[data-testid="details-name"]')!;
+      name.value = 'Jane Doe';
+      name.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
+      const email = queryEl().querySelector<HTMLInputElement>('[data-testid="details-email"]')!;
+      email.value = 'jane@example.com';
+      email.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
+
+      queryEl().querySelector<HTMLButtonElement>('[data-testid="details-submit"]')!.click();
+      fixture.detectChanges();
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      expect(fixture.componentInstance.flow.partySize()).toBe(1);
+      expect(queryEl().querySelector('[data-testid="confirmation"]')).toBeTruthy();
+      expect(queryEl().querySelector('[data-testid="confirmation-summary"]')?.textContent).toContain(
+        'for 1 guest',
+      );
     });
   });
 

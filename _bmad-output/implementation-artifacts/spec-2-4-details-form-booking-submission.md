@@ -2,7 +2,7 @@
 title: 'Story 2.4: Details Form & Booking Submission'
 type: 'feature'
 created: '2026-09-11'
-status: 'in-progress'
+status: 'done'
 route: 'dispatch'
 review_loop_iteration: 0
 baseline_commit: d9ce2117fcc18cc2cec9b773d6f767b0d674c591
@@ -60,12 +60,12 @@ context: []
 ## Tasks & Acceptance
 
 **Execution:**
-- [ ] `src/booking/services/booking.service.ts` -- ADD `createBooking` batch write (booking + projection, same ID) -- submission is the core deliverable
-- [ ] `src/booking/services/booking-flow.service.ts` -- ADD `confirmation` step + `confirm()` transition -- completes the 6-step flow
-- [ ] `src/booking/steps/details-step/details-step.component.*` -- NEW Reactive details form with submit-only validation + error/retry -- diner input surface
-- [ ] `src/booking/pages/booking-page/booking-page.component.*` -- Wire live details step + confirmation view, announcements, focus -- shell completes landing to confirmation
-- [ ] `src/booking/**/*.spec.ts` -- Unit-test matrix rows (validation, custom variants, batch shape, double-submit guard, back-preserves) -- matrix coverage gate
-- [ ] `e2e/tests/public-booking-page.spec.ts` -- Submit happy-path + custom-field variants against emulators -- real-Firestore proof incl. projection
+- [x] `src/booking/services/booking.service.ts` -- ADD `createBooking` batch write (booking + projection, same ID) -- submission is the core deliverable
+- [x] `src/booking/services/booking-flow.service.ts` -- ADD `confirmation` step + `confirm()` transition -- completes the 6-step flow
+- [x] `src/booking/steps/details-step/details-step.component.*` -- NEW Reactive details form with submit-only validation + error/retry -- diner input surface
+- [x] `src/booking/pages/booking-page/booking-page.component.*` -- Wire live details step + confirmation view, announcements, focus -- shell completes landing to confirmation
+- [x] `src/booking/**/*.spec.ts` -- Unit-test matrix rows (validation, custom variants, batch shape, double-submit guard, back-preserves) -- matrix coverage gate
+- [x] `e2e/tests/public-booking-page.spec.ts` -- Submit happy-path + custom-field variants against emulators -- real-Firestore proof incl. projection
 
 **Acceptance Criteria:**
 - Given valid details, when the diner submits, then a `confirmed` booking and matching non-PII projection are created in one batch and confirmation loads
@@ -75,9 +75,38 @@ context: []
 
 ## Implementation Notes
 
+Implementation (2026-09-11): `createBooking` batch write + `confirmation` flow state + new `osef-details-step` Reactive form + live details/confirmation wiring on booking page. Verified: `npm test` 29 files / 308 tests pass; `npm run lint` clean; `npm run build` succeeds (pre-existing initial-bundle budget warning only). E2E (implementer report): 11/11 pass incl. batch+projection assertions. Follow-ups: no automated AXE pass executed; confirmation checkmark contrast on brand-secondary worth a design check; e2e cleanup hardcodes emulator project ID.
+
 ## Spec Change Log
 
 ## Review Triage Log
+
+### Code review 2026-09-13 (uncommitted changes vs HEAD, full mode)
+Layers: blind-hunter + edge-case-hunter (FAILED — hallucinated `validateBookingInput`, `ValidateBookingInput`, `submittedBooking` signal, `SubmitBooking` entity, `confirmation/` component, `dashboard bookings` query/pagination — none exist in repo; 13 JSON findings rejected as unverifiable) + verification-gap + acceptance-auditor. `npm test` re-verified 29 files / 308 pass. Acceptance audit: all 4 ACs PASS, no spec violations.
+Entries below use `### Review Findings` bullets per step-04-present ordering (decision-needed, patch, defer) plus rejected appendix.
+
+### Review Findings
+- [x] [Review][Decision] Retry-after-ambiguous-failure duplicate booking — RESOLVED 2026-09-13: accept duplicates as out-of-scope (spec Never: double-booking race out of scope; matches chosen option). No code change. [details-step.component.ts:122-125 + booking.service.ts:72-74]
+- [x] [Review][Patch] Disable back + retry while pending — APPLIED 2026-09-13: back + retry buttons bind [disabled]="pending()"; added BACK_NAVIGATION unit asserting both disabled mid-submit. [details-step.component.html:2-10 + details-step.component.html:66-73]
+- [x] [Review][Patch] Double-submit guard bypassed by disabled-button test — APPLIED 2026-09-13: added DOUBLE_SUBMIT unit invoking submit()/retry() programmatically while pending; single createBooking asserted. [details-step.component.spec.ts:262]
+- [x] [Review][Patch] Missing-selection guard pins only empty-date disjunct — APPLIED 2026-09-13: parameterized it.each for restaurantId ''/time ''/partySize 0; no write asserted per disjunct. [details-step.component.spec.ts:250 + details-step.component.ts:97]
+- [x] [Review][Patch] Confirmation singular-guest branch never asserted — APPLIED 2026-09-13: plural control 'for 4 guests' on existing confirmation test + new [P1] party-of-one test asserting 'for 1 guest'. [booking-page.component.spec.ts:567-570]
+- [x] [Review][Patch] Empty custom label renders empty accessible name — APPLIED 2026-09-13: customLabel falls back to 'Additional details' on blank; unit covers blank-label case. [details-step.component.ts:54 + details-step.component.html:49]
+- [x] [Review][Defer] Form state lost on back-then-forward (name/email/custom cleared; slot/date/party preserved) — deferred: real but belongs to Story 2-5 navigation scope, not 2-4 submit scope [details-step.component.ts:38-42]
+- [x] [Review][Defer] E2E cleanup hardcodes emulator project ID — deferred: pre-existing test-infra brittleness, zero product impact [e2e/tests/public-booking-page.spec.ts:413-419]
+- Rejected (false): confirmation echoes raw ISO + 24h verbatim — spec Intent explicitly decides this; acceptance-auditor confirms AC4 PASS. No action.
+- Rejected (false): confirmation omits name/email/custom values — spec confirmation contract is date/time/party + "You're all set." only; auditor confirms AC4 PASS. No action.
+- Rejected (false): createBooking performs no date/time/partySize/email-shape validation — spec Code Map assigns validation to the details-step form (submit-only) and batch shape to the service; form trims + validates, service writes verbatim by design. No action.
+- Rejected (false): showCustom blank-optional drops explicit empty string — spec payload says customFieldValue trimmed, only when field shown, omit otherwise; empty-omitted is the specified shape. No action.
+- Rejected (false): page restaurant reload/slug change resets flow wiping in-flight form — reset-on-(re)load is specified (page TS effect + DestroyRef reset) so same-slug revisit starts fresh. No action.
+- Rejected (false): submitError stays visible while editing with no live re-validation — spec mandates validation runs on submit only, never on blur/input. No action.
+- Rejected (false): missing flow selections never attempt a write with no user feedback — spec mandates missing selections never attempt a write; page never renders details without selections. No action.
+- Rejected (false): submit failure focus not moved to alert/first invalid — step a11y contract is focus-to-heading + Step N live region only; unit asserts aria-describedby wiring. No action.
+- Rejected (low): no maxlength on name/email/custom — Firestore rejects oversize server-side; diner-typed overlong values are everyday-rare and fix adds new constraints beyond spec. Not worth it.
+- Rejected (low): confirmation shows no booking ID/reference — spec confirmation is summary + "You're all set." with no further actions. Not worth it.
+- Rejected (low): retry button has no own disabled/loading state — retry() funnels into submit() which returns early while pending; overlapping path already guarded. Not worth it.
+- Rejected (low): success path shows created booking ID nowhere — same as booking-ID item above; spec defines confirmation content. Not worth it.
+- Rejected (edge-layer): all 13 edge-case-hunter JSON findings — unverifiable against repo (symbols/files do not exist); layer marked failed per step-02 rule 4.
 
 ## Verification
 

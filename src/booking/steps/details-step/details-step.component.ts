@@ -51,7 +51,10 @@ export class DetailsStepComponent implements AfterViewInit {
   readonly customRequired = computed(
     () => this.showCustom() && this.customField()?.required === true,
   );
-  readonly customLabel = computed(() => this.customField()?.label ?? '');
+  readonly customLabel = computed(() => {
+    const label = this.customField()?.label?.trim() ?? '';
+    return label.length > 0 ? this.customField()!.label : 'Additional details';
+  });
 
   /**
    * Plain methods (not computed): FormControl values are not signals, so a
@@ -85,7 +88,6 @@ export class DetailsStepComponent implements AfterViewInit {
   async submit(): Promise<void> {
     if (this.pending()) return;
     this.submitAttempted.set(true);
-    this.submitError.set(false);
 
     if (this.nameError() || this.emailError() || this.customError()) return;
 
@@ -111,6 +113,7 @@ export class DetailsStepComponent implements AfterViewInit {
         email,
         ...(this.showCustom() && customValue.length > 0 ? { customFieldValue: customValue } : {}),
       });
+      this.submitError.set(false);
       this.submitted.emit();
     } catch {
       this.submitError.set(true);

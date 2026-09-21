@@ -149,3 +149,13 @@ Items surfaced during code reviews that are pre-existing issues or out of scope 
 - source_spec: `_bmad-output/implementation-artifacts/spec-2-3-time-slot-selection-availability.md`
   summary: Stop seeding the unused restaurants/{id}/tables subcollection in e2e restaurant.fixture.ts (app reads only the embedded tableGroups array)
   evidence: Carved during the story's token-gate split; test-fixture housekeeping with zero product impact
+
+## Deferred from: code review of spec-2-4-details-form-booking-submission (2026-09-13)
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-2-4-details-form-booking-submission.md`
+  summary: Details form state lost on back-then-forward — slot/date/party preserved but typed name/email/custom cleared when leaving the details step
+  evidence: FormGroup is component-local (details-step.component.ts:38-42); back() preserves only flow signals. Real but belongs to Story 2-5 navigation scope, not 2-4 submit scope
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-2-4-details-form-booking-submission.md`
+  summary: E2E cleanup hardcodes emulator project ID `firebase-crackling-fire-4704` via localhost:8081 REST DELETE
+  evidence: e2e/tests/public-booking-page.spec.ts:413-419; pre-existing test-infra brittleness, zero product impact — consider deriving from fixture/process.env

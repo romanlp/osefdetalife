@@ -4,6 +4,7 @@
     class="back-button"
     data-testid="details-back"
     aria-label="Back to time selection"
+    [disabled]="pending()"
     (click)="back.emit()"
   >
     <span aria-hidden="true">&larr;</span>
@@ -66,7 +67,7 @@
     @if (submitError()) {
       <section role="alert" class="error" data-testid="details-error">
         <p class="error-message">Something went wrong. Please try again.</p>
-        <button type="button" class="retry-button" data-testid="details-retry" (click)="retry()">
+        <button type="button" class="retry-button" data-testid="details-retry" [disabled]="pending()" (click)="retry()">
           Try again
         </button>
       </section>
