@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TimeSlotStepComponent } from './time-slot-step.component';
+import { BookingFlowService } from '../../services/booking-flow.service';
 import { BookingService } from '../../services/booking.service';
 import { NOW } from '../../utils/clock';
 import type { PublicBookingProjection } from '../../../shared/types/booking';
@@ -62,10 +63,33 @@ describe('TimeSlotStepComponent', () => {
       timezone?: string;
       projections?: PublicBookingProjection[];
       reject?: boolean;
+      /** Replaces the availability read entirely — used to park the fetch in flight. */
+      respond?: () => Promise<PublicBookingProjection[]>;
+    } = {},
+  ): Promise<void> {
+    await mount(overrides);
+    await fixture.whenStable();
+    fixture.detectChanges();
+  }
+
+  /** Mounts the step and lets the loader start, without waiting for it to settle. */
+  async function mount(
+    overrides: {
+      hours?: OpeningHours;
+      tableGroups?: TableGroup[];
+      date?: string;
+      partySize?: number;
+      selected?: string | null;
+      timezone?: string;
+      projections?: PublicBookingProjection[];
+      reject?: boolean;
+      respond?: () => Promise<PublicBookingProjection[]>;
     } = {},
   ): Promise<void> {
     bookingServiceSpy.getPublicBookings.mockReset();
-    if (overrides.reject) {
+    if (overrides.respond) {
+      bookingServiceSpy.getPublicBookings.mockImplementation(overrides.respond);
+    } else if (overrides.reject) {
       bookingServiceSpy.getPublicBookings.mockRejectedValue(new Error('offline'));
     } else {
       bookingSpyResolve(overrides.projections ?? []);
@@ -88,8 +112,13 @@ describe('TimeSlotStepComponent', () => {
     fixture.componentRef.setInput('partySize', overrides.partySize ?? 4);
     fixture.componentRef.setInput('selected', overrides.selected ?? null);
     fixture.detectChanges();
-    await fixture.whenStable();
+    await flushMicrotasks();
     fixture.detectChanges();
+  }
+
+  /** Lets the resource's loader reach the parked fetch without settling it. */
+  function flushMicrotasks(): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve));
   }
 
   function bookingSpyResolve(projections: PublicBookingProjection[]): void {
@@ -299,6 +328,66 @@ describe('TimeSlotStepComponent', () => {
       expect(bookingServiceSpy.getPublicBookings).toHaveBeenCalledTimes(2);
       expect(queryEl().querySelector('[data-testid="time-retry"]')).toBeFalsy();
       expect(queryEl().querySelectorAll('.pill').length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('TRANSITION_BUSY', () => {
+    it('[P0] should raise the flow busy flag while the availability fetch is in flight and clear it on resolve', async () => {
+      let release!: (projections: PublicBookingProjection[]) => void;
+      await mount({
+        respond: () => new Promise<PublicBookingProjection[]>((resolve) => (release = resolve)),
+      });
+      const flow = TestBed.inject(BookingFlowService);
+
+      expect(flow.transitionBusy()).toBe(true);
+      expect(queryEl().querySelector('[data-testid="time-loading"]')).toBeTruthy();
+
+      release([]);
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      expect(flow.transitionBusy()).toBe(false);
+      expect(queryEl().querySelectorAll('.pill').length).toBeGreaterThan(0);
+    });
+
+    it('[P0] should clear the flow busy flag when the availability fetch rejects', async () => {
+      let fail!: (error: Error) => void;
+      await mount({
+        respond: () => new Promise<PublicBookingProjection[]>((_, reject) => (fail = reject)),
+      });
+      const flow = TestBed.inject(BookingFlowService);
+
+      expect(flow.transitionBusy()).toBe(true);
+
+      fail(new Error('offline'));
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      expect(flow.transitionBusy()).toBe(false);
+      expect(queryEl().querySelector('[data-testid="time-retry"]')).toBeTruthy();
+    });
+
+    it('[P1] should raise and clear the flag around a retry too', async () => {
+      await createComponent({ reject: true });
+      const flow = TestBed.inject(BookingFlowService);
+      expect(flow.transitionBusy()).toBe(false);
+
+      let release!: (projections: PublicBookingProjection[]) => void;
+      bookingServiceSpy.getPublicBookings.mockImplementation(
+        () => new Promise<PublicBookingProjection[]>((resolve) => (release = resolve)),
+      );
+      queryEl().querySelector<HTMLButtonElement>('[data-testid="time-retry"]')!.click();
+      fixture.detectChanges();
+      await flushMicrotasks();
+      fixture.detectChanges();
+
+      expect(flow.transitionBusy()).toBe(true);
+
+      release([]);
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      expect(flow.transitionBusy()).toBe(false);
     });
   });
 

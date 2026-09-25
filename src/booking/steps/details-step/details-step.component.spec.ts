@@ -1,10 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { DetailsStepComponent } from './details-step.component';
+import { BookingFlowService, type DetailsDraft } from '../../services/booking-flow.service';
 import { BookingService } from '../../services/booking.service';
 import type { CustomField } from '../../../shared/types/restaurant';
 
 describe('DetailsStepComponent', () => {
   let fixture: ComponentFixture<DetailsStepComponent>;
+  let flowService: BookingFlowService;
   let bookingServiceSpy: { createBooking: ReturnType<typeof vi.fn> };
 
   function queryEl(): HTMLElement {
@@ -37,6 +39,8 @@ describe('DetailsStepComponent', () => {
       time?: string;
       partySize?: number;
       restaurantId?: string;
+      /** Draft already held by the flow when the step mounts (back → forward). */
+      draft?: DetailsDraft;
     } = {},
   ): Promise<void> {
     bookingServiceSpy = {
@@ -47,6 +51,10 @@ describe('DetailsStepComponent', () => {
       imports: [DetailsStepComponent],
       providers: [{ provide: BookingService, useValue: bookingServiceSpy }],
     }).compileComponents();
+
+    flowService = TestBed.inject(BookingFlowService);
+    flowService.reset();
+    if (overrides.draft) flowService.saveDetails(overrides.draft);
 
     fixture = TestBed.createComponent(DetailsStepComponent);
     fixture.componentRef.setInput('restaurantId', overrides.restaurantId ?? 'rest-123');
@@ -341,6 +349,47 @@ describe('DetailsStepComponent', () => {
       fixture.detectChanges();
 
       expect(bookingServiceSpy.createBooking).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('DETAILS_DRAFT_RESTORE', () => {
+    it('[P0] should seed the form from the flow draft when the step is re-entered', async () => {
+      await createComponent({
+        draft: { name: 'Jane Doe', email: 'jane@example.com', custom: '' },
+      });
+
+      expect(nameInput().value).toBe('Jane Doe');
+      expect(emailInput().value).toBe('jane@example.com');
+    });
+
+    it('[P0] should write every edit back into the flow draft', async () => {
+      await createComponent();
+      expect(flowService.detailsDraft()).toEqual({ name: '', email: '', custom: '' });
+
+      setInputValue(nameInput(), 'Jane Doe');
+      setInputValue(emailInput(), 'jane@example.com');
+
+      expect(flowService.detailsDraft()).toEqual({
+        name: 'Jane Doe',
+        email: 'jane@example.com',
+        custom: '',
+      });
+    });
+
+    it('[P1] should seed the restaurant custom field from the draft too', async () => {
+      await createComponent({
+        customField: { label: 'Allergies', required: false, enabled: true },
+        draft: { name: '', email: '', custom: 'Peanuts' },
+      });
+
+      expect(customInput()?.value).toBe('Peanuts');
+    });
+
+    it('[P1] should open empty when the flow draft was cleared', async () => {
+      await createComponent();
+
+      expect(nameInput().value).toBe('');
+      expect(emailInput().value).toBe('');
     });
   });
 

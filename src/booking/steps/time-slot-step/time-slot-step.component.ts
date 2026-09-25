@@ -10,6 +10,7 @@ import {
   viewChild,
 } from '@angular/core';
 import type { OpeningHours, TableGroup } from '../../../shared/types/restaurant';
+import { BookingFlowService } from '../../services/booking-flow.service';
 import { BookingService } from '../../services/booking.service';
 import { availableSlots, clockMinutes, zonedMinutesOfDay } from '../../utils/availability';
 import { zonedToday } from '../../utils/calendar';
@@ -35,6 +36,7 @@ export class TimeSlotStepComponent implements AfterViewInit {
   readonly back = output<void>();
 
   private readonly bookingService = inject(BookingService);
+  private readonly flow = inject(BookingFlowService);
   private readonly now = inject(NOW);
   private readonly heading = viewChild.required<ElementRef<HTMLHeadingElement>>('heading');
 
@@ -56,20 +58,27 @@ export class TimeSlotStepComponent implements AfterViewInit {
       tick: this.refreshTick(),
     }),
     loader: async ({ params }) => {
-      const bookings = await this.bookingService.getPublicBookings(
-        params.restaurantId,
-        params.date,
-      );
-      const now = this.now();
-      const todayIso = zonedToday(params.timezone, now).iso;
-      return availableSlots({
-        hours: params.hours,
-        iso: params.date,
-        bookings,
-        partySize: params.partySize,
-        tableGroups: params.tableGroups,
-        nowMinutes: params.date === todayIso ? zonedMinutesOfDay(params.timezone, now) : null,
-      });
+      // This is the only step with work in flight, so it owns the page's
+      // transition-busy state: raised here, cleared on resolve *and* reject.
+      this.flow.beginTransition();
+      try {
+        const bookings = await this.bookingService.getPublicBookings(
+          params.restaurantId,
+          params.date,
+        );
+        const now = this.now();
+        const todayIso = zonedToday(params.timezone, now).iso;
+        return availableSlots({
+          hours: params.hours,
+          iso: params.date,
+          bookings,
+          partySize: params.partySize,
+          tableGroups: params.tableGroups,
+          nowMinutes: params.date === todayIso ? zonedMinutesOfDay(params.timezone, now) : null,
+        });
+      } finally {
+        this.flow.endTransition();
+      }
     },
   });
 

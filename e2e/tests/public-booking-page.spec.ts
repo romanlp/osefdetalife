@@ -123,6 +123,68 @@ function expectedFreeSlots(restaurant: Restaurant, iso: string): string[] {
   return slots;
 }
 
+/**
+ * AC6 evidence — WCAG 2.x contrast ratio for an element's text against the first
+ * opaque ancestor background. Computed in the browser so the real cascade
+ * (including white-label CSS custom properties) decides both colours.
+ */
+async function contrastRatio(locator: import('@playwright/test').Locator): Promise<number> {
+  return locator.first().evaluate((element) => {
+    const toRgb = (value: string): [number, number, number] => {
+      const parts = value.match(/[\d.]+/g) ?? [];
+      return [Number(parts[0]), Number(parts[1]), Number(parts[2])];
+    };
+    const luminance = ([r, g, b]: [number, number, number]): number => {
+      const channel = (value: number) => {
+        const srgb = value / 255;
+        return srgb <= 0.03928 ? srgb / 12.92 : Math.pow((srgb + 0.055) / 1.055, 2.4);
+      };
+      return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
+    };
+
+    let background: [number, number, number] | null = null;
+    for (let node: Element | null = element; node; node = node.parentElement) {
+      const value = getComputedStyle(node).backgroundColor;
+      if (value && !value.includes('rgba(0, 0, 0, 0)') && !value.includes('transparent')) {
+        background = toRgb(value);
+        break;
+      }
+    }
+    if (!background) throw new Error('No opaque ancestor background for contrast check');
+
+    const [lighter, darker] = [
+      luminance(toRgb(getComputedStyle(element).color)),
+      luminance(background),
+    ].sort((a, b) => b - a);
+    return (lighter + 0.05) / (darker + 0.05);
+  });
+}
+
+/** AC6: body copy must clear the WCAG 2.1 AA 4.5:1 minimum. */
+async function expectContrastAtLeast(
+  locator: import('@playwright/test').Locator,
+  label: string,
+  minimum = 4.5,
+): Promise<void> {
+  const ratio = await contrastRatio(locator);
+  expect(ratio, `${label} contrast ratio`).toBeGreaterThanOrEqual(minimum);
+}
+
+/** AC6: every interactive control renders at least 44×44 CSS px. */
+async function expectMinTapTarget(
+  locator: import('@playwright/test').Locator,
+  label: string,
+): Promise<void> {
+  const box = await locator.first().boundingBox();
+  expect(box, `${label} has no layout box`).not.toBeNull();
+  // Sub-pixel tolerance: a 44px rule can measure 43.99998 after layout rounding,
+  // which is not a smaller target — a real violation is off by a whole pixel.
+  const tolerance = 0.5;
+  expect(box!.width, `${label} width`).toBeGreaterThanOrEqual(44 - tolerance);
+  expect(box!.height, `${label} height`).toBeGreaterThanOrEqual(44 - tolerance);
+}
+
+
 test.describe('Public Booking Page', () => {
   test('[P0] valid slug renders restaurant name, address, and Book a Table button', async ({
     page,
@@ -344,6 +406,174 @@ test.describe('Public Booking Page', () => {
       // Back returns to party size with the selection intact.
       await page.getByTestId('calendar-back').click();
       await expect(page.getByTestId('party-size-option-2')).toHaveClass(/selected/);
+    });
+
+    test('[P0] full back chain keeps every selection and restores typed details', async ({
+      page,
+      restaurant,
+    }) => {
+      await startBooking(page, restaurant.slug);
+      await page.getByTestId('party-size-option-3').click();
+
+      const target = nextFutureOpenDate(restaurant);
+      await showMonth(page, target);
+      await page.getByTestId(`date-option-${target}`).click();
+
+      const step = page.getByTestId('time-slot-step');
+      await expect(step).toBeVisible();
+      const slotId = expectedFreeSlots(restaurant, target)[0];
+      await page.getByTestId(slotId).click();
+
+      // Type into the live details step, then walk the whole chain back.
+      await expect(page.getByTestId('details-step')).toBeVisible();
+      await page.getByTestId('details-name').fill('Jane Doe');
+      await page.getByTestId('details-email').fill('jane@example.com');
+
+      await page.getByTestId('details-back').click();
+      await expect(page.getByTestId(slotId)).toHaveAttribute('aria-pressed', 'true');
+
+      await page.getByTestId('time-back').click();
+      await expect(page.getByTestId(`date-option-${target}`)).toHaveAttribute(
+        'aria-pressed',
+        'true',
+      );
+
+      await page.getByTestId('calendar-back').click();
+      await expect(page.getByTestId('party-size-option-3')).toHaveAttribute('aria-pressed', 'true');
+
+      // Forward again along the same selections…
+      await page.getByTestId('party-size-option-3').click();
+      await expect(page.getByTestId('calendar-step')).toBeVisible();
+      await page.getByTestId(`date-option-${target}`).click();
+      await expect(step).toBeVisible();
+      await page.getByTestId(slotId).click();
+
+      // …and the typed details are still there (2.4's filed deferral).
+      await expect(page.getByTestId('details-step')).toBeVisible();
+      await expect(page.getByTestId('details-name')).toHaveValue('Jane Doe');
+      await expect(page.getByTestId('details-email')).toHaveValue('jane@example.com');
+      await expect(page.getByTestId('step-announcement')).toHaveText('Step 5 of 6: Details');
+      // Focus lands on the incoming step's heading, not the first control.
+      await expect(page.locator('[data-testid="details-step"] h2')).toBeFocused();
+    });
+
+    test('[P1] details open empty when a different slot is chosen after back', async ({
+      page,
+      restaurant,
+    }) => {
+      await startBooking(page, restaurant.slug);
+      await page.getByTestId('party-size-option-2').click();
+
+      const target = nextFutureOpenDate(restaurant);
+      await showMonth(page, target);
+      await page.getByTestId(`date-option-${target}`).click();
+
+      await expect(page.getByTestId('time-slot-step')).toBeVisible();
+      const slots = expectedFreeSlots(restaurant, target);
+      expect(slots.length).toBeGreaterThan(1);
+      await page.getByTestId(slots[0]).click();
+
+      await expect(page.getByTestId('details-step')).toBeVisible();
+      await page.getByTestId('details-name').fill('Jane Doe');
+
+      // A different slot is a new booking intent — the draft goes with the old one.
+      await page.getByTestId('details-back').click();
+      await page.getByTestId(slots[1]).click();
+
+      await expect(page.getByTestId('details-step')).toBeVisible();
+      await expect(page.getByTestId('details-name')).toHaveValue('');
+    });
+
+    test('[P0] page-level Firestore failure shows the exact message and retry recovers', async ({
+      page,
+      restaurant,
+    }) => {
+      const firestoreOrigin = '**/localhost:8081/**';
+      await page.route(firestoreOrigin, (route) => route.abort('connectionrefused'));
+
+      await page.goto(`/book/${restaurant.slug}`);
+
+      const alert = page.getByTestId('booking-page-error');
+      await expect(alert).toBeVisible({ timeout: 20_000 });
+      await expect(alert).toContainText('Something went wrong. Please try again.');
+      await expect(page.getByTestId('retry-button')).toBeVisible();
+      // No flow is initiated while the lookup is failing.
+      await expect(page.getByTestId('book-button')).toHaveCount(0);
+      await expectContrastAtLeast(alert.locator('p'), 'page error message');
+
+      // Retry re-runs the lookup once the network is back.
+      await page.unroute(firestoreOrigin);
+      await page.getByTestId('retry-button').click();
+
+      await expect(page.getByTestId('restaurant-name')).toHaveText(restaurant.name, {
+        timeout: 20_000,
+      });
+    });
+
+    test('[P1] every interactive control meets the 44px tap-target minimum', async ({
+      page,
+      restaurant,
+    }) => {
+      await page.goto(`/book/${restaurant.slug}`);
+
+      await expect(page.getByTestId('book-button')).toBeVisible();
+      await expectMinTapTarget(page.getByTestId('book-button'), 'book-button');
+      await page.getByTestId('book-button').click();
+
+      await expect(page.getByTestId('party-size-option-1')).toBeVisible();
+      await expectMinTapTarget(page.getByTestId('party-size-option-1'), 'party-size-option-1');
+      await expectMinTapTarget(page.getByTestId('party-size-back'), 'party-size-back');
+      await page.getByTestId('party-size-option-2').click();
+
+      const target = nextFutureOpenDate(restaurant);
+      await expect(page.getByTestId('calendar-step')).toBeVisible();
+      await expectMinTapTarget(page.getByTestId('calendar-prev'), 'calendar-prev');
+      await expectMinTapTarget(page.getByTestId('calendar-next'), 'calendar-next');
+      await expectMinTapTarget(page.getByTestId('calendar-back'), 'calendar-back');
+      await showMonth(page, target);
+      await expectMinTapTarget(page.getByTestId(`date-option-${target}`), `date-option-${target}`);
+      await page.getByTestId(`date-option-${target}`).click();
+
+      await expect(page.getByTestId('time-slot-step')).toBeVisible();
+      const slotId = expectedFreeSlots(restaurant, target)[0];
+      await expectMinTapTarget(page.getByTestId(slotId), slotId);
+      await expectMinTapTarget(page.getByTestId('time-back'), 'time-back');
+      await page.getByTestId(slotId).click();
+
+      await expect(page.getByTestId('details-step')).toBeVisible();
+      await expectMinTapTarget(page.getByTestId('details-name'), 'details-name');
+      await expectMinTapTarget(page.getByTestId('details-email'), 'details-email');
+      await expectMinTapTarget(page.getByTestId('details-submit'), 'details-submit');
+      await expectMinTapTarget(page.getByTestId('details-back'), 'details-back');
+    });
+
+    test('[P1] platform text meets WCAG AA contrast on landing, party size and details', async ({
+      page,
+      restaurant,
+    }) => {
+      await page.goto(`/book/${restaurant.slug}`);
+
+      await expect(page.getByTestId('restaurant-name')).toBeVisible();
+      await expectContrastAtLeast(page.getByTestId('restaurant-name'), 'restaurant name');
+      await expectContrastAtLeast(page.getByTestId('restaurant-address'), 'restaurant address');
+
+      await page.getByTestId('book-button').click();
+      await expect(page.getByTestId('party-size-option-1')).toBeVisible();
+      await expectContrastAtLeast(page.locator('.heading'), 'party size heading');
+      await expectContrastAtLeast(page.locator('.subheading'), 'party size subheading');
+
+      await page.getByTestId('party-size-option-2').click();
+      const target = nextFutureOpenDate(restaurant);
+      await showMonth(page, target);
+      await page.getByTestId(`date-option-${target}`).click();
+
+      await expect(page.getByTestId('time-slot-step')).toBeVisible();
+      await page.getByTestId(expectedFreeSlots(restaurant, target)[0]).click();
+
+      await expect(page.getByTestId('details-step')).toBeVisible();
+      await expectContrastAtLeast(page.locator('label[for="details-name-input"]'), 'name label');
+      await expectContrastAtLeast(page.locator('label[for="details-email-input"]'), 'email label');
+      await expectContrastAtLeast(page.getByTestId('details-name'), 'name input text');
     });
 
     test('[P0] happy-path submit writes booking + projection, lands on confirmation', async ({

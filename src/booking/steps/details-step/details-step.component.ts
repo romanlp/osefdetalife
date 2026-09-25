@@ -9,9 +9,11 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import type { CustomField } from '../../../shared/types/restaurant';
 import { BookingService } from '../../services/booking.service';
+import { BookingFlowService } from '../../services/booking-flow.service';
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -33,18 +35,28 @@ export class DetailsStepComponent implements AfterViewInit {
   readonly back = output<void>();
 
   private readonly bookingService = inject(BookingService);
+  private readonly flow = inject(BookingFlowService);
   private readonly heading = viewChild.required<ElementRef<HTMLHeadingElement>>('heading');
 
+  /** Seeded from the flow draft so back → forward restores what the diner already typed. */
   readonly form = new FormGroup({
-    name: new FormControl('', { nonNullable: true }),
-    email: new FormControl('', { nonNullable: true }),
-    custom: new FormControl('', { nonNullable: true }),
+    name: new FormControl(this.flow.detailsDraft().name, { nonNullable: true }),
+    email: new FormControl(this.flow.detailsDraft().email, { nonNullable: true }),
+    custom: new FormControl(this.flow.detailsDraft().custom, { nonNullable: true }),
   });
 
   /** Latched on first submit — inline errors never appear on blur/input. */
   private readonly submitAttempted = signal(false);
   readonly pending = signal(false);
   readonly submitError = signal(false);
+
+  constructor() {
+    // The draft lives in the flow service: every edit is written back, so leaving
+    // and re-entering the step (or the page re-rendering it) keeps the values.
+    this.form.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => {
+      this.flow.saveDetails(this.form.getRawValue());
+    });
+  }
 
   /** Shown only when the restaurant enabled its custom field. */
   readonly showCustom = computed(() => this.customField()?.enabled === true);

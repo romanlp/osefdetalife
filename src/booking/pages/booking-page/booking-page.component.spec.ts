@@ -4,6 +4,7 @@ import { BookingPageComponent } from './booking-page.component';
 import { BookingService } from '../../services/booking.service';
 import { BookingFlowService } from '../../services/booking-flow.service';
 import { NOW } from '../../utils/clock';
+import type { PublicBookingProjection } from '../../../shared/types/booking';
 import type { Restaurant } from '../../../shared/types/restaurant';
 
 const RESTAURANT_FIXTURE: Restaurant = {
@@ -103,6 +104,52 @@ describe('BookingPageComponent', () => {
     return fixture.nativeElement.querySelector('[data-testid="book-button"]');
   }
 
+  function click(testId: string): void {
+    queryEl().querySelector<HTMLButtonElement>(`[data-testid="${testId}"]`)!.click();
+    fixture.detectChanges();
+  }
+
+  function setInputValue(input: HTMLInputElement, value: string): void {
+    input.value = value;
+    input.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+  }
+
+  /** The page's step container — carries the transition-busy aria state. */
+  function stepHost(): HTMLElement {
+    return queryEl().querySelector<HTMLElement>('.step-host')!;
+  }
+
+  function busyIndicator(): HTMLElement | null {
+    return queryEl().querySelector<HTMLElement>('[data-testid="transition-busy"]');
+  }
+
+  /** Lets a parked fetch reach its await without settling it. */
+  function flushMicrotasks(): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve));
+  }
+
+  /** Loads the page and walks to the calendar for Fri 2026-08-21 with 4 guests. */
+  async function walkToCalendar(): Promise<void> {
+    await createLoadedComponent(RESTAURANT_OPEN_ALL_WEEK);
+    click('book-button');
+    click('party-size-option-4');
+  }
+
+  /** Walks to the time step with pills rendered for Fri 2026-08-21, party of 4. */
+  async function walkToTimeStep(): Promise<void> {
+    await walkToCalendar();
+    click('date-option-2026-08-21');
+    await fixture.whenStable();
+    fixture.detectChanges();
+  }
+
+  /** Walks to the details step with slot 10:00 chosen. */
+  async function walkToDetails(): Promise<void> {
+    await walkToTimeStep();
+    click('time-option-10-00');
+  }
+
   describe('HAPPY_PATH', () => {
     it('[P0] should show a loading spinner then render name, address, and Book a Table button', async () => {
       let resolveLoad!: (value: Restaurant | null) => void;
@@ -180,8 +227,15 @@ describe('BookingPageComponent', () => {
       bookingServiceSpy.getRestaurantBySlug.mockRejectedValue(new Error('network down'));
       await createComponent('the-blue-bistro');
 
-      expect(fixture.nativeElement.textContent).toContain('Something went wrong.');
-      expect(fixture.nativeElement.textContent).toContain('Please try again.');
+      const alert = queryEl().querySelector<HTMLElement>('[data-testid="booking-page-error"]')!;
+      expect(alert).toBeTruthy();
+      expect(alert.getAttribute('role')).toBe('alert');
+
+      // Exactly one rendered line carries the epic's sentence — no split fragments.
+      const lines = alert.querySelectorAll('p');
+      expect(lines).toHaveLength(1);
+      expect(lines[0].textContent?.trim()).toBe('Something went wrong. Please try again.');
+      expect(fixture.nativeElement.textContent).toContain('Something went wrong. Please try again.');
       expect(fixture.nativeElement.querySelector('[data-testid="retry-button"]')).toBeTruthy();
     });
 
@@ -648,7 +702,178 @@ describe('BookingPageComponent', () => {
     });
   });
 
+  describe('TRANSITION_BUSY', () => {
+    it('[P0] should mark the step host busy while the incoming step fetches availability, and clear it once ready', async () => {
+      let release!: (projections: PublicBookingProjection[]) => void;
+      bookingServiceSpy.getPublicBookings.mockReturnValue(
+        new Promise<PublicBookingProjection[]>((resolve) => {
+          release = resolve;
+        }),
+      );
+      await walkToCalendar();
+      expect(stepHost().getAttribute('aria-busy')).toBeNull();
+
+      click('date-option-2026-08-21');
+      await flushMicrotasks();
+      fixture.detectChanges();
+
+      expect(fixture.componentInstance.flow.transitionBusy()).toBe(true);
+      expect(stepHost().getAttribute('aria-busy')).toBe('true');
+      expect(busyIndicator()).toBeTruthy();
+
+      release([]);
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      expect(fixture.componentInstance.flow.transitionBusy()).toBe(false);
+      expect(stepHost().getAttribute('aria-busy')).toBeNull();
+      expect(busyIndicator()).toBeFalsy();
+      expect(queryEl().querySelectorAll('.pill').length).toBeGreaterThan(0);
+    });
+
+    it('[P0] should clear the busy state when that fetch fails and show the in-step error', async () => {
+      bookingServiceSpy.getPublicBookings.mockRejectedValue(new Error('offline'));
+      await walkToCalendar();
+
+      click('date-option-2026-08-21');
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      expect(fixture.componentInstance.flow.transitionBusy()).toBe(false);
+      expect(stepHost().getAttribute('aria-busy')).toBeNull();
+      expect(busyIndicator()).toBeFalsy();
+      expect(queryEl().querySelector('[data-testid="time-retry"]')).toBeTruthy();
+    });
+
+    it('[P0] should stay instant — no indicator, no aria-busy — on advances with no work in flight', async () => {
+      await createLoadedComponent(RESTAURANT_OPEN_ALL_WEEK);
+
+      click('book-button');
+      expect(queryEl().querySelector('[data-testid="party-size-step"]')).toBeTruthy();
+      expect(busyIndicator()).toBeFalsy();
+      expect(stepHost().getAttribute('aria-busy')).toBeNull();
+
+      click('party-size-option-4');
+      expect(queryEl().querySelector('[data-testid="calendar-step"]')).toBeTruthy();
+      expect(busyIndicator()).toBeFalsy();
+      expect(stepHost().getAttribute('aria-busy')).toBeNull();
+    });
+
+    it('[P0] should not mark the details or confirmation steps busy', async () => {
+      await walkToDetails();
+
+      expect(queryEl().querySelector('[data-testid="details-step"]')).toBeTruthy();
+      expect(busyIndicator()).toBeFalsy();
+      expect(stepHost().getAttribute('aria-busy')).toBeNull();
+
+      setInputValue(queryEl().querySelector<HTMLInputElement>('[data-testid="details-name"]')!, 'Jane Doe');
+      setInputValue(queryEl().querySelector<HTMLInputElement>('[data-testid="details-email"]')!, 'jane@example.com');
+      click('details-submit');
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      expect(queryEl().querySelector('[data-testid="confirmation"]')).toBeTruthy();
+      expect(busyIndicator()).toBeFalsy();
+      expect(stepHost().getAttribute('aria-busy')).toBeNull();
+    });
+  });
+
   describe('BACK_PRESERVES', () => {
+    it('[P0] should walk the whole back chain with every selection intact and focus on each incoming heading', async () => {
+      await walkToDetails();
+      setInputValue(queryEl().querySelector<HTMLInputElement>('[data-testid="details-name"]')!, 'Jane Doe');
+
+      const flow = fixture.componentInstance.flow;
+
+      // details → time: the chosen slot is still highlighted.
+      click('details-back');
+      expect(flow.step()).toBe('time');
+      await fixture.whenStable();
+      fixture.detectChanges();
+      const slot = queryEl().querySelector<HTMLButtonElement>('[data-testid="time-option-10-00"]')!;
+      expect(slot.classList.contains('selected')).toBe(true);
+      expect(slot.getAttribute('aria-pressed')).toBe('true');
+      expect(document.activeElement).toBe(queryEl().querySelector('[data-testid="time-slot-step"] h2'));
+
+      // time → date: the chosen date is still highlighted.
+      click('time-back');
+      expect(flow.step()).toBe('date');
+      const date = queryEl().querySelector<HTMLButtonElement>('[data-testid="date-option-2026-08-21"]')!;
+      expect(date.classList.contains('selected')).toBe(true);
+      expect(document.activeElement).toBe(queryEl().querySelector('[data-testid="calendar-step"] h2'));
+
+      // date → party size: the chosen party size is still highlighted.
+      click('calendar-back');
+      expect(flow.step()).toBe('party-size');
+      const size = queryEl().querySelector<HTMLButtonElement>('[data-testid="party-size-option-4"]')!;
+      expect(size.classList.contains('selected')).toBe(true);
+      expect(size.getAttribute('aria-pressed')).toBe('true');
+      expect(document.activeElement).toBe(queryEl().querySelector('[data-testid="party-size-step"] h2'));
+
+      // party size → landing: the funnel is intact behind us.
+      click('party-size-back');
+      expect(flow.step()).toBe('landing');
+      expect(document.activeElement).toBe(bookButton());
+      expect(queryEl().querySelector('[data-testid="step-announcement"]')?.textContent?.trim()).toBe(
+        'Step 1 of 6: Start',
+      );
+      expect(flow.partySize()).toBe(4);
+      expect(flow.selectedDate()).toBe('2026-08-21');
+      expect(flow.selectedSlot()).toBe('10:00');
+      expect(flow.detailsDraft().name).toBe('Jane Doe');
+
+      // …and forward again: the party size and date highlights are restored.
+      click('book-button');
+      expect(
+        queryEl()
+          .querySelector<HTMLButtonElement>('[data-testid="party-size-option-4"]')!
+          .classList.contains('selected'),
+      ).toBe(true);
+
+      click('party-size-option-4');
+      expect(
+        queryEl()
+          .querySelector<HTMLButtonElement>('[data-testid="date-option-2026-08-21"]')!
+          .classList.contains('selected'),
+      ).toBe(true);
+    });
+
+    it('[P0] should restore typed details after back → forward with the same slot', async () => {
+      await walkToDetails();
+      setInputValue(queryEl().querySelector<HTMLInputElement>('[data-testid="details-name"]')!, 'Jane Doe');
+      setInputValue(
+        queryEl().querySelector<HTMLInputElement>('[data-testid="details-email"]')!,
+        'jane@example.com',
+      );
+
+      click('details-back');
+      await fixture.whenStable();
+      fixture.detectChanges();
+      // The same slot — the same booking intent, so the typed values come back.
+      click('time-option-10-00');
+
+      expect(fixture.componentInstance.flow.step()).toBe('details');
+      expect(queryEl().querySelector<HTMLInputElement>('[data-testid="details-name"]')!.value).toBe(
+        'Jane Doe',
+      );
+      expect(queryEl().querySelector<HTMLInputElement>('[data-testid="details-email"]')!.value).toBe(
+        'jane@example.com',
+      );
+    });
+
+    it('[P0] should clear the typed details when a different slot is chosen after back', async () => {
+      await walkToDetails();
+      setInputValue(queryEl().querySelector<HTMLInputElement>('[data-testid="details-name"]')!, 'Jane Doe');
+
+      click('details-back');
+      await fixture.whenStable();
+      fixture.detectChanges();
+      click('time-option-10-30');
+
+      expect(fixture.componentInstance.flow.selectedSlot()).toBe('10:30');
+      expect(queryEl().querySelector<HTMLInputElement>('[data-testid="details-name"]')!.value).toBe('');
+    });
+
     it('[P0] should preserve the date returning from the stub and the party size returning from the calendar', async () => {
       await createLoadedComponent(RESTAURANT_OPEN_ALL_WEEK);
       bookButton().click();
