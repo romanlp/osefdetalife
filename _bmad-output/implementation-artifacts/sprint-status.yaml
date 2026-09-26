@@ -41,7 +41,7 @@
 # - Retrospective appends its action items to action_items; sprint-status surfaces open ones
 
 generated: '2026-07-14'
-last_updated: 09-26-2026 00:34
+last_updated: 09-26-2026 00:45
 project: osefdetalife
 project_key: NOKEY
 tracking_system: file-system
@@ -65,7 +65,7 @@ development_status:
   2-3-time-slot-selection-availability: done
   2-4-details-form-booking-submission: done
   2-5-navigation-loading-error-handling: done
-  epic-2-retrospective: optional
+  epic-2-retrospective: done
 
   epic-3: backlog
   3-1-dashboard-shell-polish-sign-out-responsive-styling: backlog
@@ -129,3 +129,17 @@ action_items:
     owner: "Dev agent (Amelia)"
     status: done
     ref: "_bmad-output/implementation-artifacts/epic-1-retro-2026-08-14.md"
+  - id: "epic-2-retro-item-9-add-pre-flight-check-to-verify-required"
+    epic: 2
+    action: "Add pre-flight check to verify required emulator ports (8081, 9099) are
+      free and clear before starting e2e runs"
+    owner: "Roman / Dev agent"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-2-retro-2026-09-26.md"
+  - id: "epic-2-retro-item-10-enforce-tailwind-utility-preference-over"
+    epic: 2
+    action: "Enforce Tailwind utility preference over raw component SCSS for page
+      containers to protect Angular 2kB budgets in AGENTS.md"
+    owner: "Dev agent (Amelia)"
+    status: open
+    ref: "_bmad-output/implementation-artifacts/epic-2-retro-2026-09-26.md"
