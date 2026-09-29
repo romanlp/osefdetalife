@@ -141,5 +141,5 @@ action_items:
     action: "Enforce Tailwind utility preference over raw component SCSS for page
       containers to protect Angular 2kB budgets in AGENTS.md"
     owner: "Dev agent (Amelia)"
-    status: open
+    status: done
     ref: "_bmad-output/implementation-artifacts/epic-2-retro-2026-09-26.md"
