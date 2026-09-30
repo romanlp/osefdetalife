@@ -1,6 +1,32 @@
-<div class="flex h-dvh">
-  <osef-dashboard-sidebar />
-  <main class="bg-linen text-ink min-w-0 flex-1 overflow-y-auto">
-    <router-outlet />
-  </main>
-</div>
+<mat-sidenav-container class="h-dvh">
+  <mat-sidenav
+    id="dashboard-sidenav"
+    [mode]="mode()"
+    [opened]="opened()"
+    [disableClose]="isWide()"
+    (openedChange)="onOpenedChange($event)"
+  >
+    <osef-dashboard-sidebar (itemSelected)="closeIfOver()" />
+  </mat-sidenav>
+  <mat-sidenav-content>
+    @if (!isWide()) {
+      <mat-toolbar class="sticky top-0 z-10 border-b border-hairline">
+        <button
+          matIconButton
+          type="button"
+          data-testid="menu-button"
+          aria-label="Open navigation"
+          aria-controls="dashboard-sidenav"
+          [attr.aria-expanded]="menuOpen()"
+          (click)="menuOpen.set(true)"
+        >
+          <mat-icon aria-hidden="true">menu</mat-icon>
+        </button>
+        <span class="ml-2 text-lg font-bold">Osefdetalife</span>
+      </mat-toolbar>
+    }
+    <main>
+      <router-outlet />
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

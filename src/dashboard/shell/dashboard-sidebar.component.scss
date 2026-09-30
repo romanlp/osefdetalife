@@ -1,45 +1,31 @@
-.nav-link {
-  color: inherit;
-  background: transparent;
-  border: 0;
-  border-left: 3px solid transparent;
-  transition: background-color 0.15s ease;
+@use '@angular/material' as mat;
 
-  &:hover:not(:disabled) {
-    background: color-mix(in srgb, var(--osef-sage) 10%, transparent);
-  }
+:host {
+  @include mat.list-overrides(
+    (
+      active-indicator-shape: 0,
+      active-indicator-color: color-mix(in srgb, var(--osef-sage) 18%, transparent),
+      list-item-label-text-color: var(--osef-ink),
+      list-item-hover-label-text-color: var(--osef-ink),
+      list-item-focus-label-text-color: var(--osef-ink),
+      list-item-leading-icon-color: var(--osef-ink),
+      list-item-hover-state-layer-color: var(--osef-sage),
+      list-item-focus-state-layer-color: var(--osef-sage),
+      list-item-disabled-label-text-color: var(--osef-ink),
+      list-item-disabled-leading-icon-color: var(--osef-ink),
+    )
+  );
+}
+
+.mat-mdc-list-item {
+  border-left: 3px solid transparent;
 
   &:focus-visible {
     outline: 2px solid var(--osef-ink);
     outline-offset: -2px;
   }
-
-  &.active {
-    border-left-color: var(--osef-sage);
-    background: color-mix(in srgb, var(--osef-sage) 18%, transparent);
-  }
 }
 
-@media (width < 48rem) {
-  .nav-link:focus-visible::after {
-    content: attr(aria-label);
-    position: absolute;
-    top: 50%;
-    left: calc(100% + 8px);
-    z-index: 10;
-    transform: translateY(-50%);
-    padding: 4px 8px;
-    border-radius: 4px;
-    background: var(--osef-ink);
-    color: var(--osef-surface);
-    font-size: 0.875rem;
-    white-space: nowrap;
-    pointer-events: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .nav-link {
-    transition: none;
-  }
+.active {
+  border-left-color: var(--osef-sage);
 }

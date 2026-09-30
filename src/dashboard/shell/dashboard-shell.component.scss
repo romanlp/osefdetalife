@@ -1,3 +1,26 @@
+@use '@angular/material' as mat;
+
 :host {
-  display: block;
+  @include mat.sidenav-overrides(
+    (
+      container-width: 240px,
+      container-shape: 0,
+      container-background-color: var(--osef-surface),
+      container-text-color: var(--osef-ink),
+      container-divider-color: var(--osef-hairline),
+      content-background-color: var(--osef-linen),
+      content-text-color: var(--osef-ink),
+    )
+  );
+  @include mat.toolbar-overrides(
+    (
+      container-background-color: var(--osef-surface),
+      container-text-color: var(--osef-ink),
+    )
+  );
+  @include mat.icon-button-overrides(
+    (
+      icon-color: var(--osef-ink),
+    )
+  );
 }

@@ -2,7 +2,7 @@
 title: 'Story 3.1b: Dashboard Navigation on Angular Material'
 type: 'refactor'
 created: '2026-09-30'
-status: 'ready-for-dev'
+status: 'done'
 route: 'dispatch'
 review_loop_iteration: 0
 baseline_commit: be8c3b726bf241643af79ebc2283dae901e5e5f5
@@ -63,10 +63,10 @@ context: []
 ## Tasks & Acceptance
 
 **Execution:**
-- [ ] `src/dashboard/shell/dashboard-shell.component.{ts,html,scss}` -- sidenav container, breakpoint-driven mode, narrow toolbar + menu button, scoped sidenav overrides
-- [ ] `src/dashboard/shell/dashboard-sidebar.component.{ts,html,scss}` -- `mat-nav-list` items, sign-out as a `mat-list-item` button, snack bar error, `itemSelected` output, list overrides + left border
-- [ ] `src/dashboard/shell/*.spec.ts` -- the full matrix at unit level
-- [ ] `e2e/tests/dashboard-flow.spec.ts` -- replace the rail test with NARROW + OPEN_CLOSE + narrow sign-out
+- [x] `src/dashboard/shell/dashboard-shell.component.{ts,html,scss}` -- sidenav container, breakpoint-driven mode, narrow toolbar + menu button, scoped sidenav overrides
+- [x] `src/dashboard/shell/dashboard-sidebar.component.{ts,html,scss}` -- `mat-nav-list` items, sign-out as a `mat-list-item` button, snack bar error, `itemSelected` output, list overrides + left border
+- [x] `src/dashboard/shell/*.spec.ts` -- the full matrix at unit level
+- [x] `e2e/tests/dashboard-flow.spec.ts` -- replace the rail test with NARROW + OPEN_CLOSE + narrow sign-out
 
 **Acceptance Criteria:**
 - Given any viewport, when the dashboard renders, then no custom layout CSS remains beyond Material overrides and the active left border
@@ -92,3 +92,23 @@ context: []
 **Manual checks:**
 - At 375px: open the drawer, Tab cycles inside it, Esc closes and focus returns to the menu button
 - Force `.dark-theme` on `<html>` and confirm the sidenav, list and content invert
+
+## Review Triage Log
+
+| # | Source | Location | Finding | Verdict | Evidence | Route |
+|---|--------|----------|---------|---------|----------|-------|
+| 1 | blind, edge, verification-gap | `dashboard-shell.component.html` | Esc in wide side mode closes the sidebar permanently | high | `sidenav.mjs:225` closes on Esc unless `disableClose`; `opened()` stays true so the binding never reopens it | patch — `[disableClose]="isWide()"` + WIDE unit test |
+| 2 | blind | `dashboard-shell.component.html` | Narrow toolbar scrolls off with long content | low | Toolbar is a plain child of the scrolling `mat-sidenav-content` | patch — `sticky top-0 z-10` |
+| 3 | blind, edge | `dashboard-sidebar.component.ts` | Failure snack bar (no duration) stays on screen after a successful retry, over `/login` | medium | 3.1 cleared `signOutError` on retry; nothing dismisses the snack bar ref | patch — `snackBar.dismiss()` at sign-out start + spec |
+| 4 | blind, edge | `dashboard-sidebar.component.ts` | Snack bar announces politely, weaker than 3.1's `role="alert"` | low | `snack-bar.mjs:87` defaults `politeness = 'polite'` | patch — `{ politeness: 'assertive' }` |
+| 5 | blind | `dashboard-shell.component.html` | `<main>` lost linen/ink/min-w-0/overflow classes | false | `content-background-color`/`content-text-color` overrides supply the canvas; `mat-sidenav-content` owns scrolling | reject |
+| 6 | blind | `dashboard-sidebar.component.scss` | Disabled sign-out no longer looks disabled | false | M3 list keeps `disabled-label-text-opacity: 0.38` / icon opacity; only colour was overridden | reject |
+| 7 | blind | shell | Reduced-motion rule dropped for drawer animation | false | Material's animation chunk already honours `prefers-reduced-motion`; the removed rule targeted a transition that no longer exists | reject |
+| 8 | blind | `dashboard-shell.component.ts` | `WIDE_QUERY` duplicates Tailwind `md` literal | low | Developer-only drift risk, no user impact today | reject |
+| 9 | blind | shell | Open drawer lacks accessible name / dialog role | false | Focus moves into the `aria-label="Dashboard navigation"` landmark, which names the context | reject |
+| 10 | blind | sidebar/toolbar | Brand duplicated on narrow and not a heading | low | Cosmetic; `<p>` brand pre-dates this change | reject |
+| 11 | blind | specs | `setTimeout` waits, no Shift+Tab, hard-coded backdrop point | low | Tests pass reliably; Enter on an anchor fires click so keyboard selection is covered | reject |
+| 12 | blind | diff | Spec file absent from diff | false | Excluded by design; spec is the claims file | reject |
+| 13 | edge | `dashboard-shell.component.ts` | Narrowing with focus inside side sidebar drops focus to body | low | Needs keyboard focus in sidebar during a resize; fix adds an effect | reject |
+| 14 | edge | `dashboard-shell.component.html` | Closing during the open transition loses focus restore | low | Sub-400ms window; fix adds focus bookkeeping | reject |
+| 15 | edge | `dashboard-sidebar.component.html` | Ctrl/Meta-click closes the drawer without navigating | low | Rare on narrow/touch viewports; fix adds a branch | reject |
