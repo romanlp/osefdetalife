@@ -1,19 +1,44 @@
-<nav data-testid="sidebar-nav" class="sidebar" aria-label="Dashboard navigation">
-  <p class="brand">Osefdetalife</p>
-  <ul class="nav-list">
+<nav data-testid="sidebar-nav" class="flex h-full flex-col" aria-label="Dashboard navigation">
+  <p class="m-0 hidden px-4 pt-6 pb-4 text-lg font-bold md:block">Osefdetalife</p>
+  <ul class="m-0 flex list-none flex-col gap-1 p-2">
     @for (item of navItems; track item.label) {
       <li>
         <a
-          class="nav-link"
-          [attr.data-testid]="'nav-item-' + item.label.toLowerCase()"
+          class="nav-link relative flex min-h-12 items-center justify-center gap-3 rounded-lg px-3 no-underline md:justify-start"
+          [attr.data-testid]="'nav-item-' + item.label.toLowerCase().replaceAll(' ', '-')"
+          [attr.aria-label]="item.label"
+          [title]="item.label"
           [routerLink]="item.path"
           routerLinkActive="active"
+          ariaCurrentWhenActive="page"
           [routerLinkActiveOptions]="{ exact: true }"
         >
-          <mat-icon aria-hidden="true">{{ item.icon }}</mat-icon>
-          <span>{{ item.label }}</span>
+          <mat-icon aria-hidden="true" class="shrink-0">{{ item.icon }}</mat-icon>
+          <span class="hidden md:inline">{{ item.label }}</span>
         </a>
       </li>
     }
   </ul>
+  <div class="relative mt-auto p-2">
+    @if (signOutError(); as message) {
+      <p
+        role="alert"
+        class="text-error m-0 mb-2 text-sm md:px-3 max-md:absolute max-md:bottom-full max-md:left-full max-md:z-10 max-md:ml-2 max-md:w-56 max-md:rounded-lg max-md:border max-md:border-hairline max-md:bg-surface max-md:p-3"
+      >{{ message }}</p>
+    }
+    <button
+      #signOutButton
+      type="button"
+      data-testid="sign-out-button"
+      class="nav-link relative flex min-h-12 w-full cursor-pointer items-center justify-center gap-3 rounded-lg px-3 text-base disabled:cursor-not-allowed disabled:opacity-60 md:justify-start"
+      aria-label="Sign out"
+      title="Sign out"
+      [disabled]="signingOut()"
+      [attr.aria-busy]="signingOut()"
+      (click)="signOut()"
+    >
+      <mat-icon aria-hidden="true" class="shrink-0">logout</mat-icon>
+      <span class="hidden md:inline">Sign out</span>
+    </button>
+  </div>
 </nav>

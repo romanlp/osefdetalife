@@ -1,13 +1,13 @@
-<div class="min-h-screen flex items-center justify-center bg-[#FAF7F2]">
+<div class="min-h-full flex items-center justify-center bg-linen">
   <section class="w-full max-w-[480px] mx-4 p-6">
-    <p class="text-sm text-gray-500 mb-1">Step 3 of 3: Share your booking page</p>
+    <p class="text-sm text-ink-muted mb-1">Step 3 of 3: Share your booking page</p>
     <h1 class="text-2xl font-semibold mb-2">Your booking link</h1>
-    <p class="text-gray-600 mb-6">
+    <p class="text-ink-muted mb-6">
       Share this link with diners so they can book a table. Scan the QR code to open on mobile.
     </p>
 
     @if (loading()) {
-      <div role="status" aria-live="polite" class="text-gray-500">
+      <div role="status" aria-live="polite" class="text-ink-muted">
         Loading your booking link...
       </div>
     } @else if (!restaurant()) {
@@ -25,14 +25,14 @@
           type="text"
           [value]="bookingLink()"
           readonly
-          class="flex-1 bg-gray-100 text-gray-900 text-sm rounded-lg px-4 py-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-900"
+          class="flex-1 bg-surface text-ink text-sm rounded-lg px-4 py-3 border border-hairline focus:outline-none focus:ring-2 focus:ring-ink"
           aria-label="Your restaurant's booking link"
         />
         <button
           type="button"
           data-testid="copy-button"
           (click)="copy()"
-          class="bg-gray-900 text-gray-100 rounded-lg px-6 py-3 font-medium hover:bg-gray-800 whitespace-nowrap"
+          class="bg-ink text-linen rounded-lg px-6 py-3 font-medium hover:bg-ink/90 whitespace-nowrap"
         >
           Copy
         </button>
@@ -52,7 +52,7 @@
         <img
           [src]="qrCodeUrl()"
           alt="QR code for your booking link"
-          class="inline-block border border-gray-200 rounded-lg p-2 bg-white"
+          class="inline-block border border-hairline rounded-lg p-2 bg-surface"
           width="200"
           height="200"
         />
@@ -62,7 +62,7 @@
         type="button"
         data-testid="preview-button"
         (click)="openPreview()"
-        class="w-full bg-gray-900 text-gray-100 rounded-lg py-3 font-medium hover:bg-gray-800"
+        class="w-full bg-ink text-linen rounded-lg py-3 font-medium hover:bg-ink/90"
       >
         Preview booking page
       </button>

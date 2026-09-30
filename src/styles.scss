@@ -41,6 +41,36 @@ body {
   --color: var(--color-dark);
 }
 
+:root {
+  --osef-linen: #f5f0eb;
+  --osef-surface: #ffffff;
+  --osef-hairline: #e5e0db;
+  --osef-ink: #1a1a1a;
+  --osef-ink-muted: #6b6b6b;
+  --osef-sage: #8fa67a;
+  --osef-error: #c44b4b;
+}
+
+.dark-theme {
+  --osef-linen: #1a1a1a;
+  --osef-surface: #252320;
+  --osef-hairline: #3a3632;
+  --osef-ink: #f5f0eb;
+  --osef-ink-muted: #9a9590;
+  --osef-sage: #a8c48a;
+  --osef-error: #e06060;
+}
+
+@theme inline {
+  --color-linen: var(--osef-linen);
+  --color-surface: var(--osef-surface);
+  --color-hairline: var(--osef-hairline);
+  --color-ink: var(--osef-ink);
+  --color-ink-muted: var(--osef-ink-muted);
+  --color-sage: var(--osef-sage);
+  --color-error: var(--osef-error);
+}
+
 body {
   background-color: var(--bg-color);
   margin: 0;

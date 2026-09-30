@@ -159,3 +159,21 @@ Items surfaced during code reviews that are pre-existing issues or out of scope 
 - source_spec: `_bmad-output/implementation-artifacts/spec-2-4-details-form-booking-submission.md`
   summary: E2E cleanup hardcodes emulator project ID `firebase-crackling-fire-4704` via localhost:8081 REST DELETE
   evidence: e2e/tests/public-booking-page.spec.ts:413-419; pre-existing test-infra brittleness, zero product impact — consider deriving from fixture/process.env
+
+## Deferred from: code review of spec-3-1-dashboard-shell-polish-sign-out-responsive-styling (2026-09-30)
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-3-1-dashboard-shell-polish-sign-out-responsive-styling.md`
+  summary: Dark mode never applies at runtime because nothing injects `ThemingService`, so `.dark-theme` is never set on the document
+  evidence: `rg "inject\(ThemingService\)" src` is empty; the new `--osef-*` tokens invert correctly when `.dark-theme` is forced in devtools. Pre-existing, not caused by 3.1
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-3-1-dashboard-shell-polish-sign-out-responsive-styling.md`
+  summary: DESIGN.md dark error token `#E06060` on dark surface `#252320` is ~3.76:1, under WCAG AA 4.5:1 for small text
+  evidence: Computed contrast from DESIGN.md's own dark palette; unreachable until dark mode is wired (entry above). Needs a design decision on the dark error value
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-3-1-dashboard-shell-polish-sign-out-responsive-styling.md`
+  summary: A full page reload of any `/dashboard/*` child (incl. `/dashboard/booking-link` and the `/dashboard/deploy` redirect) lands on `/dashboard` instead of the requested page
+  evidence: Reproduced during 3.1 e2e; likely the auth/onboarded guards resolving before Firebase restores the session. Blocks an e2e test for the old-link redirect (covered by unit test only). Guards were out of scope for 3.1
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-3-1-dashboard-shell-polish-sign-out-responsive-styling.md`
+  summary: `e2e/tests/deploy-flow.spec.ts:40` (first test of the file) times out at sign-in on a fresh emulator run; the login page shows the reset-password message and fixture cleanup hits `PERMISSION_DENIED` on delete
+  evidence: Failed identically in 3 local runs on 2026-09-30 and in the 2026-09-25 junit (`deploy-flow.spec.ts:20`); the other 4 tests in the file use the same sign-in helper and pass. Login page and fixtures untouched by 3.1
