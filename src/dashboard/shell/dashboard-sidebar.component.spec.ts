@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi, type Mock } from 'vitest';
 import { signal, type WritableSignal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { provideRouter, Router } from '@angular/router';
 import { DashboardSidebarComponent } from './dashboard-sidebar.component';
 import { AuthService } from '../../app/services/auth.service';
@@ -30,6 +31,7 @@ describe('DashboardSidebarComponent', () => {
   let component: DashboardSidebarComponent;
   let fixture: ComponentFixture<DashboardSidebarComponent>;
   let authServiceStub: { user: WritableSignal<null>; signOut: Mock<() => Promise<void>> };
+  let snackBarStub: { open: Mock; dismiss: Mock };
 
   const query = (selector: string): HTMLElement | null =>
     fixture.nativeElement.querySelector(selector);
@@ -42,6 +44,7 @@ describe('DashboardSidebarComponent', () => {
       user: signal(null),
       signOut: vi.fn<() => Promise<void>>().mockResolvedValue(undefined),
     };
+    snackBarStub = { open: vi.fn(), dismiss: vi.fn() };
 
     await TestBed.configureTestingModule({
       imports: [DashboardSidebarComponent],
@@ -55,6 +58,7 @@ describe('DashboardSidebarComponent', () => {
           { path: 'login', children: [] },
         ]),
         { provide: AuthService, useValue: authServiceStub },
+        { provide: MatSnackBar, useValue: snackBarStub },
         { provide: OnboardingService, useValue: { getRestaurantByOwner: vi.fn() } },
       ],
     }).compileComponents();
@@ -136,6 +140,18 @@ describe('DashboardSidebarComponent', () => {
       expect(active[0]?.getAttribute('aria-current')).toBe('page');
     });
 
+    it('[P1] should drive the Material activated indicator from the active route (ACTIVE)', async () => {
+      const router = TestBed.inject(Router);
+      await router.navigateByUrl('/dashboard/booking-link');
+      await fixture.whenStable();
+      fixture.detectChanges();
+
+      const activated = fixture.nativeElement.querySelectorAll('a.mdc-list-item--activated');
+      expect(activated.length).toBe(1);
+      expect(activated[0]?.getAttribute('data-testid')).toBe('nav-item-booking-link');
+      expect(query('[data-testid="nav-item-bookings"]')?.hasAttribute('aria-current')).toBe(false);
+    });
+
     it('[P0] should redirect /dashboard/deploy to /dashboard/booking-link and mark Booking Link active (OLD_LINK)', async () => {
       const router = TestBed.inject(Router);
       await router.navigateByUrl('/dashboard/deploy');
@@ -149,37 +165,44 @@ describe('DashboardSidebarComponent', () => {
     });
   });
 
-  describe('Responsive rail (WIDE / NARROW)', () => {
-    it('[P0] should be 64px wide below md and 240px from md up', () => {
-      const host = fixture.nativeElement as HTMLElement;
-      expect(host.classList).toContain('w-16');
-      expect(host.classList).toContain('md:w-60');
-    });
-
-    it('[P0] should hide every label below md and show it from md up', () => {
-      const labels = fixture.nativeElement.querySelectorAll('a span, [data-testid="sign-out-button"] span');
-      expect(labels.length).toBe(8);
-      for (const label of labels) {
-        expect(label.classList).toContain('hidden');
-        expect(label.classList).toContain('md:inline');
+  describe('Material nav list', () => {
+    it('[P0] should render every item as a mat-list-item anchor inside a labelled mat-nav-list', () => {
+      const nav = query('[data-testid="sidebar-nav"]');
+      expect(nav?.tagName).toBe('MAT-NAV-LIST');
+      expect(nav?.getAttribute('role')).toBe('navigation');
+      expect(nav?.getAttribute('aria-label')).toBe('Dashboard navigation');
+      for (const testId of EXPECTED_TEST_IDS) {
+        const link = query(`[data-testid="${testId}"]`);
+        expect(link?.tagName).toBe('A');
+        expect(link?.classList).toContain('mat-mdc-list-item');
       }
     });
 
-    it('[P0] should give every nav item an accessible name and a tooltip at both widths', () => {
+    it('[P0] should name every item by its visible title, without title or aria-label attributes', () => {
       EXPECTED_TEST_IDS.forEach((testId, index) => {
         const link = query(`[data-testid="${testId}"]`);
-        expect(link?.getAttribute('aria-label')).toBe(EXPECTED_LABELS[index]);
-        expect(link?.getAttribute('title')).toBe(EXPECTED_LABELS[index]);
+        expect(link?.querySelector('[matListItemTitle]')?.textContent?.trim()).toBe(EXPECTED_LABELS[index]);
+        expect(link?.hasAttribute('title')).toBe(false);
+        expect(link?.hasAttribute('aria-label')).toBe(false);
       });
     });
 
-    it('[P1] should keep icons visible and hidden from assistive tech', () => {
-      const icons = fixture.nativeElement.querySelectorAll('a mat-icon');
+    it('[P1] should render icons as leading list icons hidden from assistive tech', () => {
+      const icons = fixture.nativeElement.querySelectorAll('a mat-icon[matListItemIcon]');
       expect(icons.length).toBe(7);
       for (const icon of icons) {
         expect(icon.getAttribute('aria-hidden')).toBe('true');
-        expect(icon.classList).not.toContain('hidden');
       }
+    });
+
+    it('[P0] should emit itemSelected when an item is clicked', () => {
+      const emitted = vi.fn();
+      component.itemSelected.subscribe(emitted);
+      vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+
+      query('[data-testid="nav-item-info"]')?.click();
+
+      expect(emitted).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -188,9 +211,10 @@ describe('DashboardSidebarComponent', () => {
       const button = signOutButton();
       expect(button.tagName).toBe('BUTTON');
       expect(button.getAttribute('type')).toBe('button');
-      expect(button.getAttribute('aria-label')).toBe('Sign out');
-      expect(button.getAttribute('title')).toBe('Sign out');
-      expect(query('ul')?.compareDocumentPosition(button)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+      expect(button.classList).toContain('mat-mdc-list-item');
+      expect(button.closest('mat-action-list')).toBeTruthy();
+      expect(button.textContent?.trim()).toContain('Sign out');
+      expect(query('mat-nav-list')?.compareDocumentPosition(button)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
     });
 
     it('[P0] should sign out then navigate to /login', async () => {
@@ -229,7 +253,7 @@ describe('DashboardSidebarComponent', () => {
       expect(signOutButton().disabled).toBe(false);
     });
 
-    it('[P0] should re-enable the button, announce an alert and not navigate when sign out fails', async () => {
+    it('[P0] should re-enable the button, report a snack bar error and not navigate when sign out fails', async () => {
       authServiceStub.signOut.mockRejectedValue(new Error('network'));
       const navigateSpy = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
 
@@ -239,7 +263,9 @@ describe('DashboardSidebarComponent', () => {
 
       expect(navigateSpy).not.toHaveBeenCalled();
       expect(signOutButton().disabled).toBe(false);
-      expect(query('[role="alert"]')?.textContent).toContain('Unable to sign out');
+      expect(snackBarStub.open).toHaveBeenCalledExactlyOnceWith('Unable to sign out. Please try again.', 'Dismiss', {
+        politeness: 'assertive',
+      });
     });
 
     it('[P0] should return focus to the sign-out button after a failed sign out', async () => {
@@ -266,37 +292,30 @@ describe('DashboardSidebarComponent', () => {
 
       expect(component.signingOut()).toBe(false);
       expect(signOutButton().disabled).toBe(false);
-      expect(query('[role="alert"]')).toBeNull();
+      expect(snackBarStub.open).not.toHaveBeenCalled();
     });
 
-    it('[P1] should show the alert beside the rail on narrow viewports', async () => {
-      authServiceStub.signOut.mockRejectedValue(new Error('network'));
-
-      signOutButton().click();
-      await fixture.whenStable();
-      fixture.detectChanges();
-
-      const alert = query('[role="alert"]');
-      expect(alert?.classList).not.toContain('max-md:sr-only');
-      expect(alert?.classList).toContain('max-md:absolute');
-      expect(alert?.classList).toContain('max-md:left-full');
-    });
-
-    it('[P1] should clear the alert when the owner retries', async () => {
+    it('[P1] should let the owner retry after a failure', async () => {
       authServiceStub.signOut.mockRejectedValueOnce(new Error('network'));
-      vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+      const navigateSpy = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
 
       signOutButton().click();
       await fixture.whenStable();
       fixture.detectChanges();
-      expect(query('[role="alert"]')).toBeTruthy();
+      expect(snackBarStub.open).toHaveBeenCalledTimes(1);
+      snackBarStub.dismiss.mockClear();
 
       signOutButton().click();
       await fixture.whenStable();
       fixture.detectChanges();
 
-      expect(query('[role="alert"]')).toBeNull();
+      expect(snackBarStub.dismiss).toHaveBeenCalledTimes(1);
+      expect(snackBarStub.dismiss.mock.invocationCallOrder[0]).toBeLessThan(
+        navigateSpy.mock.invocationCallOrder[0],
+      );
       expect(authServiceStub.signOut).toHaveBeenCalledTimes(2);
+      expect(snackBarStub.open).toHaveBeenCalledTimes(1);
+      expect(navigateSpy).toHaveBeenCalledWith(['/login']);
     });
   });
 });
