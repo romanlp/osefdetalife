@@ -49,6 +49,13 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 - Use the async pipe to handle observables
 - Do not assume globals like (`new Date()`) are available.
 
+## Styling
+
+- Angular enforces a per-component `anyComponentStyle` budget: **2 kB warning, 4 kB error** (`angular.json`). Keep every component stylesheet under the 2 kB warning threshold.
+- Prefer Tailwind utility classes over raw component SCSS for page and shell containers (layout, spacing, flex/grid, typography). Reach for component SCSS only for things utilities can't express: `:host` styling, `::ng-deep`-free child selectors, keyframes, and `@media (prefers-reduced-motion)` overrides.
+- This is not a preference — a page container with a few bespoke classes has already tripped the warning once (see `src/booking/pages/booking-page/booking-page.component.scss`). Reusing a utility class costs nothing in the style budget; a new SCSS class costs bytes.
+- If a component stylesheet approaches 2 kB, refactor existing rules to utilities before adding more. Do not raise the budget.
+
 ## Services
 
 - Design services around a single responsibility

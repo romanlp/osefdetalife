@@ -14,12 +14,13 @@ export const dashboardRoutes: Routes = [
           ),
       },
       {
-        path: 'deploy',
+        path: 'booking-link',
         loadComponent: () =>
           import('./pages/deploy/deploy-page.component').then(
             (m) => m.DeployPageComponent,
           ),
       },
+      { path: 'deploy', redirectTo: 'booking-link', pathMatch: 'full' },
     ],
   },
 ];

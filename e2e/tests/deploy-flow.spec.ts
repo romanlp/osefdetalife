@@ -8,7 +8,7 @@ const SIDEBAR_ITEM_TEST_IDS = [
   'nav-item-hours',
   'nav-item-tables',
   'nav-item-branding',
-  'nav-item-deploy',
+  'nav-item-booking-link',
   'nav-item-account',
 ];
 
@@ -30,8 +30,8 @@ async function getRestaurantSlug(
 }
 
 async function goToDeployPage(page: Page): Promise<void> {
-  await page.getByTestId('nav-item-deploy').click();
-  await page.waitForURL(/\/dashboard\/deploy/);
+  await page.getByTestId('nav-item-booking-link').click();
+  await page.waitForURL(/\/dashboard\/booking-link/);
 }
 
 test.describe('Deploy Flow', () => {
