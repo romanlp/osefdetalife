@@ -1,6 +1,6 @@
 # Story 1.2: Restaurant Data Model & Security Rules
 
-Status: ready-for-dev
+Status: done
 baseline_commit: fbf1a247858fbc1640f1258272d1439d4fcf093c
 
 ## Story
