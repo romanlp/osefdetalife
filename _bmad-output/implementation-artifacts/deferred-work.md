@@ -127,11 +127,13 @@ status: open
 ### DW-14: implementation-readiness report gates Epic 2 on widget-era FRs and stories
 
 origin: migrated from legacy ledger ("Public Booking Page pivot review (2026-08-15)"), 2026-10-01
-location: _bmad-output/planning-artifacts/implementation-readiness-report-2026-07-14.md:233
+location: _bmad-output/planning-artifacts/implementation-readiness-report-2026-07-14.md:147
 source_spec: _bmad-output/planning-artifacts/implementation-readiness-report-2026-07-14.md
 severity: low
-reason: the whole report is widget-era - NFR1 widget load time at :133, FR41/FR42 embed-code rows at :181-182, an Epic 2 FR-coverage table mapping FR1 to a widget landing at :233, and Story 2.1-2.6 widget components at :393; Epic 2 has since shipped
-status: open
+reason: stale vocabulary, not a wrong assessment - the pivot renamed requirements rather than replacing them, so the FR count of 53 still matches prd.md exactly and the FR-to-story mapping still holds; what is actually wrong is the tech stack line naming Web Components and Vite, the per-epic FR split predating FR-11's reassignment from Epic 2 to Epic 1, the unused 2.1-2.6 story range, and ~19 widget/embed wordings
+status: done 2026-10-01
+resolution: resolved 2026-10-01 - added a dated historical-snapshot banner stating what still holds, what is stale, and that prd.md and epics.md are authoritative; deleted the widget-era Story Sizing Validation table. The Acceptance Criteria Review table below it keeps a stale 2.1-2.6 row, left as-is because it is a point-in-time record
+decision: 2026-10-01 dated supersede banner — the report's substance survives the pivot, so banner rather than rewrite or delete
 
 ### DW-15: two UX mockups still render a fixed 375px widget frame
 
