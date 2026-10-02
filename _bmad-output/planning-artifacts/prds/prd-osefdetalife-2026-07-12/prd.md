@@ -596,17 +596,31 @@ System enforces unique slugs across all restaurants. Realizes UJ-2.
 
 ## 7. Success Metrics
 
-**Primary**
-- **SM-1:** Booking page load time < 2 seconds — validates FR-1 through FR-10.
-- **SM-2:** Booking completion rate > 80% — validates FR-1 through FR-5.
-- **SM-3:** Onboarding completion time < 10 minutes — validates FR-31 through FR-40.
+**Derivable from data the app already stores**
 
-**Secondary**
-- **SM-4:** 5 restaurants share their booking link in first month — validates FR-41 through FR-43.
+Only metrics readable from Firestore are retained. Bookings live at
+`restaurants/{restaurantId}/bookings` with a sanitized public projection at
+`restaurants/{restaurantId}/bookings-public`, so booking volume per restaurant
+per period is a query over stored data and needs no instrumentation.
+
 - **SM-5:** 50 bookings per restaurant per month (steady state) — validates FR-1 through FR-5.
+- **SM-C1:** Booking volume — why this should *not* be optimized. Retained as the counterweight to SM-5 (quality over quantity); its original counterweight SM-2 is retired below.
 
-**Counter-metrics (do not optimize)**
-- **SM-C1:** Booking volume — why this should *not* be optimized. Counterbalances SM-2 (quality over quantity).
+**Retired 2026-10-01 — not measurable without instrumentation that is out of scope**
+
+Analytics and performance instrumentation were declined, so no funnel, session or
+timing data is collected. These targets were aspirations rather than measurements
+and are kept here only so the intent is not lost if instrumentation returns.
+
+- **SM-1:** Booking page load time < 2 seconds — validates FR-1 through FR-10. `providePerformance()` is registered in `app.config.ts` but never consumed, so no web-vital data is gathered.
+- **SM-2:** Booking completion rate > 80% — validates FR-1 through FR-5. A rate needs a session-start denominator; nothing records one, so this primary metric was never computable.
+- **SM-3:** Onboarding completion time < 10 minutes — validates FR-31 through FR-40. No onboarding-completion timestamp is stored; `Restaurant.createdAt` records only the start.
+- **SM-4:** 5 restaurants share their booking link in first month — validates FR-41 through FR-43. A share is never recorded, and the deploy page offers copy rather than a tracked share action.
+
+**Open gap:** nothing measures whether diners land on `/book/{slug}` at all. SM-5
+and SM-C1 both count restaurant-side or downstream volume and cannot distinguish a
+well-used public booking page from a single busy restaurant. Closing this needs
+funnel instrumentation plus a consent position, which this project has declined.
 
 ## 8. Open Questions
 1. **Booking cancellation policy:** Diner contacts restaurant directly for MVP (recommended).

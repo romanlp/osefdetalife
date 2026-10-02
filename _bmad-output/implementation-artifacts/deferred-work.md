@@ -150,8 +150,10 @@ origin: migrated from legacy ledger ("Public Booking Page pivot review (2026-08-
 location: _bmad-output/planning-artifacts/prds/prd-osefdetalife-2026-07-12/prd.md:438
 source_spec: _bmad-output/planning-artifacts/epics.md
 severity: low
-reason: no FR states QR requirements - no scannability, error correction, size, contrast or test-scan criterion anywhere, and the duplicate in-app-preview sentence is FR-11 plus FR-43 at prd.md:168 and :458 (the legacy entry mis-identified the pair as FR-11/41/43; FR-41 is the Booking Link Page)
-status: open
+reason: no FR states QR requirements - no scannability, error correction, size or contrast criterion anywhere - and the shipped code delegates generation to a third-party image API (deploy-page.component.ts:33 builds an api.qrserver.com URL rendered as an img at deploy-page.component.html:52-58) with no QR library in package.json; the unit and e2e tests assert only that URL string, never that the image loads or that the code decodes
+status: done 2026-10-01
+resolution: closed by decision - third-party QR generation via api.qrserver.com is accepted as-is and a decode-based acceptance criterion is not wanted, so FR-41 plus the Story 1.7 acceptance criteria (epics.md:429,437,442) remain the requirement. The FR-11/FR-43 duplicate in-app-preview consequence noted in this entry moved to the pivot-doc-cleanup bundle rather than being lost
+decision: 2026-10-01 close as covered — third-party generation accepted, no testable decode criterion required
 
 ### DW-17: no success metric measures diner landings on the public booking page
 
@@ -159,8 +161,10 @@ origin: migrated from legacy ledger ("Public Booking Page pivot review (2026-08-
 location: _bmad-output/planning-artifacts/prds/prd-osefdetalife-2026-07-12/prd.md:605
 source_spec: _bmad-output/planning-artifacts/epics.md
 severity: low
-reason: SM-4 at prd.md:605 counts restaurants sharing their booking link and SM-5 counts bookings per restaurant, so nothing measures acquisition; adding one requires first reversing prd.md:565 and :591 which place analytics out of MVP
-status: open
+reason: SM-4 counts restaurants sharing their booking link and SM-5 counts bookings per restaurant, so nothing measures acquisition and the two cannot distinguish a working public page from one busy restaurant; SM-2 booking completion rate at prd.md:601 is a primary metric that is separately unmeasurable because nothing records a session start to serve as its denominator. Firebase Analytics is already provisioned (app.config.ts:22, firebase.ts:101-107,157) and emits zero events
+status: done 2026-10-01
+resolution: closed by decision 2026-10-01 - analytics instrumentation declined, so the unmeasurable metrics were retired rather than chased. provideAnalytics() now calls setConsent denying analytics_storage and all three ad signals (firebase.ts:101-116, covered by firebase.spec.ts), which stops the analytics storage that was being written with consent defaulted to granted. PRD section 7 rewritten to keep only SM-5 and SM-C1, the two derivable from Firestore, and to record why SM-1 through SM-4 are retired and what each would have needed
+decision: 2026-10-01 drop the analytics metrics, do not build them - setConsent denies analytics_storage and the ad signals, the unmeasurable SM-1 through SM-4 are retired in the PRD, and provideAppCheck() reCAPTCHA v3 is knowingly left running after review
 
 ### DW-18: Epic 1 retro action item 2 still names the deleted widgetBundleUrl variable
 
