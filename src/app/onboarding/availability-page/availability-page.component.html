@@ -55,7 +55,7 @@
       </div>
 
       @if (hoursError()) {
-        <div role="alert" class="text-red-700 text-sm">{{ hoursError() }}</div>
+        <div role="alert" class="mat-text-error text-sm">{{ hoursError() }}</div>
       }
 
       <div class="border-t pt-4 mt-2">
@@ -118,11 +118,11 @@
       </div>
 
       @if (tableGroupsError()) {
-        <div role="alert" class="text-red-700 text-sm">{{ tableGroupsError() }}</div>
+        <div role="alert" class="mat-text-error text-sm">{{ tableGroupsError() }}</div>
       }
 
       @if (error()) {
-        <div role="alert" class="text-red-700 text-sm">{{ error() }}</div>
+        <div role="alert" class="mat-text-error text-sm">{{ error() }}</div>
       }
 
       <button

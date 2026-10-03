@@ -256,8 +256,10 @@ origin: migrated from legacy ledger ("Deferred from: review of spec-2-2-party-si
 location: src/booking/utils/calendar.ts:82
 source_spec: _bmad-output/implementation-artifacts/spec-2-2-party-size-date-selection.md
 severity: low
-reason: largely handled - Story 2.3 landed the availability-layer fix at availability.ts:135 which drops slots at or before now for today, covered by availability.spec.ts:221; what remains is cosmetic, that picking today after close shows an empty time step
-status: open
+reason: buildMonthGrid takes (year, month, hours, todayIso) and filters only on iso < todayIso and !isOpenOn, so it has no notion of time of day and cannot know the restaurant has closed today; the diner can select today and reach the time step's "No available times for this date" empty state
+status: done 2026-10-01
+resolution: closed by decision - this is spec-compliant, not a defect. spec-2-2's DAY_HIDDEN row defines a hidden cell as a closed weekday or an open day before today and does not include today-after-close, and Story 2.3 already added the correct guard one layer down at availability.ts:134-135 (m <= effectiveNow), so the outcome is a clear empty state the diner can back out of
+decision: 2026-10-01 close as spec-compliant and gracefully handled. Noted for Story 3-2 - the dashboard bookings date picker will face the same today-relative-to-close question, and if it is ever tightened the rule should be written once in calendar.ts and compared against the close minute for that weekday rather than end of day
 
 ### DW-28: zoned-day date math is duplicated between app and e2e helpers
 
@@ -347,11 +349,13 @@ status: open
 ### DW-37: DESIGN.md dark error token misses WCAG AA contrast
 
 origin: migrated from legacy ledger ("Deferred from: code review of spec-3-1-dashboard-shell-polish-sign-out-responsive-styling (2026-09-30)"), 2026-10-01
-location: _bmad-output/planning-artifacts/ux-designs/ux-osefdetalife-2026-07-14/DESIGN.md:26
+location: _bmad-output/planning-artifacts/ux-designs/ux-osefdetalife-2026-07-14/DESIGN.md:15
 source_spec: _bmad-output/implementation-artifacts/spec-3-1-dashboard-shell-polish-sign-out-responsive-styling.md
 severity: medium
-reason: error-dark #E06060 on surface-raised-dark #252320 computes to 4.49:1, not the ~3.76:1 first recorded - still under AA 4.5:1 for small text but by 0.014; the token is also never applied, since --color-error is declared at styles.scss:71 and used in zero files while every error message uses raw Tailwind text-red-500 or text-red-700
-status: open
+reason: the original entry audited the wrong colour - it recorded ~3.76:1 for error-dark #E06060 on #252320, but that pair computes to 4.486:1 and 3.76:1 is in fact #ef4444 (Tailwind red-500) on white; the 3.76 figure came from Story 3-1's own review (spec-3-1:119), which attributed a Tailwind measurement to the DESIGN.md hex while its line 103 correctly noted the text was still on Tailwind colours. The real defect was that --osef-error had zero consumers: 15 error texts across 7 templates hardcoded text-red-500 or text-red-700
+status: done 2026-10-01
+resolution: resolved 2026-10-01 by adopting Angular Material's mat-text-error utility across all 15 sites in 7 templates and deleting the bespoke token. mat-text-error sets color: var(--mat-sys-error), which styles.scss:23-32 resolves via mat.system-classes() and mat.theme() to light-dark(#ba1a1a, #ffb4ab) - #ba1a1a measures 6.461:1 on surface, 5.706:1 on linen and 6.046:1 on the hardcoded #FAF7F2, passing AA everywhere, so no bespoke colour and no DESIGN.md hex are needed. --osef-error is removed from both palettes and the @theme inline bridge; DESIGN.md now directs error colour to Material's theme
+decision: 2026-10-01 adopt Angular Material's mat-text-error per the Material theming guidelines and remove the custom error token - mat.theme() alone does NOT emit the utility classes, so mat.system-classes() had to be added to styles.scss or all 15 sites would have referenced a nonexistent class. Dark mode remains unaddressed per owner decision and is still unmeasurable until DW-36 lands; Material's own dark error #ffb4ab was not evaluated
 
 ### DW-38: reloading a /dashboard/* child route lands on /dashboard
 

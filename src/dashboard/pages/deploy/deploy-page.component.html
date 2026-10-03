@@ -11,7 +11,7 @@
         Loading your booking link...
       </div>
     } @else if (!restaurant()) {
-      <div role="alert" class="text-red-700 text-sm">
+      <div role="alert" class="mat-text-error text-sm">
         {{ error() ?? 'Unable to load your restaurant. Please refresh and try again.' }}
       </div>
     } @else {
@@ -45,7 +45,7 @@
       }
 
       @if (copyError()) {
-        <p role="alert" class="text-red-700 text-sm mb-4">{{ copyError() }}</p>
+        <p role="alert" class="mat-text-error text-sm mb-4">{{ copyError() }}</p>
       }
 
       <div class="mb-6 text-center">

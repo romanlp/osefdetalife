@@ -12,7 +12,7 @@ colors:
   accent-hover: '#7A9168'
   border-hairline: '#E5E0DB'
   success: '#8FA67A'
-  error: '#C44B4B'
+  # error: not defined here — see "Error Colour" below
   # Dark mode
   surface-base-dark: '#1A1A1A'
   surface-raised-dark: '#252320'
@@ -23,7 +23,7 @@ colors:
   accent-hover-dark: '#96B378'
   border-hairline-dark: '#3A3632'
   success-dark: '#A8C48A'
-  error-dark: '#E06060'
+  # error-dark: not defined here — see "Error Colour" below
 typography:
   family: 'Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif'
   heading:
@@ -90,7 +90,7 @@ Restrained on purpose. The platform palette is neutral and warm; restaurants bri
 - **Muted (`#6B6B6B`)** is secondary text, labels, and placeholders. Never used for essential information.
 - **Sage (`#8FA67A`)** is the only chromatic color in the platform palette. Used for success states, the secondary button, active nav indicators, and tags. Restaurants override this with their own secondary color in the booking page.
 - **Hairline (`#E5E0DB`)** separates surfaces at the lowest possible contrast. Anything heavier feels like UI rather than paper.
-- **Error Red (`#C44B4B`)** for destructive actions and error states. Used sparingly.
+- **Error Colour** for destructive actions and error states is **not** a platform token. Error text uses Angular Material's `mat-text-error` utility (`color: var(--mat-sys-error)`), which resolves from the Material theme in `src/styles.scss`. Do not hardcode a red and do not reintroduce a bespoke `--osef-error`; if the error colour needs adjusting, override the Material theme rather than adding a parallel token.
 
 **Dark Mode:**
 
