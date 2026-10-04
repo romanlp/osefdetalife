@@ -1,6 +1,6 @@
 import { test as base } from '@playwright/test';
 import { createUserWithEmailAndPassword, signOut } from 'firebase/auth';
-import { Firestore, collection, doc, setDoc, deleteDoc } from 'firebase/firestore';
+import { collection, doc, setDoc, deleteDoc } from 'firebase/firestore';
 import { getAuthInstance } from '../utils/firebase';
 import { createUserData } from './factories';
 import type { User } from './types';

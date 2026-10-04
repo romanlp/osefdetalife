@@ -146,12 +146,7 @@
         "e2e": {
           "builder": "playwright-ng-schematics:playwright",
           "options": {
-            "devServerTarget": "osefdetalife:serve"
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "osefdetalife:serve:production"
-            }
+            "devServerTarget": "osefdetalife:serve:e2e"
           }
         }
       }

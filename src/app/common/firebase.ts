@@ -14,7 +14,7 @@ import {
   type AppCheck,
   ReCaptchaV3Provider,
 } from 'firebase/app-check';
-import { getAnalytics, type Analytics } from 'firebase/analytics';
+import { getAnalytics, setConsent, type Analytics } from 'firebase/analytics';
 import {
   getPerformance,
   type FirebasePerformance,
@@ -104,7 +104,14 @@ export function provideAnalytics(): EnvironmentProviders {
       provide: ANALYTICS,
       useFactory: () => {
         const app = inject(PROVIDED_FIREBASE_APP);
-        return getAnalytics(app);
+        const analytics = getAnalytics(app);
+        setConsent({
+          analytics_storage: 'denied',
+          ad_storage: 'denied',
+          ad_user_data: 'denied',
+          ad_personalization: 'denied',
+        });
+        return analytics;
       },
       deps: [PROVIDED_FIREBASE_APP],
     },

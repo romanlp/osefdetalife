@@ -1,4 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { TestBed } from '@angular/core/testing';
+import {
+  ANALYTICS,
+  PROVIDED_FIREBASE_APP,
+  provideAnalytics,
+} from './firebase';
 
 vi.mock('firebase/app', () => ({
   initializeApp: vi.fn(() => ({ name: 'mock-app' })),
@@ -12,7 +18,8 @@ vi.mock('firebase/app-check', () => ({
 }));
 
 vi.mock('firebase/analytics', () => ({
-  getAnalytics: vi.fn(),
+  getAnalytics: vi.fn(() => ({ type: 'analytics' })),
+  setConsent: vi.fn(),
 }));
 
 vi.mock('firebase/performance', () => ({
@@ -55,5 +62,24 @@ describe('common/firebase', () => {
   it('should export Firebase service class', async () => {
     const mod = await import('./firebase');
     expect(typeof mod.Firebase).toBe('function');
+  });
+
+  it('should deny analytics and advertising storage on init', async () => {
+    const { setConsent } = await import('firebase/analytics');
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: PROVIDED_FIREBASE_APP, useValue: { name: 'mock-app' } },
+        provideAnalytics(),
+      ],
+    });
+    TestBed.inject(ANALYTICS);
+    expect(setConsent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        analytics_storage: 'denied',
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+      }),
+    );
   });
 });

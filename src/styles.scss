@@ -3,19 +3,20 @@
 @use "@angular/material" as mat;
 @import url("https://fonts.googleapis.com/css?family=Krub");
 
-
-
 :root {
-  --color-bg-dark: #15171b;
-  --color-bg-light: #e8e8e8;
+  --osef-linen: var(--mat-sys-background);
+  --osef-surface: var(--mat-sys-surface);
+  --osef-hairline: #e5e0db;
+  --osef-ink: #1a1a1a;
+  --osef-ink-muted: #6b6b6b;
+  --osef-sage: #8fa67a;
+}
 
-  --color-dark: #ffffff;
-  --color-light: #000000;
-
-  --color-item-light: #f1f1f1;
-
-  --bg-color: var(--color-bg-light);
-  --color: var(--color-light);
+.dark-theme {
+  --osef-hairline: #3a3632;
+  --osef-ink: #f5f0eb;
+  --osef-ink-muted: #9a9590;
+  --osef-sage: #a8c48a;
 }
 
 html {
@@ -25,40 +26,24 @@ html {
       color: mat.$violet-palette,
       typography: Krub,
       density: 0,
+    ),
+    (
+      background: light-dark(#fefbff, #1a1a1a),
+      surface-container-highest: light-dark(#f8f1f6, #1a1a1a)
     )
   );
+  @include mat.system-classes();
 }
 
 body {
-  background: var(--mat-sys-surface);
+  background: var(--mat-sys-background);
   color: var(--mat-sys-on-surface);
+  margin: 0;
+  font-family: "Krub", sans-serif;
 }
 
 .dark-theme {
   color-scheme: dark;
-
-  --bg-color: var(--color-bg-dark);
-  --color: var(--color-dark);
-}
-
-:root {
-  --osef-linen: #f5f0eb;
-  --osef-surface: #ffffff;
-  --osef-hairline: #e5e0db;
-  --osef-ink: #1a1a1a;
-  --osef-ink-muted: #6b6b6b;
-  --osef-sage: #8fa67a;
-  --osef-error: #c44b4b;
-}
-
-.dark-theme {
-  --osef-linen: #1a1a1a;
-  --osef-surface: #252320;
-  --osef-hairline: #3a3632;
-  --osef-ink: #f5f0eb;
-  --osef-ink-muted: #9a9590;
-  --osef-sage: #a8c48a;
-  --osef-error: #e06060;
 }
 
 @theme inline {
@@ -68,12 +53,4 @@ body {
   --color-ink: var(--osef-ink);
   --color-ink-muted: var(--osef-ink-muted);
   --color-sage: var(--osef-sage);
-  --color-error: var(--osef-error);
-}
-
-body {
-  background-color: var(--bg-color);
-  margin: 0;
-  font-family: "Krub", sans-serif;
-  color: var(--color);
 }

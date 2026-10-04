@@ -1,5 +1,5 @@
-<div class="h-screen flex items-center justify-center bg-[#FAF7F2]">
-  <mat-card appearance="outlined" class="relative w-full max-w-[480px] mx-4 p-6">
+<div class="h-screen flex items-center justify-center">
+  <mat-card appearance="filled" class="relative w-full max-w-[480px] mx-4 p-6">
     @if (busy()) {
       <mat-progress-bar mode="indeterminate" class="absolute top-0 left-0 right-0" aria-label="Loading" />
     }
@@ -83,7 +83,7 @@
       </section>
 
       @if (hexError()) {
-        <div role="alert" class="text-red-700 text-sm">{{ hexError() }}</div>
+        <div role="alert" class="mat-text-error text-sm">{{ hexError() }}</div>
       }
 
       <section class="border-t pt-4 mt-2">
@@ -124,7 +124,7 @@
       </section>
 
       @if (error()) {
-        <div role="alert" class="text-red-700 text-sm">{{ error() }}</div>
+        <div role="alert" class="mat-text-error text-sm">{{ error() }}</div>
       }
 
       <button

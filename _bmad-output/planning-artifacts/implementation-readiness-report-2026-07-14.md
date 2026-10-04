@@ -9,6 +9,35 @@ stepsCompleted:
 **Date:** 2026-07-14
 **Project:** osefdetalife
 
+> **⚠️ Historical snapshot — not a current readiness gate.**
+> Assessed 2026-07-14, before the 2026-08-12 pivot from an embeddable widget to a
+> public booking page at `/book/{slug}`. Retained for history only; do not use it
+> to decide whether the project is ready to build.
+>
+> **What still holds.** The pivot *renamed* requirements rather than replacing
+> them, so the substance of this assessment survives. The FR count of 53 matches
+> `prd.md` exactly (all of FR-1…FR-53 declared, no gaps), and the FR→story
+> mapping is still accurate — FR-1 remains Epic 2 Story 2.1, FR-42 remains
+> Story 1.7. The success metrics also carried over: SM-1 is still "booking page
+> load time < 2 seconds", only reworded from "widget load time".
+>
+> **What is stale.**
+> - *Vocabulary* — ~19 places still say widget / embed code where the product is
+>   now a public booking page. Most concentrated at `:92`, `:97`, `:98`, `:133`,
+>   `:147`, `:181`, `:182`, `:194`, `:233`, `:274`, `:366-367`, `:383-384`,
+>   `:390`, `:393`, `:405`, `:420`, `:531`.
+> - *Tech stack (`:147`)* — still lists "Web Components, Vite". Neither is a
+>   dependency any more; there is no `lit` package and no `build:widget` script.
+> - *Per-epic FR split* — this report counts Epic 1 = 23 / Epic 2 = 14, while
+>   `epics.md:193,197` counts 24 / 13. The difference is FR-11, which moved from
+>   Epic 2 to Epic 1 after the pivot (it was the widget demo page, now the
+>   in-app booking-page preview). `epics.md` is authoritative for the mapping.
+> - *Story ranges* — the "2.1-2.6" range used in the tables below never matched
+>   what shipped; Epic 2 was delivered as Stories 2-1…2-5.
+>
+> **Authoritative sources.** `prd.md` for the FR list, `epics.md` for the FR→story
+> mapping, `ARCHITECTURE-SPINE.md` for decisions.
+
 ---
 
 # Step 1: Document Discovery — Complete
@@ -408,17 +437,6 @@ FR27: Sign out ✓
 - Story 3.1-3.7: Dashboard components — User-facing flows
 
 ## Story Quality Assessment
-
-### Story Sizing Validation
-
-| Story | Size | Independent | Status |
-|-------|------|-------------|--------|
-| 1.1 Project Scaffolding | Appropriate | ✓ | ✓ |
-| 1.2 Data Model | Appropriate | ✓ | ✓ |
-| 1.3 Authentication | Appropriate | ✓ | ✓ |
-| 1.4-1.7 Onboarding | Appropriate | ✓ | ✓ |
-| 2.1-2.6 Widget | Appropriate | ✓ | ✓ |
-| 3.1-3.7 Dashboard | Appropriate | ✓ | ✓ |
 
 ### Acceptance Criteria Review
 

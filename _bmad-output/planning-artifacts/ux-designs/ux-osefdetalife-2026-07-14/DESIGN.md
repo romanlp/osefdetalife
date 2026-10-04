@@ -1,10 +1,10 @@
 ---
 name: Bookable
-description: White-label restaurant booking platform. Warm minimal aesthetic — quiet confidence, earthy tones, generous whitespace. Public booking page is fully white-labeled; dashboard is platform-branded.
+description: White-label restaurant booking platform. Minimal aesthetic — quiet confidence, soft neutral tones, generous whitespace. Public booking page is fully white-labeled; dashboard is platform-branded.
 colors:
   # Light mode
-  surface-base: '#F5F0EB'
-  surface-raised: '#FFFFFF'
+  surface-base: '#FEFBFF'
+  surface-raised: '#F8F1F6'
   ink-primary: '#1A1A1A'
   ink-secondary: '#6B6B6B'
   ink-disabled: '#B5B0AA'
@@ -12,7 +12,7 @@ colors:
   accent-hover: '#7A9168'
   border-hairline: '#E5E0DB'
   success: '#8FA67A'
-  error: '#C44B4B'
+  # error: not defined here — see "Error Colour" below
   # Dark mode
   surface-base-dark: '#1A1A1A'
   surface-raised-dark: '#252320'
@@ -23,7 +23,7 @@ colors:
   accent-hover-dark: '#96B378'
   border-hairline-dark: '#3A3632'
   success-dark: '#A8C48A'
-  error-dark: '#E06060'
+  # error-dark: not defined here — see "Error Colour" below
 typography:
   family: 'Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif'
   heading:
@@ -72,31 +72,34 @@ components:
 
 ## Brand & Style
 
-Bookable is a white-label restaurant booking platform for small independent restaurants in the UK. The design language is warm minimal — quiet confidence, earthy tones, generous whitespace. No chrome for chrome's sake. Every element earns its place.
+Bookable is a white-label restaurant booking platform for small independent restaurants in the UK. The design language is minimal — quiet confidence, soft neutral tones, generous whitespace. No chrome for chrome's sake. Every element earns its place.
 
 The public booking page is fully white-labeled: restaurants override primary and secondary colors to match their own brand. The dashboard uses the platform's neutral palette. The aesthetic borrows from Airbnb's clean booking flow: minimal chrome, smooth step transitions, clear CTAs, trust signals.
 
-Dark mode is supported from day one. The palette inverts cleanly — warm linen becomes deep ink, sage green brightens for contrast on dark surfaces.
+Dark mode is supported from day one. The palette inverts cleanly — the pale canvas becomes deep ink, sage green brightens for contrast on dark surfaces.
 
 ## Colors
 
-Restrained on purpose. The platform palette is neutral and warm; restaurants bring their own color through white-label overrides.
+Restrained on purpose. The platform palette is neutral and soft; restaurants bring their own color through white-label overrides.
+
+The canvas and surface roles are not bespoke tokens. They are Angular Material system tokens — `--mat-sys-background` and `--mat-sys-surface` — set as overrides in the `mat.theme()` call in `src/styles.scss`. The `--osef-linen` and `--osef-surface` custom properties are aliases of those two tokens, so the Tailwind bridge (`bg-linen`, `bg-surface`) and Material components read one value and cannot drift. Change the palette in `mat.theme()`, not in both places.
 
 **Light Mode:**
 
-- **Warm Linen (`#F5F0EB`)** is the primary canvas. Slightly warm, never clinical. The page background.
-- **White (`#FFFFFF`)** is the raised surface — cards, modals, inputs. Distinguished from linen by tone and a single hairline border.
-- **Ink (`#1A1A1A`)** is the primary text and the primary button fill. High contrast on linen. CTAs are black — impossible to miss.
+- **Canvas (`#FEFBFF`)** is the page background. A very pale, faintly cool neutral — closer to paper than to a tinted surface. Maps to `--mat-sys-background`.
+- **Surface (`#F8F1F6`)** is the raised surface — cards, modals, inputs. Maps to `--mat-sys-surface`.
+- Canvas and surface sit only **1.08:1** apart, so a card is delineated by its outline, not by its fill. Any element meant to read as a distinct panel needs a border or elevation, not a colour step.
+- **Ink (`#1A1A1A`)** is the primary text and the primary button fill. High contrast on the canvas. CTAs are black — impossible to miss.
 - **Muted (`#6B6B6B`)** is secondary text, labels, and placeholders. Never used for essential information.
 - **Sage (`#8FA67A`)** is the only chromatic color in the platform palette. Used for success states, the secondary button, active nav indicators, and tags. Restaurants override this with their own secondary color in the booking page.
-- **Hairline (`#E5E0DB`)** separates surfaces at the lowest possible contrast. Anything heavier feels like UI rather than paper.
-- **Error Red (`#C44B4B`)** for destructive actions and error states. Used sparingly.
+- **Hairline (`#E5E0DB`)** separates surfaces. Anything heavier starts to feel like UI rather than paper.
+- **Error Colour** for destructive actions and error states is **not** a platform token. Error text uses Angular Material's `mat-text-error` utility (`color: var(--mat-sys-error)`), which resolves from the Material theme in `src/styles.scss`. Do not hardcode a red and do not reintroduce a bespoke `--osef-error`; if the error colour needs adjusting, override the Material theme rather than adding a parallel token.
 
 **Dark Mode:**
 
 - **Deep Ink (`#1A1A1A`)** is the dark canvas. Same hex as light-mode primary text — the palette inverts.
 - **Dark Surface (`#252320`)** is the raised surface in dark mode. Warm-toned, not pure black.
-- **Linen (`#F5F0EB`)** becomes the primary text color in dark mode.
+- **Pale Ink (`#F5F0EB`)** becomes the primary text color in dark mode.
 - **Bright Sage (`#A8C48A`)** is the accent in dark mode — brighter to maintain contrast on dark surfaces.
 - **Dark Hairline (`#3A3632`)** separates surfaces.
 
