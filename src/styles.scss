@@ -3,45 +3,6 @@
 @use "@angular/material" as mat;
 @import url("https://fonts.googleapis.com/css?family=Krub");
 
-
-
-:root {
-  --color-bg-dark: #15171b;
-  --color-bg-light: #e8e8e8;
-
-  --color-dark: #ffffff;
-  --color-light: #000000;
-
-  --color-item-light: #f1f1f1;
-
-  --bg-color: var(--color-bg-light);
-  --color: var(--color-light);
-}
-
-html {
-  color-scheme: light dark;
-  @include mat.theme(
-    (
-      color: mat.$violet-palette,
-      typography: Krub,
-      density: 0,
-    )
-  );
-   @include mat.system-classes();
-}
-
-body {
-  background: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
-}
-
-.dark-theme {
-  color-scheme: dark;
-
-  --bg-color: var(--color-bg-dark);
-  --color: var(--color-dark);
-}
-
 :root {
   --osef-linen: #f5f0eb;
   --osef-surface: #ffffff;
@@ -60,6 +21,33 @@ body {
   --osef-sage: #a8c48a;
 }
 
+html {
+  color-scheme: light dark;
+  @include mat.theme(
+    (
+      color: mat.$violet-palette,
+      typography: Krub,
+      density: 0,
+    ),
+    (
+      background: light-dark(blue, #1a1a1a),
+      surface: light-dark(red, #1a1a1a)
+    )
+  );
+  @include mat.system-classes();
+}
+
+body {
+  background: var(--mat-sys-background);
+  color: var(--mat-sys-on-surface);
+  margin: 0;
+  font-family: "Krub", sans-serif;
+}
+
+.dark-theme {
+  color-scheme: dark;
+}
+
 @theme inline {
   --color-linen: var(--osef-linen);
   --color-surface: var(--osef-surface);
@@ -67,11 +55,4 @@ body {
   --color-ink: var(--osef-ink);
   --color-ink-muted: var(--osef-ink-muted);
   --color-sage: var(--osef-sage);
-}
-
-body {
-  background-color: var(--bg-color);
-  margin: 0;
-  font-family: "Krub", sans-serif;
-  color: var(--color);
 }
