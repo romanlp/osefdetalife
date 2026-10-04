@@ -30,11 +30,28 @@ export function getFirebaseAuth(): Auth {
 
 let emulatorsConnected = false;
 
+const LOOPBACK_HOSTNAMES = new Set(['localhost', '127.0.0.1', '::1', '[::1]']);
+
+export function isLoopbackHostname(hostname: string): boolean {
+  return LOOPBACK_HOSTNAMES.has(hostname.trim().toLowerCase());
+}
+
 export function connectToEmulators(): void {
   if (emulatorsConnected) return;
-  if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
-    connectFirestoreEmulator(getFirebaseDb(), 'localhost', 8081);
-    connectAuthEmulator(getFirebaseAuth(), 'http://localhost:9099');
-    emulatorsConnected = true;
+  if (typeof window === 'undefined') return;
+
+  const { hostname } = window.location;
+  if (!isLoopbackHostname(hostname)) {
+    console.error(
+      `useEmulators is enabled but the page origin "${hostname}" is not a loopback address, so the ` +
+        `emulator connection was skipped and this app is talking to the REAL Firebase project ` +
+        `(${environment.firebase.projectId}). This silently breaks e2e runs and can write test data to ` +
+        `production. Use a loopback origin, or turn off useEmulators if this is intentional.`,
+    );
+    return;
   }
+
+  connectFirestoreEmulator(getFirebaseDb(), 'localhost', 8081);
+  connectAuthEmulator(getFirebaseAuth(), 'http://localhost:9099');
+  emulatorsConnected = true;
 }
