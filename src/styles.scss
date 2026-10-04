@@ -4,8 +4,8 @@
 @import url("https://fonts.googleapis.com/css?family=Krub");
 
 :root {
-  --osef-linen: #f5f0eb;
-  --osef-surface: #ffffff;
+  --osef-linen: var(--mat-sys-background);
+  --osef-surface: var(--mat-sys-surface);
   --osef-hairline: #e5e0db;
   --osef-ink: #1a1a1a;
   --osef-ink-muted: #6b6b6b;
@@ -13,8 +13,6 @@
 }
 
 .dark-theme {
-  --osef-linen: #1a1a1a;
-  --osef-surface: #252320;
   --osef-hairline: #3a3632;
   --osef-ink: #f5f0eb;
   --osef-ink-muted: #9a9590;
@@ -30,8 +28,8 @@ html {
       density: 0,
     ),
     (
-      background: light-dark(blue, #1a1a1a),
-      surface: light-dark(red, #1a1a1a)
+      background: light-dark(#fefbff, #1a1a1a),
+      surface-container-highest: light-dark(#f8f1f6, #1a1a1a)
     )
   );
   @include mat.system-classes();
